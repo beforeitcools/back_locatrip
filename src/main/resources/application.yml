@@ -1,0 +1,11 @@
+server:
+  port: 8082
+spring:
+  jpa:
+    show-sql: true
+    database: mysql
+    properties:
+      hibernate:
+        format_sql: true
+  config:
+    import: "classpath:application-db.yml"
