@@ -19,9 +19,10 @@ public class WebConfig {
     private Connector createHttpConnector() {
         Connector connector = new Connector(TomcatServletWebServerFactory.DEFAULT_PROTOCOL);
         connector.setScheme("http");
-        connector.setPort(8082);  // HTTP 포트
+        connector.setPort(8081);  // HTTP 포트
         connector.setSecure(false);
-        connector.setRedirectPort(5555);  // HTTPS 포트
+        connector.setRedirectPort(8082);  // HTTPS 포트
         return connector;
     }
 }
+//sadfasdfsdfsd
