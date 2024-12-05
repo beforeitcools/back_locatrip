@@ -1,5 +1,10 @@
 server:
   port: 8082
+  ssl:
+    enabled: true
+    key-store: classpath:certificate.jks
+    key-store-password: 123456
+    key-store-type: JKS
 spring:
   jpa:
     show-sql: true
@@ -9,8 +14,4 @@ spring:
         format_sql: true
   config:
     import: "classpath:application-db.yml"
-  ssl:
-    enabled: true
-    key-store: classpath:certificate.jks
-    key-store-password: 123456
-    key-store-type: JKS
+
