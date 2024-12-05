@@ -2,9 +2,9 @@ server:
   port: 8082
   ssl:
     enabled: true
-    key-store: classpath:certificate.jks
+    key-store: classpath:certificate.p12
     key-store-password: 1234
-    key-store-type: JKS
+    key-store-type: PKCS12
 spring:
   jpa:
     show-sql: true
