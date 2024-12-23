@@ -1,8 +1,8 @@
-package com.ohgiraffers.jenkins_test_app.menu.service;
+package com.ohgiraffers.jenkins_test_app.user.service;
 
 
-import com.ohgiraffers.jenkins_test_app.menu.entity.Menu;
-import com.ohgiraffers.jenkins_test_app.menu.repository.MenuRepository;
+import com.ohgiraffers.jenkins_test_app.user.entity.Menu;
+import com.ohgiraffers.jenkins_test_app.user.repository.MenuRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

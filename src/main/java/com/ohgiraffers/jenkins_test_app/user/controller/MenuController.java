@@ -1,7 +1,7 @@
-package com.ohgiraffers.jenkins_test_app.menu.controller;
+package com.ohgiraffers.jenkins_test_app.user.controller;
 
-import com.ohgiraffers.jenkins_test_app.menu.entity.Menu;
-import com.ohgiraffers.jenkins_test_app.menu.service.MenuService;
+import com.ohgiraffers.jenkins_test_app.user.entity.Menu;
+import com.ohgiraffers.jenkins_test_app.user.service.MenuService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

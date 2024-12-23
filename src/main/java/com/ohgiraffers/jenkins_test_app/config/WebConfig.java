@@ -9,6 +9,7 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class WebConfig {
 
+/*
     @Bean
     public ServletWebServerFactory servletContainer() {
         TomcatServletWebServerFactory factory = new TomcatServletWebServerFactory();
@@ -24,4 +25,7 @@ public class WebConfig {
         connector.setRedirectPort(8082);  // HTTPS 포트
         return connector;
     }
+*/
+
+    // local 환경(개발시에는) HTTP 요청을 HTTPS 로 변환해주어서는 안된다.
 }

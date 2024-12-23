@@ -1,4 +1,4 @@
-package com.ohgiraffers.jenkins_test_app.menu.entity;
+package com.ohgiraffers.jenkins_test_app.user.entity;
 
 import jakarta.persistence.*;
 
