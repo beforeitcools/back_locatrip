@@ -13,7 +13,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/menu")
-public class MenuController {
+public class UserController {
 
     @Autowired
     private MenuService menuService;
