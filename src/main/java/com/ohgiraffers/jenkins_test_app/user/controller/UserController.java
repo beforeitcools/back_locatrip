@@ -21,13 +21,14 @@ public class UserController {
     @GetMapping("/select")
     public ResponseEntity selectAllMenu() {
 
-        List<Menu> menuList = menuService.selectAllMenu();
+        return ResponseEntity.ok("오케바다");
+        /*List<Menu> menuList = menuService.selectAllMenu();
         if(menuList != null){
-            return ResponseEntity.ok(menuList);
+            return ResponseEntity.ok("오케바디");
         }else {
             return ResponseEntity
                     .status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body("서버 오류 발생");
-        }
+        }*/
     }
 }
