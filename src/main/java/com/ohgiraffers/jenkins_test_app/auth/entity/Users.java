@@ -4,6 +4,10 @@ import com.ohgiraffers.jenkins_test_app.auth.Enum.UserRole;
 import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 @Entity(name = "users_signup")
 @Table(name = "users")
@@ -47,6 +51,15 @@ public class Users {
 
     @Column(name = "inactive_at")
     private LocalDateTime inactiveAt;
+
+    public List<String> getRoleList(){
+
+        if(this.role.getRole().length()>0){
+
+            return Arrays.asList(this.role.getRole().split(","));
+        }
+        return new ArrayList<>();
+    }
 
     public Users() {
     }
@@ -146,8 +159,10 @@ public class Users {
         this.status = status;
     }
 
-    public LocalDateTime getCreatedAt() {
-        return createdAt;
+    public String getCreatedAt() {
+        DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyy.MM.dd.");
+
+        return createdAt.format(dateFormatter);
     }
 
     public void setCreatedAt(LocalDateTime createdAt) {

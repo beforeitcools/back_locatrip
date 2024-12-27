@@ -1,6 +1,6 @@
 package com.ohgiraffers.jenkins_test_app.auth.dto;
 
-public class SignupDTO {
+public class UsersDTO {
 
     private Integer id;                         // 사용자 고유 ID
     private String nickname;                    // 사용자 닉네임
@@ -11,10 +11,10 @@ public class SignupDTO {
 
     private int status;                         // 사용자 계정 상태 (0: 비활성, 1: 활성)
 
-    public SignupDTO() {
+    public UsersDTO() {
     }
 
-    public SignupDTO(Integer id, String nickname, String userId, String password, String profilePic, int status) {
+    public UsersDTO(Integer id, String nickname, String userId, String password, String profilePic, int status) {
         this.id = id;
         this.nickname = nickname;
         this.userId = userId;

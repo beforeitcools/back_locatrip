@@ -2,39 +2,40 @@ package com.ohgiraffers.jenkins_test_app.auth.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.ohgiraffers.jenkins_test_app.auth.dto.SignupDTO;
-import com.ohgiraffers.jenkins_test_app.auth.service.SignupService;
+import com.ohgiraffers.jenkins_test_app.auth.common.EmailValidator;
+import com.ohgiraffers.jenkins_test_app.auth.common.NameValidator;
+import com.ohgiraffers.jenkins_test_app.auth.dto.UsersDTO;
+import com.ohgiraffers.jenkins_test_app.auth.entity.Users;
+import com.ohgiraffers.jenkins_test_app.auth.service.AuthService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestPart;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/auth/*")
 public class AuthController {
-
-    @Autowired
-    private SignupService signupService;
 
     String backUrl = "http://112.221.66.174:7777";
 
-    @PostMapping("signup")
+    @Autowired
+    private AuthService authService;
+
+
+    @PostMapping("/signup")
     public ResponseEntity signup(@RequestPart("signupData") String signupDataJson,
                                  @RequestPart(value = "profileImg", required = false) MultipartFile profileImg){
         // JsonEncode 되어 있는 signupData를 SignupDTO 로 decode
         ObjectMapper objectMapper = new ObjectMapper();
-        SignupDTO signupDTO;
+        UsersDTO usersDTO;
         try {
-            signupDTO = objectMapper.readValue(signupDataJson, SignupDTO.class);
+            usersDTO = objectMapper.readValue(signupDataJson, UsersDTO.class);
         } catch (JsonProcessingException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("유효하지 않은 회원가입 데이터");
         }
@@ -52,7 +53,7 @@ public class AuthController {
             String ext = originalFileName.substring(originalFileName.lastIndexOf("."));
             String savedName = UUID.randomUUID().toString().replace("-", "") + ext;
             String filePath = savePath + "/" + savedName;
-            signupDTO.setProfilePic(backUrl + "/images/user/profilePic/" + savedName);
+            usersDTO.setProfilePic(backUrl + "/images/user/profilePic/" + savedName);
 
             try {
                 profileImg.transferTo(new File(filePath));
@@ -62,12 +63,50 @@ public class AuthController {
             }
         }
 
-        Object result = SignupService.signup(signupDTO);
+        Object result = authService.signup(usersDTO);
 
-        if(Objects.isNull(result)){
-            return ResponseEntity.status(500).body("회원가입 실패");
+        if(result instanceof Users){
+            return ResponseEntity.ok(result);
         }
 
+        return ResponseEntity.status(500).body("회원가입 실패 : " + result);
+    }
+
+    /**아이디 중복검사*/
+    @GetMapping("/checkUserId")
+    public ResponseEntity checkUserId(@RequestParam Map<String, Object> parameters){
+
+        String userId = (String) parameters.get("userId");
+        // 유효성 검사
+        if(!EmailValidator.isValidEmail(userId)){
+            return ResponseEntity.ok("유효하지않은 형식입니다. \n다시 입력해주세요.");
+        }
+
+        // 중복 여부
+        if(authService.isUserIdExists(userId)){
+            return ResponseEntity.ok("중복된 아이디 입니다. \n다시 입력해주세요.");
+        }
+
+        // 성공
+        return ResponseEntity.ok("사용 가능한 아이디입니다.");
+    }
+
+    /**닉네임 중복검사*/
+    @GetMapping("/checkNickname")
+    public ResponseEntity<String> checkName(@RequestParam("nickname") String nickname){
+
+        // 유효성 검사
+        if(!NameValidator.isValidName(nickname)){
+            return ResponseEntity.ok("유효하지않은 형식입니다. \n다시 입력해주세요.");
+        }
+
+        // 중복 여부
+        if(authService.isUserNameExists(nickname)){
+            return ResponseEntity.ok("중복된 닉네임입니다. \n다시 입력해주세요.");
+        }
+
+        // 성공
+        return ResponseEntity.ok("사용 가능한 닉네임입니다.");
     }
 
 

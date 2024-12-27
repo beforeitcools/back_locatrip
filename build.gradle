@@ -37,6 +37,10 @@ dependencies {
     // http 요청이 들어올 때 요청 데이터가 json 으로 반환이 되는데 이것을 간편하게 포맷팅 해주는 lib
     implementation group: 'com.googlecode.json-simple', name: 'json-simple', version: '1.1.1'
 
+    // LocalDateTime 을 serialize 하기 위해서 추가해야 하는 모듈
+    implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.18.1'
+
+
 }
 
 tasks.named('test') {
