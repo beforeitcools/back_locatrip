@@ -1,47 +1,32 @@
 package com.ohgiraffers.jenkins_test_app.trip.dto;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
+import java.util.List;
 
 public class TripDTO {
-    private Integer id;
-    private int userId;
+
+    private String userId;
     private String title;
-    private int regionId;
-    private LocalDate startDate;
-    private LocalDate endDate;
-    private LocalDateTime createdAt;
-    private LocalDateTime updatedAt;
-    private int chattingId;
+    private String startDate; // LocalDate 로 변환할 예정
+    private String endDate;
+    private List<String> regions;
 
     public TripDTO() {
     }
 
-    public TripDTO(Integer id, int userId, String title, int regionId, LocalDate startDate, LocalDate endDate, LocalDateTime createdAt, LocalDateTime updatedAt, int chattingId) {
-        this.id = id;
+    public TripDTO(String userId, String title, String startDate, String endDate, List<String> regions) {
         this.userId = userId;
         this.title = title;
-        this.regionId = regionId;
         this.startDate = startDate;
         this.endDate = endDate;
-        this.createdAt = createdAt;
-        this.updatedAt = updatedAt;
-        this.chattingId = chattingId;
+        this.regions = regions;
     }
 
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
-    }
-
-    public int getUserId() {
+    public String getUserId() {
         return userId;
     }
 
-    public void setUserId(int userId) {
+    public void setUserId(String userId) {
         this.userId = userId;
     }
 
@@ -53,66 +38,38 @@ public class TripDTO {
         this.title = title;
     }
 
-    public int getRegionId() {
-        return regionId;
-    }
-
-    public void setRegionId(int regionId) {
-        this.regionId = regionId;
-    }
-
-    public LocalDate getStartDate() {
+    public String getStartDate() {
         return startDate;
     }
 
-    public void setStartDate(LocalDate startDate) {
+    public void setStartDate(String startDate) {
         this.startDate = startDate;
     }
 
-    public LocalDate getEndDate() {
+    public String getEndDate() {
         return endDate;
     }
 
-    public void setEndDate(LocalDate endDate) {
+    public void setEndDate(String endDate) {
         this.endDate = endDate;
     }
 
-    public LocalDateTime getCreatedAt() {
-        return createdAt;
+    public List<String> getRegions() {
+        return regions;
     }
 
-    public void setCreatedAt(LocalDateTime createdAt) {
-        this.createdAt = createdAt;
-    }
-
-    public LocalDateTime getUpdatedAt() {
-        return updatedAt;
-    }
-
-    public void setUpdatedAt(LocalDateTime updatedAt) {
-        this.updatedAt = updatedAt;
-    }
-
-    public int getChattingId() {
-        return chattingId;
-    }
-
-    public void setChattingId(int chattingId) {
-        this.chattingId = chattingId;
+    public void setRegions(List<String> regions) {
+        this.regions = regions;
     }
 
     @Override
     public String toString() {
         return "TripDTO{" +
-                "id=" + id +
-                ", userId=" + userId +
+                "userId='" + userId + '\'' +
                 ", title='" + title + '\'' +
-                ", regionId=" + regionId +
-                ", startDate=" + startDate +
-                ", endDate=" + endDate +
-                ", createdAt=" + createdAt +
-                ", updatedAt=" + updatedAt +
-                ", chattingId=" + chattingId +
+                ", startDate='" + startDate + '\'' +
+                ", endDate='" + endDate + '\'' +
+                ", regions=" + regions +
                 '}';
     }
 }
