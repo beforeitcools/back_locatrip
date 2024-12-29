@@ -7,13 +7,14 @@ import com.ohgiraffers.jenkins_test_app.trip.respository.SelectedRegionRepositor
 import com.ohgiraffers.jenkins_test_app.trip.respository.TripRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
 
 import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
-import java.util.List;
+import java.time.format.DateTimeParseException;
 import java.util.Objects;
+import java.util.Optional;
 
 @Service
 public class TripService {
@@ -25,21 +26,24 @@ public class TripService {
 
     // 날짜 변환 로직 (공통 메서드로 분리)
     private LocalDate convertStringToDate(String dateString) {
-        if (dateString == null || dateString.isEmpty()) {
-            return null;
+        try {
+            if (dateString == null || dateString.isEmpty()) {
+                return null;
+            }
+            String parsedDate = dateString.split("T")[0];
+            return LocalDate.parse(parsedDate);
+        } catch (DateTimeParseException e) {
+            throw new IllegalArgumentException("Invalid date format: " + dateString, e);
         }
-        String parsedDate = dateString.split("T")[0];
-        return LocalDate.parse(parsedDate);
     }
 
 
     @Transactional
     public Trip addTrip(TripDTO trip) {
-        if(Objects.isNull(trip)){
-            return null;
+        if (trip == null || trip.getUserId() == null || trip.getTitle() == null || trip.getRegions() == null) {
+            throw new IllegalArgumentException("Invalid TripDTO input");
         }
 
-        DateTimeFormatter formatter = DateTimeFormatter.ISO_LOCAL_DATE;
 
         // String -> LocalDate 변환
         LocalDate startDate = convertStringToDate(trip.getStartDate());
@@ -52,18 +56,28 @@ public class TripService {
         newTrip.setEndDate(endDate);
         newTrip.setChattingId(null);
 
-        // Trip 저장
-        Trip savedTrip = tripRepository.save(newTrip);
+        try {
+            Trip savedTrip = tripRepository.save(newTrip);
 
-        // 선택한 지역 저장
-        for (String region : trip.getRegions()) {
-            SelectedRegion selectedRegion = new SelectedRegion(savedTrip.getId(), region, savedTrip);
-            SelectedRegion result = selectedRegionRepository.save(selectedRegion);
+            for (String region : trip.getRegions()) {
+                SelectedRegion selectedRegion = new SelectedRegion(savedTrip.getId(), region, savedTrip);
+                selectedRegionRepository.save(selectedRegion);
+            }
+            return savedTrip;
+        } catch (DataIntegrityViolationException e) {
+            throw new RuntimeException("Database error", e);
+        }
+    }
+
+    public Optional<Trip> selectTrip(Integer id) {
+
+        if(Objects.isNull(id)){
+            return Optional.empty();
         }
 
-        if(savedTrip == null) {
-            return null;
-        }
-        return savedTrip;
+        Optional<Trip> trip = tripRepository.findById(id);
+
+
+        return trip;
     }
 }
