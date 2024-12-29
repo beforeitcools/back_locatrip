@@ -159,10 +159,11 @@ public class Users {
         this.status = status;
     }
 
-    public String getCreatedAt() {
-        DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyy.MM.dd.");
+    public /*String*/ LocalDateTime getCreatedAt() {
+        /*DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyy.MM.dd.");
 
-        return createdAt.format(dateFormatter);
+        return createdAt.format(dateFormatter);*/
+        return createdAt;
     }
 
     public void setCreatedAt(LocalDateTime createdAt) {

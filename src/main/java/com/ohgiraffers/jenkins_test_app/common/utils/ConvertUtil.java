@@ -2,6 +2,7 @@ package com.ohgiraffers.jenkins_test_app.common.utils;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
@@ -11,6 +12,7 @@ public class ConvertUtil {
     public static Object convertObjectToJsonObject(Object obj){
 
         ObjectMapper mapper = new ObjectMapper(); // ObjectMapper: Java 객체를 JSON 문자열로 변환하는 Jackson 라이브러리의 객체
+        mapper.registerModule(new JavaTimeModule());
         JSONParser parser = new JSONParser(); // JSONParser: JSON 문자열을 JSON 객체로 파싱하는 라이브러리의 객체
         String convertJsonString; // 변환된 JSON 문자열을 저장할 변수
         Object convertObj; // 최종적으로 JSON 객체로 변환된 결과를 저장할 변수

@@ -22,7 +22,7 @@ import java.util.UUID;
 @RestController
 public class AuthController {
 
-    String backUrl = "http://112.221.66.174:7777";
+    String backUrl = "http://112.221.66.174:8082";
 
     @Autowired
     private AuthService authService;
