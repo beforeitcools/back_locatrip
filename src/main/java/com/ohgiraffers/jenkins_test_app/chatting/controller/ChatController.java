@@ -1,42 +1,29 @@
 package com.ohgiraffers.jenkins_test_app.chatting.controller;
 
 import com.ohgiraffers.jenkins_test_app.chatting.entity.Messages;
-import com.ohgiraffers.jenkins_test_app.chatting.service.ChatService;
+import com.ohgiraffers.jenkins_test_app.chatting.repository.ChatRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.messaging.handler.annotation.MessageMapping;
+import org.springframework.messaging.handler.annotation.SendTo;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
+import org.springframework.stereotype.Controller;
 
-import java.util.List;
-
-@RestController
-@RequestMapping("/chat")
+@Controller
 public class ChatController
 {
     @Autowired
-    private ChatService chatService;
+    private SimpMessagingTemplate messagingTemplate;
 
-//TODO: 메세지 컨트롤러로 빼야하나 ...?
-//    @MessageMapping("/message")
-//    @SendTo("/topic/messages")
-//    public String handleMessage(String message)
-//    {
-//        return message;
-//    }
+    @Autowired
+    private ChatRepository chatRepository;
 
-    @GetMapping("/selectrecent")
-    public List<Messages> selectAllChats()
+    @MessageMapping("/sendMessage")
+    @SendTo("/topic/messages")
+    public Messages handleMessage(Messages message)
     {
-        List<Messages> messages = chatService.selectRecentMessages();
-        return messages;
-    }
-
-    @GetMapping("/select/{chatroomId}")
-    public List<Messages> selectChatsByUserId(@PathVariable("chatroomId") int chatroomId)
-    {
-        System.out.println("chatroomId = " + chatroomId);
-        List<Messages> messages = chatService.selectChatsByChatroomId(chatroomId);
-        return messages;
+        // 데이터베이스에서 메세지 저장
+        Messages savedMessage = chatRepository.save(message);
+        System.out.println("저기효 ... 실행은되나요?" + message.getMessageContents() );
+        return savedMessage;
     }
 }
