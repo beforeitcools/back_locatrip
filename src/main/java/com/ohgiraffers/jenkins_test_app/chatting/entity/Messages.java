@@ -85,4 +85,10 @@ public class Messages
     {
         this.sendTime = sendTime;
     }
+
+    @Override
+    public String toString()
+    {
+        return "Messages{" + "id=" + id + ", chatroomId=" + chatroomId + ", userId=" + userId + ", messageContents='" + messageContents + '\'' + ", sendTime=" + sendTime + '}';
+    }
 }

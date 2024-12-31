@@ -3,12 +3,13 @@ package com.ohgiraffers.jenkins_test_app.chatting.controller;
 import com.ohgiraffers.jenkins_test_app.chatting.entity.Messages;
 import com.ohgiraffers.jenkins_test_app.chatting.repository.ChatRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
-import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.*;
 
-@Controller
+@RestController
 public class ChatController
 {
     @Autowired
@@ -25,5 +26,12 @@ public class ChatController
         Messages savedMessage = chatRepository.save(message);
         System.out.println("저기효 ... 실행은되나요?" + message.getMessageContents() );
         return savedMessage;
+    }
+
+    @RequestMapping(value = "/sendMessage", method = RequestMethod.POST)
+    public void sendMessage(@RequestBody Messages message)
+    {
+        System.out.println("Received message => " + message);
+        chatRepository.save(message);
     }
 }
