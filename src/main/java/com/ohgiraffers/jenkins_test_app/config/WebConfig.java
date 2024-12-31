@@ -5,11 +5,20 @@ import org.springframework.boot.web.embedded.tomcat.TomcatServletWebServerFactor
 import org.springframework.boot.web.servlet.server.ServletWebServerFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @Configuration
-public class WebConfig {
+public class WebConfig implements WebMvcConfigurer {
+    @Override
+    public void addResourceHandlers(ResourceHandlerRegistry registry) {
+        String commonPath = "file:///C:/locat/";
 
-/*
+        registry.addResourceHandler("/images/user/profilePic/**")
+                .addResourceLocations(commonPath + "profile_pic/");
+    }
+
+    /*
     @Bean
     public ServletWebServerFactory servletContainer() {
         TomcatServletWebServerFactory factory = new TomcatServletWebServerFactory();
