@@ -15,6 +15,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
@@ -59,7 +60,7 @@ public class AuthController {
                 profileImg.transferTo(new File(filePath));
             } catch (IOException e) {
                 e.printStackTrace();
-                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("이미지 업로드 실패");
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("프로필 이미지 업로드 실패");
             }
         }
 
@@ -75,38 +76,40 @@ public class AuthController {
     /**아이디 중복검사*/
     @GetMapping("/checkUserId")
     public ResponseEntity checkUserId(@RequestParam Map<String, Object> parameters){
-
         String userId = (String) parameters.get("userId");
+        Map<String, String> response = new HashMap<>();
         // 유효성 검사
         if(!EmailValidator.isValidEmail(userId)){
-            return ResponseEntity.ok("유효하지않은 형식입니다. \n다시 입력해주세요.");
+            response.put("message", "유효하지않은 형식입니다. \n다시 입력해주세요.");
         }
-
         // 중복 여부
-        if(authService.isUserIdExists(userId)){
-            return ResponseEntity.ok("중복된 아이디 입니다. \n다시 입력해주세요.");
+        else if(authService.isUserIdExists(userId)){
+            response.put("message", "중복된 아이디 입니다. \n다시 입력해주세요.");
+        }
+        else {
+            response.put("message", "사용 가능한 아이디입니다.");
         }
 
-        // 성공
-        return ResponseEntity.ok("사용 가능한 아이디입니다.");
+        return ResponseEntity.ok(response);
     }
 
     /**닉네임 중복검사*/
     @GetMapping("/checkNickname")
-    public ResponseEntity<String> checkName(@RequestParam("nickname") String nickname){
-
+    public ResponseEntity checkName(@RequestParam("nickname") String nickname){
+        Map<String, String> response = new HashMap<>();
         // 유효성 검사
         if(!NameValidator.isValidName(nickname)){
-            return ResponseEntity.ok("유효하지않은 형식입니다. \n다시 입력해주세요.");
+            response.put("message", "유효하지않은 형식입니다. \n다시 입력해주세요.");
         }
-
         // 중복 여부
-        if(authService.isUserNameExists(nickname)){
-            return ResponseEntity.ok("중복된 닉네임입니다. \n다시 입력해주세요.");
+        else if(authService.isUserNameExists(nickname)){
+            response.put("message", "중복된 닉네임 입니다. \n다시 입력해주세요.");
+        }
+        else {
+            response.put("message", "사용 가능한 닉네임입니다.");
         }
 
-        // 성공
-        return ResponseEntity.ok("사용 가능한 닉네임입니다.");
+        return ResponseEntity.ok(response);
     }
 
 
