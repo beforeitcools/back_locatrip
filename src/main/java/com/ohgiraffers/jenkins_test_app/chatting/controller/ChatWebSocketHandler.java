@@ -2,6 +2,7 @@ package com.ohgiraffers.jenkins_test_app.chatting.controller;
 
 import org.springframework.web.socket.CloseStatus;
 import org.springframework.web.socket.TextMessage;
+import org.springframework.web.socket.WebSocketMessage;
 import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
 
@@ -53,5 +54,11 @@ public class ChatWebSocketHandler extends TextWebSocketHandler
         // 클라이언트가 websocket 연결을 닫았을 때 호출되는 메소드
         clients.remove(session);
         System.out.println("웹소켓 종료: " + session.getId());
+    }
+
+    @Override
+    public void handleMessage(WebSocketSession session, WebSocketMessage<?> message) throws Exception
+    {
+        session.sendMessage(new TextMessage("New message received"));
     }
 }

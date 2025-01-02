@@ -13,12 +13,13 @@ public class RecentChatDTO
     {
     }
 
-    public RecentChatDTO(String chatroomId, String chatroomName, String chatroomPic, String currentMessage, boolean isRead)
+    public RecentChatDTO(String chatroomId, String chatroomName, String chatroomPic, String currentMessage, String sendTime, boolean isRead)
     {
         this.chatroomId = chatroomId;
         this.chatroomName = chatroomName;
         this.chatroomPic = chatroomPic;
         this.currentMessage = currentMessage;
+        this.sendTime = sendTime;
         this.isRead = isRead;
     }
 
@@ -60,6 +61,16 @@ public class RecentChatDTO
     public void setCurrentMessage(String currentMessage)
     {
         this.currentMessage = currentMessage;
+    }
+
+    public String getSendTime()
+    {
+        return sendTime;
+    }
+
+    public void setSendTime(String sendTime)
+    {
+        this.sendTime = sendTime;
     }
 
     public boolean isRead()
