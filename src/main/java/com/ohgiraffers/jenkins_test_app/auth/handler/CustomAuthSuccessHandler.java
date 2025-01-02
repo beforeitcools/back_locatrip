@@ -41,7 +41,8 @@ public class CustomAuthSuccessHandler extends SavedRequestAwareAuthenticationSuc
             responseMap.put("message","탈퇴한 계정입니다.");
         }else {
             // 정상 계정인 경우 JWT 토큰을 생성하고 응답에 포함시킵니다.
-            String token = TokenUtils.generateJwtToken(user);  // 생성된 토큰 조작부
+            String accessToken = TokenUtils.generateAccessToken(user);  // 생성된 토큰 조작부
+            String refreshToken = TokenUtils.generateRefreshToken(user);
             // 정상 로그인 시 사용자 정보와 성공 메시지, 생성된 토큰을 응답에 담습니다.
             responseMap.put("userInfo",jsonValue);
             responseMap.put("message","로그인 성공");
@@ -50,7 +51,8 @@ public class CustomAuthSuccessHandler extends SavedRequestAwareAuthenticationSuc
             // AuthConstants.TOKEN_TYPE: "Bearer"와 같은 토큰 유형
             // 최종적으로 Authorization 헤더로 JWT 토큰을 클라이언트에 전달
             // Authorization 헤더에 JWT 토큰을 포함하여 클라이언트에게 전달하는 것
-            response.addHeader(AuthConstants.AUTH_HEADER, AuthConstants.TOKEN_TYPE + " " + token);
+            response.addHeader(AuthConstants.AUTH_HEADER, AuthConstants.TOKEN_TYPE + " " + accessToken);
+            response.addHeader(AuthConstants.REFRESH_TOKEN_HEADER, AuthConstants.TOKEN_TYPE + " " + refreshToken);
         }
 
         // 응답에 보낼 데이터(사용자 정보와 메시지)를 JSON 객체로 변환합니다.

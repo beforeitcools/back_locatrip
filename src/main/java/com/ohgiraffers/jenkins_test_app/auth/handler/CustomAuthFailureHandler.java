@@ -30,32 +30,43 @@ public class CustomAuthFailureHandler implements AuthenticationFailureHandler {
     public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response, AuthenticationException exception) throws IOException, ServletException {
         JSONObject jsonObject;  // dto를 따로 안 만들어도 알아서 json 객체로 내보냄
         String failMsg;
+        int statusCode;
 
         // 에러 발생 시 호출됨
         if(exception instanceof AuthenticationServiceException){
-            failMsg = "회원 정보가 존재하지 않습니다. 회원가입 후 로그인해주세요.";
+            failMsg = "아이디가 혹은 비밀번호가 일치하지 않습니다.";
+            statusCode = HttpServletResponse.SC_NOT_FOUND;      //404
         } else if(exception instanceof BadCredentialsException){
-            failMsg = "아이디가 존재하지 않거나 비밀번호가 일치하지 않습니다.";
+            failMsg = "아이디가 혹은 비밀번호가 일치하지 않습니다.";
+            statusCode = HttpServletResponse.SC_UNAUTHORIZED;   //401
         } else if (exception instanceof LockedException) {
             failMsg = "잠긴 계정입니다.";
+            statusCode = HttpServletResponse.SC_FORBIDDEN;      //403
         } else if (exception instanceof DisabledException) {
             failMsg = "비활성화 된 계정입니다.";
+            statusCode = HttpServletResponse.SC_FORBIDDEN;      //403
         } else if (exception instanceof AccountExpiredException) {
-            failMsg = "만료된 계정입니다.";
+            failMsg = "탈퇴한 계정 입니다.";
+            statusCode = HttpServletResponse.SC_UNAUTHORIZED;   //401
         } else if (exception instanceof CredentialsExpiredException) {
             failMsg = "자격 증명이 만료된 계정입니다.";
+            statusCode = HttpServletResponse.SC_UNAUTHORIZED;   //401
         } else if (exception instanceof AuthenticationCredentialsNotFoundException) {
             failMsg = "인증 요청이 거부되었습니다.";
+            statusCode = HttpServletResponse.SC_UNAUTHORIZED;   //401
         } else if (exception instanceof UsernameNotFoundException) {
             failMsg = "존재하지 않는 이메일 입니다.";
+            statusCode = HttpServletResponse.SC_NOT_FOUND;      //404
         }else {
             failMsg = "정의 되어있지 않은 오류 케이스 입니다.";
+            statusCode = HttpServletResponse.SC_INTERNAL_SERVER_ERROR;  //500
         }
 
+        response.setStatus(statusCode);
         response.setContentType("application/json");
         response.setCharacterEncoding("UTF-8");
-        PrintWriter printWriter = response.getWriter();
 
+        PrintWriter printWriter = response.getWriter();
         HashMap<String, Object> resultMap = new HashMap<>();
         resultMap.put("failType", failMsg);
 

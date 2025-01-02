@@ -5,6 +5,7 @@ public class AuthConstants {
     // HTTP 요청의 헤더에 인증 정보를 포함하기 위해 사용하는 키
     //  인증에 필요한 헤더와 토큰 타입을 일관성 있게 관리하기 위해서 사용됨.
     public static final String AUTH_HEADER = "Authorization";
+    public static final String REFRESH_TOKEN_HEADER = "Refresh_Token";
     public static final String TOKEN_TYPE = "BEARER"; // 토큰 값 인트로
 }
 

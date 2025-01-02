@@ -16,16 +16,26 @@ import java.util.Map;
 public class TokenUtils {
 
     private static String jwtSecretKey;
-    private static long tokenValidateTime;
+    private static long refreshTokenValidateTime;
+    private static long accessTokenValidateTime;
+    // private static long tokenValidateTime;
 
     @Value("${jwt.key}")
     public void setJwtSecretKey(String jwtSecretKey) {
         TokenUtils.jwtSecretKey = jwtSecretKey;
     }
-    @Value("${jwt.time}")
+    @Value("${jwt.refresh_time}")
+    public void setRefreshTokenValidateTime(long refreshTokenValidateTime) {
+        TokenUtils.refreshTokenValidateTime = refreshTokenValidateTime;
+    }
+    @Value("${jwt.access_time}")
+    public void setAccessTokenValidateTime(long accessTokenValidateTime) {
+        TokenUtils.accessTokenValidateTime = accessTokenValidateTime;
+    }
+    /*@Value("${jwt.time}")
     public void setTokenValidateTime(long tokenValidateTime) {
         TokenUtils.tokenValidateTime = tokenValidateTime;
-    }
+    }*/
 
     /**
      * header의 token 을 분리하는 메소드
@@ -82,18 +92,39 @@ public class TokenUtils {
     }
 
     /**
-     * token 을 생성하는 메소드
+     * Access token 을 생성하는 메소드
      * @param user userEntity
      * @return String token
      * */
-    public static String generateJwtToken(Users user){
+    public static String generateAccessToken(Users user){
         // 토큰 만료 시간을 현재 시간에서 지정된 유효 시간(tokenValidateTime) 이후로 설정
-        Date expireTime = new Date(System.currentTimeMillis()+tokenValidateTime);
+        Date expireTime = new Date(System.currentTimeMillis()+accessTokenValidateTime);
         // JwtBuilder를 사용하여 JWT 토큰을 생성하는 빌더 객체를 초기화
         JwtBuilder builder = Jwts.builder()  // 토큰 생성 라이브러리 JwtBuilder
                 .setHeader(createHeader()) // 토큰의 헤더 설정 (헤더에는 토큰의 타입 및 알고리즘 정보가 담김)
                 .setClaims(createClaims(user)) // 토큰의 클레임 설정 (사용자 정보와 같은 페이로드 데이터를 담음)
-                .setSubject("locat token : " + user.getUserId())  // 토큰의 설명 정보를 담아줌
+                .setSubject("access token : " + user.getUserId())  // 토큰의 설명 정보를 담아줌
+                .signWith(SignatureAlgorithm.HS256,createSignature())  // 토큰 암호화 방식 정의
+                // HS256은 HMAC (Hash-based Message Authentication Code) + SHA-256 해시 알고리즘을 조합한 방식으로,
+                // 토큰의 무결성과 검증을 위해 사용됩니다.
+                .setExpiration(expireTime); // 토큰 만료 시간 설정
+        // 최종적으로 생성된 토큰을 문자열 형태로 반환
+        return builder.compact();
+    }
+
+    /**
+     * Refresh token 을 생성하는 메소드
+     * @param user userEntity
+     * @return String token
+     * */
+    public static String generateRefreshToken(Users user){
+        // 토큰 만료 시간을 현재 시간에서 지정된 유효 시간(tokenValidateTime) 이후로 설정
+        Date expireTime = new Date(System.currentTimeMillis()+refreshTokenValidateTime);
+        // JwtBuilder를 사용하여 JWT 토큰을 생성하는 빌더 객체를 초기화
+        JwtBuilder builder = Jwts.builder()  // 토큰 생성 라이브러리 JwtBuilder
+                .setHeader(createHeader()) // 토큰의 헤더 설정 (헤더에는 토큰의 타입 및 알고리즘 정보가 담김)
+                .setClaims(createClaims(user)) // 토큰의 클레임 설정 (사용자 정보와 같은 페이로드 데이터를 담음)
+                .setSubject("refresh token : " + user.getUserId())  // 토큰의 설명 정보를 담아줌
                 .signWith(SignatureAlgorithm.HS256,createSignature())  // 토큰 암호화 방식 정의
                 // HS256은 HMAC (Hash-based Message Authentication Code) + SHA-256 해시 알고리즘을 조합한 방식으로,
                 // 토큰의 무결성과 검증을 위해 사용됩니다.

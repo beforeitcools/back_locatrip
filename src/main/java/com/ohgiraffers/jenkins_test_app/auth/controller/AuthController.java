@@ -21,6 +21,7 @@ import java.util.Objects;
 import java.util.UUID;
 
 @RestController
+@RequestMapping("/auth/*")
 public class AuthController {
 
     String backUrl = "http://112.221.66.174:8082";
@@ -29,7 +30,7 @@ public class AuthController {
     private AuthService authService;
 
 
-    @PostMapping("/signup")
+    @PostMapping("signup")
     public ResponseEntity signup(@RequestPart("signupData") String signupDataJson,
                                  @RequestPart(value = "profileImg", required = false) MultipartFile profileImg){
         // JsonEncode 되어 있는 signupData를 SignupDTO 로 decode
@@ -74,7 +75,7 @@ public class AuthController {
     }
 
     /**아이디 중복검사*/
-    @GetMapping("/checkUserId")
+    @GetMapping("checkUserId")
     public ResponseEntity checkUserId(@RequestParam Map<String, Object> parameters){
         String userId = (String) parameters.get("userId");
         Map<String, String> response = new HashMap<>();
@@ -94,7 +95,7 @@ public class AuthController {
     }
 
     /**닉네임 중복검사*/
-    @GetMapping("/checkNickname")
+    @GetMapping("checkNickname")
     public ResponseEntity checkName(@RequestParam("nickname") String nickname){
         Map<String, String> response = new HashMap<>();
         // 유효성 검사

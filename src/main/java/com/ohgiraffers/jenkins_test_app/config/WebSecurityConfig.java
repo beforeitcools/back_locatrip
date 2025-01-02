@@ -109,7 +109,7 @@ public class WebSecurityConfig {
     public CustomAuthenticationFilter customAuthenticationFilter(){
         CustomAuthenticationFilter authenticationFilter = new CustomAuthenticationFilter(authenticationManager());
         // 3번에서 만든 매니저
-        authenticationFilter.setFilterProcessesUrl("/login");  // 어떤 요청 리소스를 가로챌지
+        authenticationFilter.setFilterProcessesUrl("/auth/login");  // 어떤 요청 리소스를 가로챌지
         authenticationFilter.setAuthenticationSuccessHandler(customAuthSuccessHandler()); // 요청 성공 동작
         authenticationFilter.setAuthenticationFailureHandler(customAuthFailureHandler()); // 요청 실패 동작
         authenticationFilter.afterPropertiesSet(); // 선택적으로 사용할 수 있는 메서드이며, 필터 초기화 후 추가 설정이 필요할 때만 호출됩니다.

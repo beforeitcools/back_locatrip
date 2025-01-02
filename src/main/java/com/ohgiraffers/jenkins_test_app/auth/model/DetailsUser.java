@@ -87,7 +87,11 @@ public class DetailsUser implements UserDetails {
     @Override
     public boolean isCredentialsNonExpired() {
         // 탈퇴 여부 표현 메소드 false면 사용 X
-        return true;
+        if(user.getStatus() == 0){
+            return false;
+        }else {
+            return true;
+        }
     }
 
     @Override

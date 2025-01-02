@@ -21,4 +21,6 @@ spring:
 
 jwt:
   key: 1c9f00194be79d53d1f173d958dca4daa0d47b75793c90abaee17d0b0fb379ce8739a177ed8ece545816b35897a8dd0dbc2c0a6b464a7ce44fc3887c0f7d9a73
-  time: 86400000
+  refresh_time: 60000
+  access_time: 10000
+#  time: 86400000
