@@ -38,7 +38,7 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
 
         // 권한이 필요 없는 URL 리스트
         List<String> roleLeessList = Arrays.asList(
-                "/auth/signup", "/auth/login", "/auth/checkUserId", "/auth/checkNickname", "/auth/logout"
+                "/auth/signup", "/auth/login", "/auth/checkUserId", "/auth/checkNickname", "/auth/logout", "/auth/refreshAccessToken"
         );
 
         // 요청된 URI가 권한이 필요없는 목록에 포함되어 있으면, 필터를 통과시킴
@@ -94,6 +94,8 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
             }
         }catch (Exception e){
             // 예외가 발생하면 JSON 형식으로 응답을 반환
+            int statusCode = exceptionHandler(e);
+            response.setStatus(statusCode);
             response.setContentType("application/json");
             response.setCharacterEncoding("UTF-8");
             PrintWriter printWriter = response.getWriter();
@@ -102,6 +104,21 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
             printWriter.flush();
             printWriter.close();
         }
+    }
+
+    // 예외에 맞는 statusCode를 반환하는 메서드
+    private int exceptionHandler(Exception e) {
+        int statusCode;
+        if(e instanceof ExpiredJwtException){
+            statusCode = HttpServletResponse.SC_UNAUTHORIZED;   // 401
+        } else if(e instanceof SignatureException){
+            statusCode = HttpServletResponse.SC_FORBIDDEN;      // 403
+        }else if(e instanceof JwtException){
+            statusCode = HttpServletResponse.SC_FORBIDDEN;      // 403
+        } else {
+            statusCode = HttpServletResponse.SC_INTERNAL_SERVER_ERROR;      // 500
+        }
+        return statusCode;
     }
 
     // 예외에 맞는 메시지를 반환하는 메서드
@@ -118,7 +135,7 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
         }
         // JSON 응답을 작성하기 위해 Map을 생성
         HashMap<String, Object> jsonMap = new HashMap<>();
-        jsonMap.put("status",401); // HTTP 상태 코드 401 (인증 오류)
+//        jsonMap.put("status",401); // HTTP 상태 코드 401 (인증 오류)
         jsonMap.put("message", resultMsg);
         jsonMap.put("reason",e.getMessage());
         JSONObject jsonObject = new JSONObject(jsonMap);

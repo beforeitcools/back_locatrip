@@ -52,7 +52,8 @@ public class CustomAuthFailureHandler implements AuthenticationFailureHandler {
             failMsg = "자격 증명이 만료된 계정입니다.";
             statusCode = HttpServletResponse.SC_UNAUTHORIZED;   //401
         } else if (exception instanceof AuthenticationCredentialsNotFoundException) {
-            failMsg = "인증 요청이 거부되었습니다.";
+//            failMsg = "인증 요청이 거부되었습니다.";
+            failMsg = "토큰 저장 실패";
             statusCode = HttpServletResponse.SC_UNAUTHORIZED;   //401
         } else if (exception instanceof UsernameNotFoundException) {
             failMsg = "존재하지 않는 이메일 입니다.";

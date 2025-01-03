@@ -2,6 +2,7 @@ package com.ohgiraffers.jenkins_test_app.auth.handler;
 
 import com.ohgiraffers.jenkins_test_app.auth.entity.Users;
 import com.ohgiraffers.jenkins_test_app.auth.model.DetailsUser;
+import com.ohgiraffers.jenkins_test_app.auth.service.AuthService;
 import com.ohgiraffers.jenkins_test_app.common.AuthConstants;
 import com.ohgiraffers.jenkins_test_app.common.utils.ConvertUtil;
 import com.ohgiraffers.jenkins_test_app.common.utils.TokenUtils;
@@ -9,7 +10,9 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.json.simple.JSONObject;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AuthenticationCredentialsNotFoundException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.SavedRequestAwareAuthenticationSuccessHandler;
 
@@ -20,6 +23,8 @@ import java.util.HashMap;
 @Configuration
 public class CustomAuthSuccessHandler extends SavedRequestAwareAuthenticationSuccessHandler {
 
+    @Autowired
+    AuthService authService;
     // 요청 성공 시 실행 핸들러를 가로챔
 
     @Override                          // 현재 HTTP 요청 객체                                     //인증 정보 객체
@@ -43,6 +48,11 @@ public class CustomAuthSuccessHandler extends SavedRequestAwareAuthenticationSuc
             // 정상 계정인 경우 JWT 토큰을 생성하고 응답에 포함시킵니다.
             String accessToken = TokenUtils.generateAccessToken(user);  // 생성된 토큰 조작부
             String refreshToken = TokenUtils.generateRefreshToken(user);
+            // db에 refreshToken 추가
+            if(!authService.addRefreshTokentoUser(user, refreshToken)){
+                throw new AuthenticationCredentialsNotFoundException("refresh 토큰 저장 실패");
+            }
+
             // 정상 로그인 시 사용자 정보와 성공 메시지, 생성된 토큰을 응답에 담습니다.
             responseMap.put("userInfo",jsonValue);
             responseMap.put("message","로그인 성공");

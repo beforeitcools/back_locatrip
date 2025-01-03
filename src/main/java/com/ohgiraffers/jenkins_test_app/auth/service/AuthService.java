@@ -94,7 +94,17 @@ public class AuthService {
         return user;
     }
 
-
-
-
+    /**로그인시 db에 refresh 토큰 저장
+     * @param Users user, String refreshToken
+     * @return boolean true: 성공 / false: 실패
+     * */
+    public boolean addRefreshTokentoUser(Users user, String refreshToken) {
+        user.setRefreshToken(refreshToken);
+        Users updatedUser = userRepository.save(user);
+        if(!Objects.isNull(updatedUser)){
+            return true;
+        }else {
+            return false;
+        }
+    }
 }

@@ -7,7 +7,14 @@ import com.ohgiraffers.jenkins_test_app.auth.common.NameValidator;
 import com.ohgiraffers.jenkins_test_app.auth.dto.UsersDTO;
 import com.ohgiraffers.jenkins_test_app.auth.entity.Users;
 import com.ohgiraffers.jenkins_test_app.auth.service.AuthService;
+import com.ohgiraffers.jenkins_test_app.common.AuthConstants;
+import com.ohgiraffers.jenkins_test_app.common.utils.TokenUtils;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.ExpiredJwtException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -15,10 +22,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
-import java.util.UUID;
+import java.util.*;
 
 @RestController
 @RequestMapping("/auth/*")
@@ -29,7 +33,7 @@ public class AuthController {
     @Autowired
     private AuthService authService;
 
-
+    /**회원가입*/
     @PostMapping("signup")
     public ResponseEntity signup(@RequestPart("signupData") String signupDataJson,
                                  @RequestPart(value = "profileImg", required = false) MultipartFile profileImg){
@@ -113,6 +117,41 @@ public class AuthController {
         return ResponseEntity.ok(response);
     }
 
+    /**access 토큰 재발급*/
+    @PostMapping("refreshAccessToken")
+    public ResponseEntity refreshAccessToken(HttpServletRequest request){
+        String header = request.getHeader(AuthConstants.REFRESH_TOKEN_HEADER);
 
+        try {
+            String refreshTokenFromClient = TokenUtils.splitHeader(header);
+            // 토큰 유효성 검사(만료여부 조작여부 등)
+            if(TokenUtils.isValidToken(refreshTokenFromClient)){
+                Claims claims = TokenUtils.getClaimsFromToken(refreshTokenFromClient);
+                Optional<Users> user = authService.findUser(claims.get("userId").toString());
+                // DB의 Refresh 토큰과 일치 여부
+                if(user.isPresent()){
+                    Users foundUserFromDB = user.get();
+                    // 일치하면 access 토큰 재발급
+                    if(foundUserFromDB.getRefreshToken() == refreshTokenFromClient){
+                        String accessToken = TokenUtils.generateAccessToken(foundUserFromDB);
+                        HttpHeaders responseHeaders = new HttpHeaders();
+                        responseHeaders.set(AuthConstants.AUTH_HEADER, AuthConstants.TOKEN_TYPE + " " + accessToken);
+                        return ResponseEntity.ok()
+                                .headers(responseHeaders)
+                                .body("Access 토큰 재발급 성공");
+                    }else {
+                        throw new RuntimeException("토큰이 일치 하지 않습니다.");
+                    }
+                } else {
+                    throw new RuntimeException("토큰 정보에 일치하는 회원이 없습니다.");
+                }
+            } else {
+                throw new RuntimeException("Refresh 토큰 만료");
+            }
+        } catch (Exception e){
+            return ResponseEntity.status(HttpServletResponse.SC_UNAUTHORIZED)   //401
+                    .body(e.getMessage());
+        }
+    }
 
 }
