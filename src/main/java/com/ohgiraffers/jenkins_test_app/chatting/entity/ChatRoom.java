@@ -20,9 +20,8 @@ public class ChatRoom
     {
     }
 
-    public ChatRoom(int id, String chatroomName, boolean isAlarmOn)
+    public ChatRoom(String chatroomName, boolean isAlarmOn)
     {
-        this.id = id;
         this.chatroomName = chatroomName;
         this.isAlarmOn = isAlarmOn;
     }

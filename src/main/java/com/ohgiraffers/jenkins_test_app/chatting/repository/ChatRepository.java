@@ -3,6 +3,7 @@ package com.ohgiraffers.jenkins_test_app.chatting.repository;
 import com.ohgiraffers.jenkins_test_app.chatting.entity.Messages;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -18,4 +19,6 @@ public interface ChatRepository extends JpaRepository<Messages, Integer>
 
     @Query(value = "SELECT m FROM Messages m WHERE m.chatroomId = :chatroomId")
     List<Messages> selectChatsByChatroomId(@PathVariable("chatroomId") int chatroomId);
+
+    void findByMessageContents(@Param("keyword") String keyword);
 }
