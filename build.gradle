@@ -25,6 +25,9 @@ dependencies {
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 
+    //웹소켓!
+    implementation 'org.springframework.boot:spring-boot-starter-websocket'
+
     // security 를 사용하기 위한 lib
     implementation 'org.springframework.boot:spring-boot-starter-security'
     testImplementation 'org.springframework.security:spring-security-test'
