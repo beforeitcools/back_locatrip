@@ -1,9 +1,13 @@
 package com.ohgiraffers.jenkins_test_app.auth.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.ohgiraffers.jenkins_test_app.auth.Enum.UserRole;
+import com.ohgiraffers.jenkins_test_app.location.entity.LocationFavorite;
 import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity(name = "users_signup")
 @Table(name = "users")
@@ -47,6 +51,10 @@ public class Users {
 
     @Column(name = "inactive_at")
     private LocalDateTime inactiveAt;
+
+    @OneToMany(mappedBy = "userEntity", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore
+    private List<LocationFavorite> favorites = new ArrayList<>();
 
     public Users() {
     }
@@ -162,6 +170,14 @@ public class Users {
         this.inactiveAt = inactiveAt;
     }
 
+    public List<LocationFavorite> getFavorites() {
+        return favorites;
+    }
+
+    public void setFavorites(List<LocationFavorite> favorites) {
+        this.favorites = favorites;
+    }
+
     @Override
     public String toString() {
         return "Users{" +
@@ -177,6 +193,7 @@ public class Users {
                 ", status=" + status +
                 ", createdAt=" + createdAt +
                 ", inactiveAt=" + inactiveAt +
+                ", favorites=" + favorites +
                 '}';
     }
 }

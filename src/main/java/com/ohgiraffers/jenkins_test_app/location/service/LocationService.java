@@ -68,4 +68,38 @@ public class LocationService {
 
         return location;
     }
+
+    public boolean deleteFavorite(Map<String, Object> placeData) {
+
+        if(placeData == null){
+            return false;
+        }
+
+        Location location = new Location();
+        location.setName((String) placeData.get("name"));
+        location.setAddress((String) placeData.get("address"));
+
+        // 장소 중복 확인
+        Optional<Location> existingLocation = locationRepository.findByNameAndAddress(
+                location.getName(), location.getAddress()
+        );
+
+        Integer locationId = existingLocation.isPresent() ? existingLocation.get().getId() : 0;
+
+
+        // 사용자 조회
+        Integer userId = (Integer) placeData.get("userId");
+        Optional<Users> userOptional = userRepository.findById(userId);
+
+        if (userOptional.isEmpty()) {
+            throw new RuntimeException("User not found with id: " + userId);
+        }
+
+        Users user = userOptional.get();
+
+        LocationFavorite locationFavorite = new LocationFavorite(locationId, userId, location, user);
+        locationFavoriteRepository.delete(locationFavorite);
+
+        return true;
+    }
 }
