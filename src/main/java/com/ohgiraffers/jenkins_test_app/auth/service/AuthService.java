@@ -107,4 +107,15 @@ public class AuthService {
             return false;
         }
     }
+
+    public boolean deleteRefreshTokenInDB(Users foundUserFromDB) {
+        foundUserFromDB.setRefreshToken(null);
+        System.out.println("여기는??????");
+        Users updatedUser = userRepository.save(foundUserFromDB);
+        if(!Objects.isNull(updatedUser)){
+            return true;
+        }else {
+            return false;
+        }
+    }
 }

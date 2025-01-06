@@ -17,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationCredentialsNotFoundException;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -151,6 +152,64 @@ public class AuthController {
         } catch (Exception e){
             return ResponseEntity.status(HttpServletResponse.SC_UNAUTHORIZED)   //401
                     .body(e.getMessage());
+        }
+    }
+
+    /**로그아웃*/
+    @PostMapping("logout")
+    public ResponseEntity logout(HttpServletRequest request){
+        Map<String, String> response = new HashMap<>();
+        System.out.println("로그아웃 시작");
+        String header = request.getHeader(AuthConstants.REFRESH_TOKEN_HEADER);
+        System.out.println(header);
+
+        try {
+            String refreshTokenFromClient = TokenUtils.splitHeader(header);
+            System.out.println(refreshTokenFromClient);
+            // 토큰 유효성 검사(조작여부 등)
+            if(TokenUtils.isValidToken(refreshTokenFromClient)) {
+                Claims claims = TokenUtils.getClaimsFromToken(refreshTokenFromClient);
+                System.out.println(claims);
+                Optional<Users> user = authService.findUser(claims.get("userId").toString());
+                // DB의 Refresh 토큰과 일치 여부
+                if (user.isPresent()) {
+                    Users foundUserFromDB = user.get();
+                    System.out.println(foundUserFromDB);
+                    System.out.println(foundUserFromDB.getRefreshToken());
+                    System.out.println(refreshTokenFromClient);
+                    // 일치하면 DB에서 Refresh 토큰 제거
+                    if (foundUserFromDB.getRefreshToken().equals(refreshTokenFromClient)) {
+                        System.out.println("여기는 오니??????");
+                        if (authService.deleteRefreshTokenInDB(foundUserFromDB)) {
+                            System.out.println("DB의 refresh 토큰 제거 성공");
+                            response.put("message", "로그아웃 완료");
+
+                            return ResponseEntity.ok(response);
+                        } else {
+                            System.out.println("DB의 refresh 토큰 제거 실패");
+                            response.put("message", "DB의 refresh 토큰 제거 실패");
+                            return ResponseEntity.status(HttpServletResponse.SC_UNAUTHORIZED)
+                                    .body(response);
+                        }
+                    } else {
+                        response.put("message", "토큰이 일치 하지 않습니다.");
+                        return ResponseEntity.status(HttpServletResponse.SC_UNAUTHORIZED)
+                                .body(response);
+                    }
+                } else {
+                    response.put("message", "존재하지 않는 회원 정보 입니다.");
+                    return ResponseEntity.status(HttpServletResponse.SC_UNAUTHORIZED)
+                            .body(response);
+                }
+            }else {
+                response.put("message", "토큰 만료");
+                return ResponseEntity.status(HttpServletResponse.SC_UNAUTHORIZED)   //401
+                        .body(response);
+            }
+        } catch (Exception e){
+            response.put("message", e.getMessage() != null ? e.getMessage() : "알 수 없는 오류 발생");
+            return ResponseEntity.status(HttpServletResponse.SC_UNAUTHORIZED)   //401
+                    .body(response);
         }
     }
 

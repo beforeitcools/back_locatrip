@@ -55,6 +55,7 @@ public class Users {
     @Column(name = "inactive_at")
     private LocalDateTime inactiveAt;
 
+
     public List<String> getRoleList(){
 
         if(this.role.getRole().length()>0){

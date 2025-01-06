@@ -31,6 +31,7 @@ public class CustomAuthSuccessHandler extends SavedRequestAwareAuthenticationSuc
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws ServletException, IOException {
         // 인증된 사용자 정보를 가져옵니다. authentication.getPrincipal()은 인증된 사용자 정보를 반환.
         // 이 객체를 `DetailsUser`로 캐스팅하고, 그 안의 `User` 객체를 가져옵니다.
+        System.out.println("로그인 시작");
         Users user = ((DetailsUser) authentication.getPrincipal()).getUser();
 
         // `User` 객체를 JSON 형식으로 변환합니다.
@@ -50,8 +51,10 @@ public class CustomAuthSuccessHandler extends SavedRequestAwareAuthenticationSuc
             String refreshToken = TokenUtils.generateRefreshToken(user);
             // db에 refreshToken 추가
             if(!authService.addRefreshTokentoUser(user, refreshToken)){
+                System.out.println("refresh토큰 저장 실패");
                 throw new AuthenticationCredentialsNotFoundException("refresh 토큰 저장 실패");
             }
+            System.out.println("refresh토큰 저장 성공");
 
             // 정상 로그인 시 사용자 정보와 성공 메시지, 생성된 토큰을 응답에 담습니다.
             responseMap.put("userInfo",jsonValue);
@@ -63,6 +66,7 @@ public class CustomAuthSuccessHandler extends SavedRequestAwareAuthenticationSuc
             // Authorization 헤더에 JWT 토큰을 포함하여 클라이언트에게 전달하는 것
             response.addHeader(AuthConstants.AUTH_HEADER, AuthConstants.TOKEN_TYPE + " " + accessToken);
             response.addHeader(AuthConstants.REFRESH_TOKEN_HEADER, AuthConstants.TOKEN_TYPE + " " + refreshToken);
+            System.out.println("로그인 성공");
         }
 
         // 응답에 보낼 데이터(사용자 정보와 메시지)를 JSON 객체로 변환합니다.
