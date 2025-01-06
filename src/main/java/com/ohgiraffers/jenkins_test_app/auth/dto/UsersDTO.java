@@ -1,24 +1,26 @@
 package com.ohgiraffers.jenkins_test_app.auth.dto;
 
-public class SignupDTO {
+public class UsersDTO {
 
     private Integer id;                         // 사용자 고유 ID
     private String nickname;                    // 사용자 닉네임
     private String userId;                      // 사용자 고유 아이디(이메일 형식)
     private String password;                    // 사용자 비밀번호 (암호화 되기전 user에게 받은 값)
+    private String refreshToken;
     // private UserRole userRole;                    // 사용자 역할 (예: 'user', 'admin')
     private String profilePic;                  // 사용자 프로필 사진 URL
 
     private int status;                         // 사용자 계정 상태 (0: 비활성, 1: 활성)
 
-    public SignupDTO() {
+    public UsersDTO() {
     }
 
-    public SignupDTO(Integer id, String nickname, String userId, String password, String profilePic, int status) {
+    public UsersDTO(Integer id, String nickname, String userId, String password, String refreshToken, String profilePic, int status) {
         this.id = id;
         this.nickname = nickname;
         this.userId = userId;
         this.password = password;
+        this.refreshToken = refreshToken;
         this.profilePic = profilePic;
         this.status = status;
     }
@@ -55,6 +57,14 @@ public class SignupDTO {
         this.password = password;
     }
 
+    public String getRefreshToken() {
+        return refreshToken;
+    }
+
+    public void setRefreshToken(String refreshToken) {
+        this.refreshToken = refreshToken;
+    }
+
     public String getProfilePic() {
         return profilePic;
     }
@@ -73,11 +83,12 @@ public class SignupDTO {
 
     @Override
     public String toString() {
-        return "SignupDTO{" +
+        return "UsersDTO{" +
                 "id=" + id +
                 ", nickname='" + nickname + '\'' +
                 ", userId='" + userId + '\'' +
                 ", password='" + password + '\'' +
+                ", refreshToken='" + refreshToken + '\'' +
                 ", profilePic='" + profilePic + '\'' +
                 ", status=" + status +
                 '}';

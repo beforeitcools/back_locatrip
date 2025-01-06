@@ -6,7 +6,9 @@ import com.ohgiraffers.jenkins_test_app.location.entity.LocationFavorite;
 import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 @Entity(name = "users_signup")
@@ -26,6 +28,9 @@ public class Users {
 
     @Column(name = "password")
     private String password;
+
+    @Column(name = "refresh_token")
+    private String refreshToken;
 
     @Enumerated(value = EnumType.STRING)
     @Column(name = "user_role")
@@ -52,6 +57,16 @@ public class Users {
     @Column(name = "inactive_at")
     private LocalDateTime inactiveAt;
 
+
+    public List<String> getRoleList(){
+
+        if(this.role.getRole().length()>0){
+
+            return Arrays.asList(this.role.getRole().split(","));
+        }
+        return new ArrayList<>();
+    }
+
     @OneToMany(mappedBy = "userEntity", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnore
     private List<LocationFavorite> favorites = new ArrayList<>();
@@ -59,11 +74,12 @@ public class Users {
     public Users() {
     }
 
-    public Users(Integer id, String nickname, String userId, String password, UserRole role, String profilePic, String localArea, LocalDateTime localAreaAuthDate, int ownBadge, int status, LocalDateTime createdAt, LocalDateTime inactiveAt) {
+    public Users(Integer id, String nickname, String userId, String password, String refreshToken, UserRole role, String profilePic, String localArea, LocalDateTime localAreaAuthDate, int ownBadge, int status, LocalDateTime createdAt, LocalDateTime inactiveAt) {
         this.id = id;
         this.nickname = nickname;
         this.userId = userId;
         this.password = password;
+        this.refreshToken = refreshToken;
         this.role = role;
         this.profilePic = profilePic;
         this.localArea = localArea;
@@ -104,6 +120,14 @@ public class Users {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public String getRefreshToken() {
+        return refreshToken;
+    }
+
+    public void setRefreshToken(String refreshToken) {
+        this.refreshToken = refreshToken;
     }
 
     public UserRole getRole() {
@@ -154,7 +178,10 @@ public class Users {
         this.status = status;
     }
 
-    public LocalDateTime getCreatedAt() {
+    public /*String*/ LocalDateTime getCreatedAt() {
+        /*DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyy.MM.dd.");
+
+        return createdAt.format(dateFormatter);*/
         return createdAt;
     }
 
@@ -185,6 +212,7 @@ public class Users {
                 ", nickname='" + nickname + '\'' +
                 ", userId='" + userId + '\'' +
                 ", password='" + password + '\'' +
+                ", refreshToken='" + refreshToken + '\'' +
                 ", role=" + role +
                 ", profilePic='" + profilePic + '\'' +
                 ", localArea='" + localArea + '\'' +
@@ -193,7 +221,6 @@ public class Users {
                 ", status=" + status +
                 ", createdAt=" + createdAt +
                 ", inactiveAt=" + inactiveAt +
-                ", favorites=" + favorites +
                 '}';
     }
 }
