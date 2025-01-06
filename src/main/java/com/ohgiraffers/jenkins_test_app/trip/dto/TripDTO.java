@@ -7,7 +7,7 @@ public class TripDTO {
 
     private String userId;
     private String title;
-    private String startDate; // LocalDate 로 변환할 예정
+    private String startDate; 
     private String endDate;
     private List<String> regions;
 
