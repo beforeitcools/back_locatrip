@@ -94,12 +94,18 @@ public class LocationService {
         if (userOptional.isEmpty()) {
             throw new RuntimeException("User not found with id: " + userId);
         }
+        
 
-        Users user = userOptional.get();
+        // 즐겨찾기 존재 여부 확인 및 삭제
+        Optional<LocationFavorite> locationFavoriteOptional =
+                locationFavoriteRepository.findByLocationIdAndUserId(locationId, userId);
 
-        LocationFavorite locationFavorite = new LocationFavorite(locationId, userId, location, user);
-        locationFavoriteRepository.delete(locationFavorite);
-
-        return true;
+        if (locationFavoriteOptional.isPresent()) {
+            locationFavoriteRepository.delete(locationFavoriteOptional.get());
+            return true; // 삭제 성공
+        }
+  
+        // 즐겨찾기 없음
+        return false;
     }
 }
