@@ -59,6 +59,6 @@ public class ChatWebSocketHandler extends TextWebSocketHandler
     @Override
     public void handleMessage(WebSocketSession session, WebSocketMessage<?> message) throws Exception
     {
-        session.sendMessage(new TextMessage("New message received"));
+        session.sendMessage(message);
     }
 }

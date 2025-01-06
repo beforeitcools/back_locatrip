@@ -29,9 +29,9 @@ public class ChatService
 //    @Autowired
 //    private ChatMapper chatMapper;
 
-    public List<Messages> selectRecentMessages()
+    public List<Messages> selectRecentMessagesByUserId(int userId)
     {
-        List<Messages> messages = chatRepository.selectRecentMessages();
+        List<Messages> messages = chatRepository.selectRecentMessages(userId);
         if(messages == null || messages.isEmpty()){
             return null;
         }
@@ -94,6 +94,13 @@ public class ChatService
         chatRepository.findByMessageContents(keyword);
         chatroomRepository.findByChatroomName(keyword);
     }
+
+//    public Integer getUnreadMessagesCount(int chatroomId, int userId)
+//    {
+//        Integer result = 0;
+//        result = chatRepository.getUnreadMessagesCount(chatroomId, userId);
+//        return result;
+//    }
 
 //    public List<RecentChatDTO> selectRecentMessages()
 //    {

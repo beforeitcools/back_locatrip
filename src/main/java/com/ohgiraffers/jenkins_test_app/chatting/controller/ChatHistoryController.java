@@ -15,11 +15,11 @@ public class ChatHistoryController
     @Autowired
     private ChatService chatService;
 
-    @GetMapping("/recent")
-    public List<Messages> selectAllChats()
+    @GetMapping("/recent/{userId}")
+    public List<Messages> selectAllChats(@PathVariable("userId") int userId)
     {
         //List<RecentChatDTO> messages = chatService.selectRecentMessages();
-        List<Messages> messages =chatService.selectRecentMessages();
+        List<Messages> messages =chatService.selectRecentMessagesByUserId(userId);
         return messages;
     }
 
@@ -30,4 +30,9 @@ public class ChatHistoryController
         List<Messages> messages = chatService.selectChatsByChatroomId(chatroomId);
         return messages;
     }
+
+//    @GetMapping("/unread/count")
+//    public Integer getUnreadMessagesCount(int chatroomId, int userId){
+//        return chatService.getUnreadMessagesCount(chatroomId, userId);
+//    }
 }

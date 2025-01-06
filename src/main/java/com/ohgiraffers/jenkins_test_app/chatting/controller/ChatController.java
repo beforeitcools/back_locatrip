@@ -2,10 +2,8 @@ package com.ohgiraffers.jenkins_test_app.chatting.controller;
 
 import com.ohgiraffers.jenkins_test_app.chatting.entity.Messages;
 import com.ohgiraffers.jenkins_test_app.chatting.repository.ChatRepository;
-import com.ohgiraffers.jenkins_test_app.chatting.repository.ChatroomRepository;
 import com.ohgiraffers.jenkins_test_app.chatting.service.ChatService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
