@@ -3,6 +3,7 @@ import com.ohgiraffers.jenkins_test_app.auth.entity.Users;
 import com.ohgiraffers.jenkins_test_app.auth.repository.UserRepository;
 import com.ohgiraffers.jenkins_test_app.location.entity.Location;
 import com.ohgiraffers.jenkins_test_app.location.entity.LocationFavorite;
+import com.ohgiraffers.jenkins_test_app.location.entity.LocationFavoriteId;
 import com.ohgiraffers.jenkins_test_app.location.repository.LocationFavoriteRepository;
 import com.ohgiraffers.jenkins_test_app.location.repository.LocationRepository;
 
@@ -10,8 +11,7 @@ import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 public class LocationService {
@@ -107,5 +107,35 @@ public class LocationService {
   
         // 즐겨찾기 없음
         return false;
+    }
+
+
+    public List<Map<String, Boolean>> selectFavorites(List<String> locationNameList, Integer userId) {
+
+        List<Map<String, Boolean>> resultList = new ArrayList<>();
+
+        if (locationNameList.isEmpty() || userId == null) {
+            return Collections.emptyList();
+        }
+
+        List<Integer> locationIds = locationRepository.findIdByNameList(locationNameList);
+
+        if (locationIds.isEmpty()) {
+            return Collections.emptyList();
+        }
+
+        List<LocationFavorite> favorites = locationFavoriteRepository.findByLocationIdInAndUserId(locationIds, userId);
+
+
+        for (LocationFavorite favorite : favorites) {
+            Map<String, Boolean> resultMap = new HashMap<>();
+            String locationName = favorite.getLocationEntity().getName();
+//            System.out.println("locationName = " + locationName);
+            resultMap.put(locationName, true);
+            resultList.add(resultMap);
+            System.out.println("resultList = " + resultList);
+        }
+
+        return resultList;
     }
 }
