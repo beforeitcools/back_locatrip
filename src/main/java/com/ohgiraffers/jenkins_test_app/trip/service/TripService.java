@@ -40,7 +40,7 @@ public class TripService {
 
     @Transactional
     public Trip addTrip(TripDTO trip) {
-        if (trip == null || trip.getUserId() == null || trip.getTitle() == null || trip.getRegions() == null) {
+        if (trip == null || trip.getTitle() == null || trip.getRegions() == null) {
             throw new IllegalArgumentException("Invalid TripDTO input");
         }
 
@@ -50,7 +50,7 @@ public class TripService {
         LocalDate endDate = convertStringToDate(trip.getEndDate());
 
         Trip newTrip = new Trip();
-        newTrip.setUserId(Integer.parseInt(trip.getUserId()));
+        newTrip.setUserId(trip.getUserId());
         newTrip.setTitle(trip.getTitle());
         newTrip.setStartDate(startDate);
         newTrip.setEndDate(endDate);

@@ -5,7 +5,7 @@ import java.util.List;
 
 public class TripDTO {
 
-    private String userId;
+    private int userId;
     private String title;
     private String startDate; 
     private String endDate;
@@ -14,7 +14,7 @@ public class TripDTO {
     public TripDTO() {
     }
 
-    public TripDTO(String userId, String title, String startDate, String endDate, List<String> regions) {
+    public TripDTO(int userId, String title, String startDate, String endDate, List<String> regions) {
         this.userId = userId;
         this.title = title;
         this.startDate = startDate;
@@ -22,11 +22,11 @@ public class TripDTO {
         this.regions = regions;
     }
 
-    public String getUserId() {
+    public int getUserId() {
         return userId;
     }
 
-    public void setUserId(String userId) {
+    public void setUserId(int userId) {
         this.userId = userId;
     }
 

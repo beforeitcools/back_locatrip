@@ -1,5 +1,7 @@
 package com.ohgiraffers.jenkins_test_app.location.controller;
 
+import com.ohgiraffers.jenkins_test_app.auth.entity.Users;
+import com.ohgiraffers.jenkins_test_app.common.utils.SecurityUtil;
 import com.ohgiraffers.jenkins_test_app.location.dto.LocationDTO;
 import com.ohgiraffers.jenkins_test_app.location.entity.Location;
 import com.ohgiraffers.jenkins_test_app.location.entity.LocationFavorite;
@@ -22,6 +24,8 @@ public class LocationController {
     @Autowired
     private LocationService locationService;
 
+    @Autowired
+    private SecurityUtil securityUtil;
 
     @PostMapping("insert")
     public ResponseEntity insertLocation(@RequestBody Map<String, Object> placeData) {
@@ -29,6 +33,10 @@ public class LocationController {
         if(Objects.isNull(placeData)){
             return ResponseEntity.status(404).body("장소를 입력해주세요.");
         }
+
+        Users authenticatedUser = securityUtil.getAuthenticatedUser();
+
+        placeData.put("userId", authenticatedUser.getId());
 
         Location result = locationService.addLocation(placeData);
 
@@ -41,10 +49,17 @@ public class LocationController {
 
     @PostMapping("deleteFavorite")
     public ResponseEntity deleteFavorite(@RequestBody Map<String, Object> placeData) {
+        System.out.println("placeData = " + placeData);
 
         if(Objects.isNull(placeData)){
             return ResponseEntity.status(404).body("올바른 값을 전달해주세요.");
         }
+
+        Users authenticatedUser = securityUtil.getAuthenticatedUser();
+
+        placeData.put("userId", authenticatedUser.getId());
+        System.out.println("placeData = " + placeData);
+
 
         boolean isDeleted = locationService.deleteFavorite(placeData);
 
@@ -56,4 +71,6 @@ public class LocationController {
         return ResponseEntity.ok("성공적으로 삭제되었습니다.");
 
     }
+
+
 }
