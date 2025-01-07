@@ -66,7 +66,7 @@ public class TokenUtils {
             Claims claims = getClaimsFromToken(token);
             return true;
         }catch (ExpiredJwtException e){
-            e.printStackTrace();
+//            e.printStackTrace();
             return false;
         }catch (JwtException e){
             e.printStackTrace();
