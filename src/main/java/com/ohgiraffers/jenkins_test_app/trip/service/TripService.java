@@ -62,6 +62,7 @@ public class TripService {
             for (String region : trip.getRegions()) {
                 SelectedRegion selectedRegion = new SelectedRegion(savedTrip.getId(), region, savedTrip);
                 selectedRegionRepository.save(selectedRegion);
+
             }
             return savedTrip;
         } catch (DataIntegrityViolationException e) {
