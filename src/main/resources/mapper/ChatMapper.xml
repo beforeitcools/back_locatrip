@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ohgiraffers.jenkins_test_app.chatting.model.ChatMapper">
+    <resultMap id="recentChatResult" type="com.ohgiraffers.jenkins_test_app.chatting.dto.RecentChatDTO">
+        <id property="chatroomId" column="chatroom_id"/>
+        <result property="chatroomName" column="chatroom_name"/>
+        <result property="currentMessage" column="message_contents"/>
+    </resultMap>
+
+    <select id="recentChat" resultMap="recentChatResult">
+        SELECT cr.id AS chatroom_id, cr.chatroom_name, m.message_contents, m.send_time FROM participate_members pm JOIN chat_room cr ON pm.chatroom_id = cr.id LEFT JOIN (SELECT chatroom_id, message_contents, send_time FROM (SELECT chatroom_id, message_contents, send_time, ROW_NUMBER() OVER (PARTITION BY chatroom_id ORDER BY send_time DESC) AS rn FROM messages) ranked WHERE rn = 1) m ON cr.id = m.chatroom_id WHERE pm.user_id = 1 ORDER BY m.send_time DESC
+    </select>
+</mapper>
