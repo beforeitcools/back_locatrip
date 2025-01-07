@@ -22,10 +22,11 @@ public class LocationController {
     @Autowired
     private LocationService locationService;
 
-
+    /**장소 저장*/
     @PostMapping("insert")
     public ResponseEntity insertLocation(@RequestBody Map<String, Object> placeData) {
 
+        System.out.println("placeData = " + placeData);
         if(Objects.isNull(placeData)){
             return ResponseEntity.status(404).body("장소를 입력해주세요.");
         }
@@ -39,8 +40,10 @@ public class LocationController {
         return ResponseEntity.ok(result);
     }
 
+    /**즐겨찾기 취소*/
     @PostMapping("deleteFavorite")
     public ResponseEntity deleteFavorite(@RequestBody Map<String, Object> placeData) {
+        
 
         if(Objects.isNull(placeData)){
             return ResponseEntity.status(404).body("올바른 값을 전달해주세요.");
