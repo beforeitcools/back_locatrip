@@ -4,7 +4,6 @@ import com.ohgiraffers.jenkins_test_app.chatting.dto.RecentChatDTO;
 import com.ohgiraffers.jenkins_test_app.chatting.entity.ChatRoom;
 import com.ohgiraffers.jenkins_test_app.chatting.entity.Messages;
 import com.ohgiraffers.jenkins_test_app.chatting.entity.ParticipateMembers;
-import com.ohgiraffers.jenkins_test_app.chatting.model.ChatMapper;
 import com.ohgiraffers.jenkins_test_app.chatting.repository.ChatRepository;
 import com.ohgiraffers.jenkins_test_app.chatting.repository.ChatroomRepository;
 import com.ohgiraffers.jenkins_test_app.chatting.repository.ParticipateRepository;
@@ -29,9 +28,9 @@ public class ChatService
 //    @Autowired
 //    private ChatMapper chatMapper;
 
-    public List<Messages> selectRecentMessagesByUserId(int userId)
+    public List<RecentChatDTO> selectRecentMessagesByUserId(int userId)
     {
-        List<Messages> messages = chatRepository.selectRecentMessages(userId);
+        List<RecentChatDTO> messages = chatroomRepository.selectRecentMessages(userId);
         if(messages == null || messages.isEmpty()){
             return null;
         }
@@ -56,11 +55,11 @@ public class ChatService
         }
     }
 
-    public void goOutAtChatroom(int chatroomId, int userId)
-    {
-        //채팅방 나가기
-        participateRepository.delete(new ParticipateMembers(userId, chatroomId));
-    }
+//    public void goOutAtChatroom(int chatroomId, int userId)
+//    {
+//        //채팅방 나가기
+//        participateRepository.delete(new ParticipateMembers(userId, chatroomId));
+//    }
 
     public void createNewChatroom(int chatroomId, String chatroomName)
     {
@@ -76,7 +75,7 @@ public class ChatService
 
         Optional<ChatRoom> chatroomOptional = chatroomRepository.findById(chatroomId);
         if (chatroomId == 0 ||chatroomOptional.isPresent()) {
-            chatroomRepository.save(new ChatRoom(chatroomName, true));
+            chatroomRepository.save(new ChatRoom(chatroomName));
 
         }
         else {
@@ -84,10 +83,10 @@ public class ChatService
         }
     }
 
-    public void insertParticipateMember(int chatroomId, int userId)
-    {
-        participateRepository.save(new ParticipateMembers(userId, chatroomId));
-    }
+//    public void insertParticipateMember(int chatroomId, int userId)
+//    {
+//        participateRepository.save(new ParticipateMembers(userId, chatroomId));
+//    }
 
     public void searchAllInChatPage(String keyword)
     {

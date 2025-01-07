@@ -1,8 +1,10 @@
 package com.ohgiraffers.jenkins_test_app.chatting.controller;
 
+import com.ohgiraffers.jenkins_test_app.auth.entity.Users;
 import com.ohgiraffers.jenkins_test_app.chatting.dto.RecentChatDTO;
 import com.ohgiraffers.jenkins_test_app.chatting.entity.Messages;
 import com.ohgiraffers.jenkins_test_app.chatting.service.ChatService;
+import com.ohgiraffers.jenkins_test_app.common.utils.SecurityUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -15,11 +17,16 @@ public class ChatHistoryController
     @Autowired
     private ChatService chatService;
 
-    @GetMapping("/recent/{userId}")
-    public List<Messages> selectAllChats(@PathVariable("userId") int userId)
+    @Autowired
+    private SecurityUtil securityUtil;
+
+    @GetMapping("/recent")
+    public List<RecentChatDTO> selectAllChats()
     {
+        Users authenticatedUser = securityUtil.getAuthenticatedUser();
         //List<RecentChatDTO> messages = chatService.selectRecentMessages();
-        List<Messages> messages =chatService.selectRecentMessagesByUserId(userId);
+        List<RecentChatDTO> messages =chatService.selectRecentMessagesByUserId(1);
+        System.out.println(messages);
         return messages;
     }
 
