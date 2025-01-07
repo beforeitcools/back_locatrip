@@ -34,23 +34,25 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
     }
 
     @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws IOException, ServletException {
+    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain) /*throws IOException, ServletException*/ {
 
         // 권한이 필요 없는 URL 리스트
         List<String> roleLeessList = Arrays.asList(
                 "/auth/signup", "/auth/login", "/auth/checkUserId", "/auth/checkNickname", "/auth/logout", "/auth/refreshAccessToken"
         );
 
-        // 요청된 URI가 권한이 필요없는 목록에 포함되어 있으면, 필터를 통과시킴
-        if(roleLeessList.contains(request.getRequestURI())){
-            chain.doFilter(request,response);
-            return;  // 체이닝 걸려있어서 / 체이닝 하면 return 으로 끊어주기만 하면 알아서 받아감
-        }
-
-        // 권한이 필요하면 여기부터 실행
-        String header = request.getHeader(AuthConstants.AUTH_HEADER); // 요청 헤더에서 AUTH_HEADER 값을 가져옴
 
         try {
+            // 요청된 URI가 권한이 필요없는 목록에 포함되어 있으면, 필터를 통과시킴
+            if(roleLeessList.contains(request.getRequestURI())){
+                chain.doFilter(request,response);
+                return;  // 체이닝 걸려있어서 / 체이닝 하면 return 으로 끊어주기만 하면 알아서 받아감
+            }
+
+            // 권한이 필요하면 여기부터 실행
+            String header = request.getHeader(AuthConstants.AUTH_HEADER); // 요청 헤더에서 AUTH_HEADER 값을 가져옴
+
+
             // 만약 헤더가 존재하고, 비어 있지 않다면
             if(header != null && !header.equalsIgnoreCase("")){
                 // 헤더에서 "Bearer"와 함께 전달된 토큰을 분리
@@ -86,7 +88,8 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
                     SecurityContextHolder.getContext().setAuthentication(authenticationToken);
                     chain.doFilter(request,response);  // 체이닝 걸려있어서 알아서 받아감
                 }else {
-                    throw new RuntimeException("토큰이 유효하지 않습니다.");
+                    System.out.println("타니~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
+                    throw new JwtAuthorizationFailureException("access token 만료");
                 }
 
             }else {
@@ -94,15 +97,30 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
             }
         }catch (Exception e){
             // 예외가 발생하면 JSON 형식으로 응답을 반환
+            System.out.println("11111111");
             int statusCode = exceptionHandler(e);
+            System.out.println("222222222222222");
             response.setStatus(statusCode);
             response.setContentType("application/json");
             response.setCharacterEncoding("UTF-8");
-            PrintWriter printWriter = response.getWriter();
+            System.out.println("333333333333333333");
+            PrintWriter printWriter = null;
+            try {
+                printWriter = response.getWriter();
+                System.out.println("444444444444444444");
+            } catch (IOException ex) {
+                System.out.println("5555555555555555555");
+                throw new RuntimeException(ex);
+            }
+            System.out.println("666666666666666666");
             JSONObject jsonObject = jsonresponseWrapper(e);
+            System.out.println("777777777777777777");
             printWriter.println(jsonObject);
+            System.out.println("888888888888888888");
             printWriter.flush();
+            System.out.println("999999999999999999");
             printWriter.close();
+            System.out.println("999999999999999999");
         }
     }
 
@@ -115,6 +133,8 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
             statusCode = HttpServletResponse.SC_FORBIDDEN;      // 403
         }else if(e instanceof JwtException){
             statusCode = HttpServletResponse.SC_FORBIDDEN;      // 403
+        }else if(e instanceof JwtAuthorizationFailureException){
+            statusCode = HttpServletResponse.SC_UNAUTHORIZED;      // 401
         } else {
             statusCode = HttpServletResponse.SC_INTERNAL_SERVER_ERROR;      // 500
         }
