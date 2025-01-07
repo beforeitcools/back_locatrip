@@ -1,12 +1,10 @@
 package com.ohgiraffers.jenkins_test_app.chatting.controller;
 
+import com.ohgiraffers.jenkins_test_app.chatting.dto.RecentChatDTO;
 import com.ohgiraffers.jenkins_test_app.chatting.entity.Messages;
 import com.ohgiraffers.jenkins_test_app.chatting.service.ChatService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -17,10 +15,11 @@ public class ChatHistoryController
     @Autowired
     private ChatService chatService;
 
-    @GetMapping("/recent")
-    public List<Messages> selectAllChats()
+    @GetMapping("/recent/{userId}")
+    public List<Messages> selectAllChats(@PathVariable("userId") int userId)
     {
-        List<Messages> messages = chatService.selectRecentMessages();
+        //List<RecentChatDTO> messages = chatService.selectRecentMessages();
+        List<Messages> messages =chatService.selectRecentMessagesByUserId(userId);
         return messages;
     }
 
@@ -31,4 +30,9 @@ public class ChatHistoryController
         List<Messages> messages = chatService.selectChatsByChatroomId(chatroomId);
         return messages;
     }
+
+//    @GetMapping("/unread/count")
+//    public Integer getUnreadMessagesCount(int chatroomId, int userId){
+//        return chatService.getUnreadMessagesCount(chatroomId, userId);
+//    }
 }

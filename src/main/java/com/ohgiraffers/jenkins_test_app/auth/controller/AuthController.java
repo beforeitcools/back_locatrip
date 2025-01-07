@@ -29,7 +29,7 @@ import java.util.*;
 @RequestMapping("/auth/*")
 public class AuthController {
 
-    String backUrl = "http://112.221.66.174:8082";
+    String backUrl = "http://112.221.66.174:1102";
 
     @Autowired
     private AuthService authService;
@@ -179,7 +179,7 @@ public class AuthController {
                     System.out.println(refreshTokenFromClient);
                     // 일치하면 DB에서 Refresh 토큰 제거
                     if (foundUserFromDB.getRefreshToken().equals(refreshTokenFromClient)) {
-                        System.out.println("여기는 오니??????");
+                        System.out.println("여는 기오니??????");
                         if (authService.deleteRefreshTokenInDB(foundUserFromDB)) {
                             System.out.println("DB의 refresh 토큰 제거 성공");
                             response.put("message", "로그아웃 완료");
