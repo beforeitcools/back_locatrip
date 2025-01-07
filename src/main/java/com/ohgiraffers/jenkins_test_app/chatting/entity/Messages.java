@@ -23,17 +23,21 @@ public class Messages
     @Column(name = "send_time")
     private Timestamp sendTime;
 
+    @Column(name = "is_read")
+    private boolean isRead;
+
     public Messages()
     {
     }
 
-    public Messages(int id, int chatroomId, int userId, String messageContents, Timestamp sendTime)
+    public Messages(int id, int chatroomId, int userId, String messageContents, Timestamp sendTime, boolean isRead)
     {
         this.id = id;
         this.chatroomId = chatroomId;
         this.userId = userId;
         this.messageContents = messageContents;
         this.sendTime = sendTime;
+        this.isRead = isRead;
     }
 
     public int getId()
@@ -86,9 +90,13 @@ public class Messages
         this.sendTime = sendTime;
     }
 
-    @Override
-    public String toString()
+    public boolean isRead()
     {
-        return "Messages{" + "id=" + id + ", chatroomId=" + chatroomId + ", userId=" + userId + ", messageContents='" + messageContents + '\'' + ", sendTime=" + sendTime + '}';
+        return isRead;
+    }
+
+    public void setRead(boolean read)
+    {
+        isRead = read;
     }
 }

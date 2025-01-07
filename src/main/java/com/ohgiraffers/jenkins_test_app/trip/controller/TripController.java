@@ -1,5 +1,7 @@
 package com.ohgiraffers.jenkins_test_app.trip.controller;
 
+import com.ohgiraffers.jenkins_test_app.auth.entity.Users;
+import com.ohgiraffers.jenkins_test_app.common.utils.SecurityUtil;
 import com.ohgiraffers.jenkins_test_app.trip.dto.TripDTO;
 import com.ohgiraffers.jenkins_test_app.trip.entity.Trip;
 import com.ohgiraffers.jenkins_test_app.trip.service.TripService;
@@ -19,16 +21,23 @@ public class TripController {
     @Autowired
     TripService tripService;
 
+    @Autowired
+    private SecurityUtil securityUtil;
+
     /** 일정 생성 */
     @PostMapping("insert")
     public ResponseEntity addTrip(@RequestBody TripDTO trip) {
-        
 
+        
         if(Objects.isNull(trip)){
             return ResponseEntity.status(404).body("일정 내용을 입력해주세요.");
         }
 
+        Users authenticatedUser = securityUtil.getAuthenticatedUser();
+        trip.setUserId(authenticatedUser.getId());
+
         Trip result = tripService.addTrip(trip);
+        
 
         if(Objects.isNull(result)){
             return ResponseEntity.status(500).body("일정 등록에 실패했습니다.");
@@ -48,12 +57,14 @@ public class TripController {
         }
 
         Optional<Trip> optionalResult = tripService.selectTrip(id);
+        System.out.println("optionalResult = " + optionalResult);
 
         if (optionalResult.isEmpty()) {
             return ResponseEntity.status(404).body("일정을 찾을 수 없습니다.");
         }
 
         Trip result = optionalResult.get();
+        System.out.println("result = " + result);
 
         return ResponseEntity.ok(result);
     }

@@ -76,7 +76,8 @@ public class WebConfig implements WebMvcConfigurer {
         registry.addInterceptor(jwtTokenInterceptor())
                 .addPathPatterns("/**")  // 모든 요청 경로에 대해 인터셉터 적용
                 // 로그인, 회원가입과 같은 예외 경로
-                .excludePathPatterns("/auth/login", "/auth/signup", "/auth/checkUserId", "/auth/checkNickname", "/auth/logout", "/auth/refreshAccessToken");
+                .excludePathPatterns("/auth/login", "/auth/signup", "/auth/checkUserId", "/auth/checkNickname",
+                        "/auth/logout", "/auth/refreshAccessToken", "/images/**");
     }
 
 
