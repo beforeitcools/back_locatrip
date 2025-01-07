@@ -2,18 +2,14 @@ package com.ohgiraffers.jenkins_test_app.location.controller;
 
 import com.ohgiraffers.jenkins_test_app.auth.entity.Users;
 import com.ohgiraffers.jenkins_test_app.common.utils.SecurityUtil;
-import com.ohgiraffers.jenkins_test_app.location.dto.LocationDTO;
 import com.ohgiraffers.jenkins_test_app.location.entity.Location;
-import com.ohgiraffers.jenkins_test_app.location.entity.LocationFavorite;
 import com.ohgiraffers.jenkins_test_app.location.service.LocationService;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
@@ -65,12 +61,33 @@ public class LocationController {
 
 
         if(!isDeleted){
-            return ResponseEntity.status(500).body("해당 카테고리를 찾을 수 없습니다.");
+            return ResponseEntity.status(500).body("좋아요를 찾을 수 없습니다.");
         }
 
         return ResponseEntity.ok("성공적으로 삭제되었습니다.");
 
     }
 
+    @GetMapping("favorites")
+    public ResponseEntity favorites(@RequestBody List<String> locationNameList) {
+
+        System.out.println("locationNameList = " + locationNameList);
+        if(Objects.isNull(locationNameList)){
+            return ResponseEntity.status(404).body("올바른 값을 전달해주세요.");
+        }
+        Users authenticatedUser = securityUtil.getAuthenticatedUser();
+
+        Integer userId = authenticatedUser.getId();
+        System.out.println("userId = " + userId);
+
+        List<Map<String, Boolean>> result = locationService.selectFavorites(locationNameList, userId);
+        System.out.println("result = " + result);
+
+        if(Objects.isNull(result)){
+            return ResponseEntity.status(500).body("좋아요를 찾을 수 없습니다.");
+        }
+
+        return ResponseEntity.ok(result);
+    }
 
 }

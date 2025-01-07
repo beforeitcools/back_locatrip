@@ -37,6 +37,38 @@ public class LocationFavorite {
         this.userEntity = userEntity;
     }
 
+    public Integer getLocationId() {
+        return locationId;
+    }
+
+    public void setLocationId(Integer locationId) {
+        this.locationId = locationId;
+    }
+
+    public Integer getUserId() {
+        return userId;
+    }
+
+    public void setUserId(Integer userId) {
+        this.userId = userId;
+    }
+
+    public Location getLocationEntity() {
+        return locationEntity;
+    }
+
+    public void setLocationEntity(Location locationEntity) {
+        this.locationEntity = locationEntity;
+    }
+
+    public Users getUserEntity() {
+        return userEntity;
+    }
+
+    public void setUserEntity(Users userEntity) {
+        this.userEntity = userEntity;
+    }
+
     @Override
     public String toString() {
         return "LocationFavorite{" +
