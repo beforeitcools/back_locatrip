@@ -1,6 +1,8 @@
 package com.ohgiraffers.jenkins_test_app.auth.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.ohgiraffers.jenkins_test_app.auth.Enum.UserRole;
+import com.ohgiraffers.jenkins_test_app.location.entity.LocationFavorite;
 import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
@@ -64,6 +66,10 @@ public class Users {
         }
         return new ArrayList<>();
     }
+
+    @OneToMany(mappedBy = "userEntity", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore
+    private List<LocationFavorite> favorites = new ArrayList<>();
 
     public Users() {
     }
@@ -189,6 +195,14 @@ public class Users {
 
     public void setInactiveAt(LocalDateTime inactiveAt) {
         this.inactiveAt = inactiveAt;
+    }
+
+    public List<LocationFavorite> getFavorites() {
+        return favorites;
+    }
+
+    public void setFavorites(List<LocationFavorite> favorites) {
+        this.favorites = favorites;
     }
 
     @Override
