@@ -99,14 +99,16 @@ public class ChatService
         chatroomRepository.findByChatroomName(keyword);
     }
 
-    public void saveMessage(MessageDTO message)
+    public void saveMessage(Messages message)
     {
         Users authenticatedUser = securityUtil.getAuthenticatedUser();
         message.setUserId(authenticatedUser.getId());
-        //chatRepository.saveMessages(message);
+        chatRepository.save(message);
     }
 
     public Messages saveAndGetMessage(Messages message){
+        Users authenticatedUser = securityUtil.getAuthenticatedUser();
+        message.setUserId(authenticatedUser.getId());
         Messages savedMessage = chatRepository.save(message);
         return savedMessage;
     }

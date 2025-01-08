@@ -27,12 +27,12 @@ public class ChatController
     }
 
     @RequestMapping(value = "/sendMessage", method = RequestMethod.POST)
-    public void sendMessage(@RequestBody MessageDTO message)
+    public void sendMessage(@RequestBody Messages message)
     {
         chatService.saveMessage(message);
     }
 
-    @PostMapping("/updateRoom/{chatroomId}")
+    @RequestMapping(value = "/updateRoom/{chatroomId}", method = RequestMethod.POST)
     public void editChatroomName(@PathVariable("chatroomId") int chatroomId, @RequestBody String chatroomName)
     {
         System.out.println("room name change 하는 로직");
