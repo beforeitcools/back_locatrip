@@ -30,7 +30,6 @@ public class ExpenseController {
     @Autowired
     private ExpenseSettlementService settlementService;
 
-
     @GetMapping("/grouped-by-days/{tripId}")
     public ResponseEntity<Map<String, Map<String, Object>>> getExpensesGroupedByDays(@PathVariable int tripId) {
         Map<String, Map<String, Object>> groupedExpenses = expenseService.getExpensesGroupedByTripDays(tripId);
@@ -101,13 +100,22 @@ public class ExpenseController {
         return ResponseEntity.ok().build();
     }
 
-
-
     @GetMapping("/settlement/total")
     public ResponseEntity<Map<String, Object>> getTotalSettlement() {
         Map<String, Object> settlementDetails = settlementService.calculateTotalSettlement();
         return ResponseEntity.ok(settlementDetails);
     }
 
+    @GetMapping("/trip/{tripId}/users")
+    public ResponseEntity<List<Map<String, Object>>> getUsersByTripId(@PathVariable int tripId) {
+        List<Map<String, Object>> users = expenseService.getUsersByTripId(tripId);
+        return ResponseEntity.ok(users);
+    }
+
+    @DeleteMapping("/{expenseId}")
+    public ResponseEntity<Void> deleteExpense(@PathVariable int expenseId) {
+        expenseService.deleteExpense(expenseId);
+        return ResponseEntity.noContent().build();
+    }
 
 }

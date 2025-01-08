@@ -1,5 +1,6 @@
 package com.ohgiraffers.jenkins_test_app.expense.service;
 
+import com.ohgiraffers.jenkins_test_app.auth.entity.Users;
 import com.ohgiraffers.jenkins_test_app.expense.dto.ExpenseDTO;
 import com.ohgiraffers.jenkins_test_app.expense.dto.ExpensePaidByDTO;
 import com.ohgiraffers.jenkins_test_app.expense.dto.ExpenseParticipantsDTO;
@@ -32,10 +33,13 @@ public class ExpenseService {
     private ExpenseParticipantsRepository participantsRepository;
 
     private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM.dd/E", Locale.KOREAN);
+
     @Autowired
     private ExpensePaidByRepository expensePaidByRepository;
+
     @Autowired
     private ExpenseParticipantsRepository expenseParticipantsRepository;
+
 
     private String formatDate (LocalDate date) {
         return date.format(formatter);
@@ -68,7 +72,6 @@ public class ExpenseService {
 
             preparationList.add(expense);
         }
-
 
         for (Object[] row : results) {
             int dayNumber = ((Number) row[0]).intValue();
@@ -108,9 +111,15 @@ public class ExpenseService {
 
         if (paidByDetails != null) {
             for (Map<String, Object> detail : paidByDetails) {
+
                 ExpensePaidBy paidBy = new ExpensePaidBy();
                 paidBy.setExpense(savedExpense);
-                paidBy.setUserId((Integer) detail.get("userId"));
+
+                // Users 엔티티 생성 및 매핑
+                Users user = new Users();
+                user.setId((Integer) detail.get("userId"));
+                paidBy.setUser(user);
+
                 paidBy.setAmount(new BigDecimal(detail.get("amount").toString()));
                 paidByRepository.save(paidBy);
             }
@@ -120,7 +129,12 @@ public class ExpenseService {
             for (Map<String, Object> detail : participantDetails) {
                 ExpenseParticipants participant = new ExpenseParticipants();
                 participant.setExpense(savedExpense);
-                participant.setUserId((Integer) detail.get("userId"));
+
+                // Users 엔티티 생성 및 매핑
+                Users user = new Users();
+                user.setId((Integer) detail.get("userId"));
+                participant.setUser(user);
+
                 participant.setAmount(new BigDecimal(detail.get("amount").toString()));
                 participantsRepository.save(participant);
             }
@@ -128,24 +142,32 @@ public class ExpenseService {
         return savedExpense;
     }
 
+
     public ExpenseDTO getExpenseById(int expenseId) {
         Expense expense = expenseRepository.findById(expenseId)
                 .orElseThrow(() -> new RuntimeException("Expense not found"));
 
-        List<ExpensePaidByDTO> paidByUsers = expensePaidByRepository.findByExpenseId(expenseId)
+        List<ExpensePaidByDTO> paidByUsers = paidByRepository.findPaidByUsersWithNickname(expenseId)
                 .stream()
-                .map(paidBy -> new ExpensePaidByDTO(paidBy.getUserId(), paidBy.getAmount()))
+                .map(row -> new ExpensePaidByDTO(
+                        (Integer) row[0],
+                        (String) row[1],
+                        (BigDecimal) row[2]
+                ))
                 .collect(Collectors.toList());
 
-        List<ExpenseParticipantsDTO> participants = expenseParticipantsRepository.findByExpenseId(expenseId)
+        List<ExpenseParticipantsDTO> participants = participantsRepository.findParticipantsWithNickname(expenseId)
                 .stream()
-                .map(participant -> new ExpenseParticipantsDTO(participant.getUserId(), participant.getAmount()))
+                .map(row -> new ExpenseParticipantsDTO(
+                        (Integer) row[0],
+                        (String) row[1],
+                        (BigDecimal) row[2]
+                ))
                 .collect(Collectors.toList());
 
-        ExpenseDTO expenseDTO = new ExpenseDTO(expense, paidByUsers, participants);
-        expenseDTO.setId(expense.getId());
-        return expenseDTO;
+        return new ExpenseDTO(expense, paidByUsers, participants);
     }
+
 
     @Transactional
     public void updateExpense(int expenseId, ExpenseDTO expenseDTO) {
@@ -165,7 +187,11 @@ public class ExpenseService {
         for (ExpensePaidByDTO paidByDTO : expenseDTO.getPaidByUsers()) {
             ExpensePaidBy paidBy = new ExpensePaidBy();
             paidBy.setExpense(expense);
-            paidBy.setUserId(paidByDTO.getUserId());
+
+            Users user = new Users();
+            user.setId(paidByDTO.getUserId());
+            paidBy.setUser(user);
+
             paidBy.setAmount(paidByDTO.getAmount());
             expensePaidByRepository.save(paidBy);
         }
@@ -175,9 +201,42 @@ public class ExpenseService {
         for (ExpenseParticipantsDTO participantDTO : expenseDTO.getParticipants()) {
             ExpenseParticipants participant = new ExpenseParticipants();
             participant.setExpense(expense);
-            participant.setUserId(participantDTO.getUserId());
+
+            Users user = new Users();
+            user.setId(participantDTO.getUserId());
+            participant.setUser(user);
+
             participant.setAmount(participantDTO.getAmount());
             expenseParticipantsRepository.save(participant);
+        }
+    }
+
+    public List<Map<String, Object>> getUsersByTripId(int tripId) {
+        List<Object[]> results = expenseRepository.findUsersAndTripByTripId(tripId);
+        return results.stream().map(row -> {
+            Map<String, Object> user = new HashMap<>();
+            user.put("id", row[0]); // userId
+            user.put("nickname", row[1]); // 닉네임
+            return user;
+        }).collect(Collectors.toList());
+    }
+
+    @Transactional
+    public void deleteExpense(int expenseId) {
+        try {
+            // 1. expense_paid_by 테이블에서 참조 레코드 삭제
+            expensePaidByRepository.deleteByExpenseId(expenseId);
+
+            // 2. expense_participants 테이블에서 참조 레코드 삭제
+            expenseParticipantsRepository.deleteByExpenseId(expenseId);
+
+            // 3. expense 테이블에서 레코드 삭제
+            Expense expense = expenseRepository.findById(expenseId)
+                    .orElseThrow(() -> new RuntimeException("Expense not found"));
+
+            expenseRepository.delete(expense);
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to delete expense: " + e.getMessage());
         }
     }
 
