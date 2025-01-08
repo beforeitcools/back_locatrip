@@ -1,6 +1,5 @@
 package com.ohgiraffers.jenkins_test_app.chatting.controller;
 
-import com.ohgiraffers.jenkins_test_app.auth.entity.Users;
 import com.ohgiraffers.jenkins_test_app.chatting.dto.RecentChatDTO;
 import com.ohgiraffers.jenkins_test_app.chatting.entity.Messages;
 import com.ohgiraffers.jenkins_test_app.chatting.service.ChatService;
@@ -23,9 +22,8 @@ public class ChatHistoryController
     @GetMapping("/recent")
     public List<RecentChatDTO> selectAllChats()
     {
-        Users authenticatedUser = securityUtil.getAuthenticatedUser();
         //List<RecentChatDTO> messages = chatService.selectRecentMessages();
-        List<RecentChatDTO> messages =chatService.selectRecentMessagesByUserId(1);
+        List<RecentChatDTO> messages =chatService.selectRecentMessagesByUserId();
         System.out.println(messages);
         return messages;
     }

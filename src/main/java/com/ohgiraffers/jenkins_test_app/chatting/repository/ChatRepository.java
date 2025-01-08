@@ -1,5 +1,6 @@
 package com.ohgiraffers.jenkins_test_app.chatting.repository;
 
+import com.ohgiraffers.jenkins_test_app.chatting.dto.MessageDTO;
 import com.ohgiraffers.jenkins_test_app.chatting.dto.RecentChatDTO;
 import com.ohgiraffers.jenkins_test_app.chatting.entity.Messages;
 import org.springframework.data.jpa.repository.JpaRepository;

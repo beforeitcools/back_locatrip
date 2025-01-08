@@ -1,5 +1,7 @@
 package com.ohgiraffers.jenkins_test_app.chatting.service;
 
+import com.ohgiraffers.jenkins_test_app.auth.entity.Users;
+import com.ohgiraffers.jenkins_test_app.chatting.dto.MessageDTO;
 import com.ohgiraffers.jenkins_test_app.chatting.dto.RecentChatDTO;
 import com.ohgiraffers.jenkins_test_app.chatting.entity.ChatRoom;
 import com.ohgiraffers.jenkins_test_app.chatting.entity.Messages;
@@ -7,6 +9,7 @@ import com.ohgiraffers.jenkins_test_app.chatting.entity.ParticipateMembers;
 import com.ohgiraffers.jenkins_test_app.chatting.repository.ChatRepository;
 import com.ohgiraffers.jenkins_test_app.chatting.repository.ChatroomRepository;
 import com.ohgiraffers.jenkins_test_app.chatting.repository.ParticipateRepository;
+import com.ohgiraffers.jenkins_test_app.common.utils.SecurityUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -25,12 +28,14 @@ public class ChatService
     @Autowired
     private ParticipateRepository participateRepository;
 
-//    @Autowired
-//    private ChatMapper chatMapper;
+    @Autowired
+    private SecurityUtil securityUtil;
 
-    public List<RecentChatDTO> selectRecentMessagesByUserId(int userId)
+    public List<RecentChatDTO> selectRecentMessagesByUserId()
     {
-        List<RecentChatDTO> messages = chatroomRepository.selectRecentMessages(userId);
+        Users authenticatedUser = securityUtil.getAuthenticatedUser();
+        // 테스트용 1
+        List<RecentChatDTO> messages = chatroomRepository.selectRecentMessages(1);
         if(messages == null || messages.isEmpty()){
             return null;
         }
@@ -92,6 +97,18 @@ public class ChatService
     {
         chatRepository.findByMessageContents(keyword);
         chatroomRepository.findByChatroomName(keyword);
+    }
+
+    public void saveMessage(MessageDTO message)
+    {
+        Users authenticatedUser = securityUtil.getAuthenticatedUser();
+        message.setUserId(authenticatedUser.getId());
+        //chatRepository.saveMessages(message);
+    }
+
+    public Messages saveAndGetMessage(Messages message){
+        Messages savedMessage = chatRepository.save(message);
+        return savedMessage;
     }
 
 //    public Integer getUnreadMessagesCount(int chatroomId, int userId)

@@ -1,10 +1,8 @@
 package com.ohgiraffers.jenkins_test_app.chatting.controller;
 
-import com.ohgiraffers.jenkins_test_app.auth.entity.Users;
+import com.ohgiraffers.jenkins_test_app.chatting.dto.MessageDTO;
 import com.ohgiraffers.jenkins_test_app.chatting.entity.Messages;
-import com.ohgiraffers.jenkins_test_app.chatting.repository.ChatRepository;
 import com.ohgiraffers.jenkins_test_app.chatting.service.ChatService;
-import com.ohgiraffers.jenkins_test_app.common.utils.SecurityUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.SendTo;
@@ -18,30 +16,20 @@ public class ChatController
     private SimpMessagingTemplate messagingTemplate;
 
     @Autowired
-    private ChatRepository chatRepository;
-
-    @Autowired
     private ChatService chatService;
-
-    @Autowired
-    private SecurityUtil securityUtil;
 
     @MessageMapping("/sendMessage")
     @SendTo("/topic/messages")
     public Messages handleMessage(Messages message)
     {
         // 데이터베이스에서 메세지 저장
-        Users authenticatedUser = securityUtil.getAuthenticatedUser();
-        Messages savedMessage = chatRepository.save(message);
-        savedMessage.setUserId(authenticatedUser.getId());
-
-        return savedMessage;
+        return chatService.saveAndGetMessage(message);
     }
 
     @RequestMapping(value = "/sendMessage", method = RequestMethod.POST)
-    public void sendMessage(@RequestBody Messages message)
+    public void sendMessage(@RequestBody MessageDTO message)
     {
-        chatRepository.save(message);
+        chatService.saveMessage(message);
     }
 
     @PostMapping("/updateRoom/{chatroomId}")
