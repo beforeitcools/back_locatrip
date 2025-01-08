@@ -1,34 +1,32 @@
 package com.ohgiraffers.jenkins_test_app.chatting.dto;
 
+import java.sql.Timestamp;
+
 public class RecentChatDTO
 {
-    private String chatroomId;
+    private int chatroomId;
     private String chatroomName;
-    private String chatroomPic;
     private String currentMessage;
     private String sendTime;
-    private boolean isRead;
 
     public RecentChatDTO()
     {
     }
 
-    public RecentChatDTO(String chatroomId, String chatroomName, String chatroomPic, String currentMessage, String sendTime, boolean isRead)
+    public RecentChatDTO(int chatroomId, String chatroomName, String currentMessage, String sendTime)
     {
         this.chatroomId = chatroomId;
         this.chatroomName = chatroomName;
-        this.chatroomPic = chatroomPic;
         this.currentMessage = currentMessage;
         this.sendTime = sendTime;
-        this.isRead = isRead;
     }
 
-    public String getChatroomId()
+    public int getChatroomId()
     {
         return chatroomId;
     }
 
-    public void setChatroomId(String chatroomId)
+    public void setChatroomId(int chatroomId)
     {
         this.chatroomId = chatroomId;
     }
@@ -41,16 +39,6 @@ public class RecentChatDTO
     public void setChatroomName(String chatroomName)
     {
         this.chatroomName = chatroomName;
-    }
-
-    public String getChatroomPic()
-    {
-        return chatroomPic;
-    }
-
-    public void setChatroomPic(String chatroomPic)
-    {
-        this.chatroomPic = chatroomPic;
     }
 
     public String getCurrentMessage()
@@ -73,13 +61,9 @@ public class RecentChatDTO
         this.sendTime = sendTime;
     }
 
-    public boolean isRead()
+    @Override
+    public String toString()
     {
-        return isRead;
-    }
-
-    public void setRead(boolean read)
-    {
-        isRead = read;
+        return "RecentChatDTO{" + "chatroomId=" + chatroomId + ", chatroomName='" + chatroomName + '\'' + ", currentMessage='" + currentMessage + '\'' + ", sendTime=" + sendTime + '}';
     }
 }

@@ -14,27 +14,35 @@ public class ExpenseSettlementService {
 
     @Autowired
     private ExpensePaidByRepository expensePaidByRepository;
+
     @Autowired
     private ExpenseParticipantsRepository expenseParticipantsRepository;
 
     public Map<String, Object> calculateTotalSettlement() {
         Map<Integer, BigDecimal> paidByMap = new HashMap<>();
         Map<Integer, BigDecimal> participantMap = new HashMap<>();
+        Map<Integer, String> userNicknameMap = new HashMap<>(); // 닉네임 저장
 
-        // 결제한 금액 합산
-        List<ExpensePaidBy> paidByList = expensePaidByRepository.findAll();
-        for (ExpensePaidBy paidBy : paidByList) {
-            paidByMap.put(paidBy.getUserId(),
-                    paidByMap.getOrDefault(paidBy.getUserId(), BigDecimal.ZERO)
-                            .add(paidBy.getAmount()));
+        // 결제한 금액 합산 및 닉네임 매핑
+        List<Object[]> paidByList = expensePaidByRepository.findAllPaidByWithNickname();
+        for (Object[] row : paidByList) {
+            Integer userId = (Integer) row[0];
+            String nickname = (String) row[1];
+            BigDecimal amount = (BigDecimal) row[2];
+
+            userNicknameMap.put(userId, nickname); // 닉네임 저장
+            paidByMap.put(userId, paidByMap.getOrDefault(userId, BigDecimal.ZERO).add(amount));
         }
 
-        // 부담한 금액 합산
-        List<ExpenseParticipants> participantsList = expenseParticipantsRepository.findAll();
-        for (ExpenseParticipants participant : participantsList) {
-            participantMap.put(participant.getUserId(),
-                    participantMap.getOrDefault(participant.getUserId(), BigDecimal.ZERO)
-                            .add(participant.getAmount()));
+        // 부담한 금액 합산 및 닉네임 매핑
+        List<Object[]> participantsList = expenseParticipantsRepository.findAllParticipantsWithNickname();
+        for (Object[] row : participantsList) {
+            Integer userId = (Integer) row[0];
+            String nickname = (String) row[1];
+            BigDecimal amount = (BigDecimal) row[2];
+
+            userNicknameMap.put(userId, nickname); // 닉네임 저장
+            participantMap.put(userId, participantMap.getOrDefault(userId, BigDecimal.ZERO).add(amount));
         }
 
         // 최종 정산 계산
@@ -73,8 +81,8 @@ public class ExpenseSettlementService {
                 BigDecimal amount = creditor.getValue().min(debtor.getValue().abs());
                 if (amount.compareTo(BigDecimal.ZERO) > 0) {
                     transactions.add(Map.of(
-                            "fromUser", debtor.getKey(),
-                            "toUser", creditor.getKey(),
+                            "fromNickname", userNicknameMap.get(debtor.getKey()), // 닉네임 사용
+                            "toNickname", userNicknameMap.get(creditor.getKey()), // 닉네임 사용
                             "amount", amount
                     ));
                     balanceMap.put(creditor.getKey(), creditor.getValue().subtract(amount));
@@ -87,6 +95,7 @@ public class ExpenseSettlementService {
         for (Integer userId : allUsers) {
             userExpenses.add(Map.of(
                     "userId", userId,
+                    "nickname", userNicknameMap.get(userId), // 닉네임 추가
                     "paid", paidByMap.getOrDefault(userId, BigDecimal.ZERO),
                     "spent", participantMap.getOrDefault(userId, BigDecimal.ZERO)
             ));
