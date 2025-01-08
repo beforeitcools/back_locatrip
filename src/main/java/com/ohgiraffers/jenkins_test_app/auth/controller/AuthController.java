@@ -1,6 +1,8 @@
 package com.ohgiraffers.jenkins_test_app.auth.controller;
 
+import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonProcessingException;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ohgiraffers.jenkins_test_app.auth.common.EmailValidator;
 import com.ohgiraffers.jenkins_test_app.auth.common.NameValidator;
@@ -8,6 +10,7 @@ import com.ohgiraffers.jenkins_test_app.auth.dto.UsersDTO;
 import com.ohgiraffers.jenkins_test_app.auth.entity.Users;
 import com.ohgiraffers.jenkins_test_app.auth.service.AuthService;
 import com.ohgiraffers.jenkins_test_app.common.AuthConstants;
+import com.ohgiraffers.jenkins_test_app.common.ServerUrlConstants;
 import com.ohgiraffers.jenkins_test_app.common.utils.TokenUtils;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
@@ -16,6 +19,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationCredentialsNotFoundException;
 import org.springframework.web.bind.annotation.*;
@@ -23,13 +27,13 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 
 @RestController
 @RequestMapping("/auth/*")
 public class AuthController {
 
-    String backUrl = "http://112.221.66.174:1102";
 
     @Autowired
     private AuthService authService;
@@ -40,9 +44,14 @@ public class AuthController {
                                  @RequestPart(value = "profileImg", required = false) MultipartFile profileImg){
         // JsonEncode 되어 있는 signupData를 SignupDTO 로 decode
         ObjectMapper objectMapper = new ObjectMapper();
+        objectMapper.configure(JsonParser.Feature.ALLOW_UNQUOTED_CONTROL_CHARS, true);
+        objectMapper.configure(JsonParser.Feature.ALLOW_BACKSLASH_ESCAPING_ANY_CHARACTER, true);
         UsersDTO usersDTO;
+        byte[] bytes = signupDataJson.getBytes(StandardCharsets.ISO_8859_1);
+        String decodedJson = new String(bytes, StandardCharsets.UTF_8);
+
         try {
-            usersDTO = objectMapper.readValue(signupDataJson, UsersDTO.class);
+            usersDTO = objectMapper.readValue(decodedJson, UsersDTO.class);
         } catch (JsonProcessingException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("유효하지 않은 회원가입 데이터");
         }
@@ -60,7 +69,7 @@ public class AuthController {
             String ext = originalFileName.substring(originalFileName.lastIndexOf("."));
             String savedName = UUID.randomUUID().toString().replace("-", "") + ext;
             String filePath = savePath + "/" + savedName;
-            usersDTO.setProfilePic(backUrl + "/images/user/profilePic/" + savedName);
+            usersDTO.setProfilePic(ServerUrlConstants.BACK_URL + "/images/user/profilePic/" + savedName);
 
             try {
                 profileImg.transferTo(new File(filePath));
@@ -121,20 +130,25 @@ public class AuthController {
     /**access 토큰 재발급*/
     @PostMapping("refreshAccessToken")
     public ResponseEntity refreshAccessToken(HttpServletRequest request){
+        System.out.println("AT 발행 시작~~~~~~1111");
         String header = request.getHeader(AuthConstants.REFRESH_TOKEN_HEADER);
+        System.out.println("header 는 있니");
 
         try {
             String refreshTokenFromClient = TokenUtils.splitHeader(header);
             // 토큰 유효성 검사(만료여부 조작여부 등)
             if(TokenUtils.isValidToken(refreshTokenFromClient)){
+                System.out.println("AT 발행 시작~~~~~~2222");
                 Claims claims = TokenUtils.getClaimsFromToken(refreshTokenFromClient);
                 Optional<Users> user = authService.findUser(claims.get("userId").toString());
                 // DB의 Refresh 토큰과 일치 여부
                 if(user.isPresent()){
+                    System.out.println("AT 로 user 찾아옴");
                     Users foundUserFromDB = user.get();
                     // 일치하면 access 토큰 재발급
-                    if(foundUserFromDB.getRefreshToken() == refreshTokenFromClient){
+                    if(foundUserFromDB.getRefreshToken().equals(refreshTokenFromClient)){
                         String accessToken = TokenUtils.generateAccessToken(foundUserFromDB);
+                        System.out.println("AT 발행 성공~~~~~~");
                         HttpHeaders responseHeaders = new HttpHeaders();
                         responseHeaders.set(AuthConstants.AUTH_HEADER, AuthConstants.TOKEN_TYPE + " " + accessToken);
                         return ResponseEntity.ok()
@@ -150,7 +164,8 @@ public class AuthController {
                 throw new RuntimeException("Refresh 토큰 만료");
             }
         } catch (Exception e){
-            return ResponseEntity.status(HttpServletResponse.SC_UNAUTHORIZED)   //401
+            System.out.println("403 보내나??");
+            return ResponseEntity.status(HttpServletResponse.SC_FORBIDDEN)   //403
                     .body(e.getMessage());
         }
     }
