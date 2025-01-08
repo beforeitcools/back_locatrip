@@ -11,8 +11,9 @@ public class Messages
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-    @Column(name = "chatroom_id")
-    private int chatroomId;
+    @ManyToOne
+    @JoinColumn (name = "chatroom_id")
+    private ChatRoom chatroom;
 
     @Column(name = "user_id")
     private int userId;
@@ -21,7 +22,7 @@ public class Messages
     private String messageContents;
 
     @Column(name = "send_time")
-    private Timestamp sendTime;
+    private String sendTime;
 
     @Column(name = "is_read")
     private boolean isRead;
@@ -30,11 +31,20 @@ public class Messages
     {
     }
 
-    public Messages(int id, int chatroomId, int userId, String messageContents, Timestamp sendTime, boolean isRead)
+    public Messages(int id, ChatRoom chatroom, int userId, String messageContents, String sendTime, boolean isRead)
     {
         this.id = id;
-        this.chatroomId = chatroomId;
+        this.chatroom = chatroom;
         this.userId = userId;
+        this.messageContents = messageContents;
+        this.sendTime = sendTime;
+        this.isRead = isRead;
+    }
+
+    public Messages(int id, ChatRoom chatroom, String messageContents, String sendTime, boolean isRead)
+    {
+        this.id = id;
+        this.chatroom = chatroom;
         this.messageContents = messageContents;
         this.sendTime = sendTime;
         this.isRead = isRead;
@@ -50,14 +60,14 @@ public class Messages
         this.id = id;
     }
 
-    public int getChatroomId()
+    public ChatRoom getChatRoom()
     {
-        return chatroomId;
+        return chatroom;
     }
 
-    public void setChatroomId(int chatroomId)
+    public void setChatRoom(ChatRoom chatRoom)
     {
-        this.chatroomId = chatroomId;
+        this.chatroom = chatRoom;
     }
 
     public int getUserId()
@@ -80,12 +90,12 @@ public class Messages
         this.messageContents = messageContents;
     }
 
-    public Timestamp getSendTime()
+    public String getSendTime()
     {
         return sendTime;
     }
 
-    public void setSendTime(Timestamp sendTime)
+    public void setSendTime(String sendTime)
     {
         this.sendTime = sendTime;
     }

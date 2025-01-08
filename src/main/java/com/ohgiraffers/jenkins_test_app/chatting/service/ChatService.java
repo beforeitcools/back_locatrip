@@ -1,13 +1,15 @@
 package com.ohgiraffers.jenkins_test_app.chatting.service;
 
+import com.ohgiraffers.jenkins_test_app.auth.entity.Users;
+import com.ohgiraffers.jenkins_test_app.chatting.dto.MessageDTO;
 import com.ohgiraffers.jenkins_test_app.chatting.dto.RecentChatDTO;
 import com.ohgiraffers.jenkins_test_app.chatting.entity.ChatRoom;
 import com.ohgiraffers.jenkins_test_app.chatting.entity.Messages;
 import com.ohgiraffers.jenkins_test_app.chatting.entity.ParticipateMembers;
-import com.ohgiraffers.jenkins_test_app.chatting.model.ChatMapper;
 import com.ohgiraffers.jenkins_test_app.chatting.repository.ChatRepository;
 import com.ohgiraffers.jenkins_test_app.chatting.repository.ChatroomRepository;
 import com.ohgiraffers.jenkins_test_app.chatting.repository.ParticipateRepository;
+import com.ohgiraffers.jenkins_test_app.common.utils.SecurityUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -26,12 +28,14 @@ public class ChatService
     @Autowired
     private ParticipateRepository participateRepository;
 
-//    @Autowired
-//    private ChatMapper chatMapper;
+    @Autowired
+    private SecurityUtil securityUtil;
 
-    public List<Messages> selectRecentMessagesByUserId(int userId)
+    public List<RecentChatDTO> selectRecentMessagesByUserId()
     {
-        List<Messages> messages = chatRepository.selectRecentMessages(userId);
+        Users authenticatedUser = securityUtil.getAuthenticatedUser();
+        // 테스트용 1
+        List<RecentChatDTO> messages = chatroomRepository.selectRecentMessages(1);
         if(messages == null || messages.isEmpty()){
             return null;
         }
@@ -56,11 +60,11 @@ public class ChatService
         }
     }
 
-    public void goOutAtChatroom(int chatroomId, int userId)
-    {
-        //채팅방 나가기
-        participateRepository.delete(new ParticipateMembers(userId, chatroomId));
-    }
+//    public void goOutAtChatroom(int chatroomId, int userId)
+//    {
+//        //채팅방 나가기
+//        participateRepository.delete(new ParticipateMembers(userId, chatroomId));
+//    }
 
     public void createNewChatroom(int chatroomId, String chatroomName)
     {
@@ -76,7 +80,7 @@ public class ChatService
 
         Optional<ChatRoom> chatroomOptional = chatroomRepository.findById(chatroomId);
         if (chatroomId == 0 ||chatroomOptional.isPresent()) {
-            chatroomRepository.save(new ChatRoom(chatroomName, true));
+            chatroomRepository.save(new ChatRoom(chatroomName));
 
         }
         else {
@@ -84,15 +88,29 @@ public class ChatService
         }
     }
 
-    public void insertParticipateMember(int chatroomId, int userId)
-    {
-        participateRepository.save(new ParticipateMembers(userId, chatroomId));
-    }
+//    public void insertParticipateMember(int chatroomId, int userId)
+//    {
+//        participateRepository.save(new ParticipateMembers(userId, chatroomId));
+//    }
 
     public void searchAllInChatPage(String keyword)
     {
         chatRepository.findByMessageContents(keyword);
         chatroomRepository.findByChatroomName(keyword);
+    }
+
+    public void saveMessage(Messages message)
+    {
+        Users authenticatedUser = securityUtil.getAuthenticatedUser();
+        message.setUserId(authenticatedUser.getId());
+        chatRepository.save(message);
+    }
+
+    public Messages saveAndGetMessage(Messages message){
+        Users authenticatedUser = securityUtil.getAuthenticatedUser();
+        message.setUserId(authenticatedUser.getId());
+        Messages savedMessage = chatRepository.save(message);
+        return savedMessage;
     }
 
 //    public Integer getUnreadMessagesCount(int chatroomId, int userId)
