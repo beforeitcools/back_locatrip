@@ -7,6 +7,7 @@ import com.ohgiraffers.jenkins_test_app.auth.dto.UsersDTO;
 import com.ohgiraffers.jenkins_test_app.auth.entity.Users;
 import com.ohgiraffers.jenkins_test_app.common.utils.SecurityUtil;
 import com.ohgiraffers.jenkins_test_app.common.ServerUrlConstants;
+import com.ohgiraffers.jenkins_test_app.mypage.entity.MyTrip;
 import com.ohgiraffers.jenkins_test_app.mypage.service.MypageService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -17,7 +18,9 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.time.LocalDate;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/mypage/*")
@@ -32,15 +35,21 @@ public class MypageController {
 
     /**마이페이지 메인 스크린 로드시*/
     @GetMapping("main")
-    public ResponseEntity<Map<String, Object>> main() {
+    public ResponseEntity<Map<String, Object>> getMyPageData() {
         Map<String, Object> mypageData = new HashMap<>();
 
+        // 프로필 info
         Users authenticatedUser = securityUtil.getAuthenticatedUser();
 
+        // 채택수
+        Long selectedAdviceCount = mypageService.getSelectedAdviceCount(authenticatedUser.getId());
+
+        // 알림(안 읽은거 있는지)
+
         mypageData.put("user", authenticatedUser);
+        mypageData.put("selectedAdviceCount", selectedAdviceCount);
 
         return ResponseEntity.ok(mypageData);
-
     }
 
     /**프로필 수정*/
@@ -91,7 +100,29 @@ public class MypageController {
             return ResponseEntity.ok(result);
         }
 
-        return ResponseEntity.status(500).body("프로필 수 실패 : " + result);
+        return ResponseEntity.status(500).body("프로필 수정 실패 : " + result);
     }
 
+
+    /**마이페이지 내여행 로드시*/
+    @GetMapping("myTrip")
+    public ResponseEntity<Map<String, Object>> getMyTripData() {
+        Map<String, Object> mypageData = new HashMap<>();
+
+        Users authenticatedUser = securityUtil.getAuthenticatedUser();
+        List<MyTrip> myTripList = mypageService.getMyTrips(authenticatedUser.getId());
+
+        List<MyTrip> futureTrips = myTripList.stream()
+                .filter(trip -> trip.getStartDate().isAfter(LocalDate.now()))
+                .collect(Collectors.toList());
+
+        List<MyTrip> pastTrips = myTripList.stream()
+                .filter(trip -> trip.getStartDate().isBefore(LocalDate.now()))
+                .collect(Collectors.toList());
+
+        mypageData.put("futureTrips", futureTrips);
+        mypageData.put("pastTrips", pastTrips);
+
+        return ResponseEntity.ok(mypageData);
+    }
 }
