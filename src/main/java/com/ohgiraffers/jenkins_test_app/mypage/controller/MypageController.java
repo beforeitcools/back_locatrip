@@ -1,17 +1,23 @@
 package com.ohgiraffers.jenkins_test_app.mypage.controller;
 
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.ohgiraffers.jenkins_test_app.auth.dto.UsersDTO;
 import com.ohgiraffers.jenkins_test_app.auth.entity.Users;
 import com.ohgiraffers.jenkins_test_app.common.utils.SecurityUtil;
+import com.ohgiraffers.jenkins_test_app.common.ServerUrlConstants;
 import com.ohgiraffers.jenkins_test_app.mypage.service.MypageService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
+import java.io.File;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.util.*;
 
 @RestController
 @RequestMapping("/mypage/*")
@@ -35,6 +41,57 @@ public class MypageController {
 
         return ResponseEntity.ok(mypageData);
 
+    }
+
+    /**프로필 수정*/
+    @PostMapping("updateProfile")
+    public ResponseEntity updateProfile(@RequestPart("updatedData") String updatedDataJson,
+                                 @RequestPart(value = "profileImg", required = false) MultipartFile profileImg){
+        // JsonEncode 되어 있는 signupData를 SignupDTO 로 decode
+        ObjectMapper objectMapper = new ObjectMapper();
+        objectMapper.configure(JsonParser.Feature.ALLOW_UNQUOTED_CONTROL_CHARS, true);
+        objectMapper.configure(JsonParser.Feature.ALLOW_BACKSLASH_ESCAPING_ANY_CHARACTER, true);
+        UsersDTO usersDTO;
+        byte[] bytes = updatedDataJson.getBytes(StandardCharsets.ISO_8859_1);
+        String decodedJson = new String(bytes, StandardCharsets.UTF_8);
+
+        try {
+            usersDTO = objectMapper.readValue(decodedJson, UsersDTO.class);
+        } catch (JsonProcessingException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("유효하지 않은 회원가입 데이터");
+        }
+
+        // 프로필 이미지 서버 실물 경로에 저장(db에 들어갈 이미지 경로 setting)
+        // 배포시점과 서버 변경시점에 backUrl 만 변경해주면 된다.(이미 db에 저장된 데이터는 backUrl 경로만 update)
+        if(!Objects.isNull(profileImg)){
+            String savePath = "C:/locat/profile_pic";
+            File fileDir = new File(savePath);
+            if(!fileDir.exists()){
+                fileDir.mkdirs();
+            }
+
+            String originalFileName = profileImg.getOriginalFilename();
+            String ext = originalFileName.substring(originalFileName.lastIndexOf("."));
+            String savedName = UUID.randomUUID().toString().replace("-", "") + ext;
+            String filePath = savePath + "/" + savedName;
+            usersDTO.setProfilePic(ServerUrlConstants.BACK_URL + "/images/user/profilePic/" + savedName);
+
+            try {
+                profileImg.transferTo(new File(filePath));
+            } catch (IOException e) {
+                e.printStackTrace();
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("프로필 이미지 업로드 실패");
+            }
+        }
+
+        Users authenticatedUser = securityUtil.getAuthenticatedUser();
+        Object result = mypageService.updateProfile(usersDTO, authenticatedUser);
+
+        if(result instanceof Users){
+            return ResponseEntity.ok(result);
+        }
+
+        return ResponseEntity.status(500).body("프로필 수 실패 : " + result);
     }
 
 }
