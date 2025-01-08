@@ -1,7 +1,7 @@
 package com.ohgiraffers.jenkins_test_app.chatting.controller;
 
+import com.ohgiraffers.jenkins_test_app.chatting.dto.MessageDTO;
 import com.ohgiraffers.jenkins_test_app.chatting.entity.Messages;
-import com.ohgiraffers.jenkins_test_app.chatting.repository.ChatRepository;
 import com.ohgiraffers.jenkins_test_app.chatting.service.ChatService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.handler.annotation.MessageMapping;
@@ -16,9 +16,6 @@ public class ChatController
     private SimpMessagingTemplate messagingTemplate;
 
     @Autowired
-    private ChatRepository chatRepository;
-
-    @Autowired
     private ChatService chatService;
 
     @MessageMapping("/sendMessage")
@@ -26,17 +23,16 @@ public class ChatController
     public Messages handleMessage(Messages message)
     {
         // 데이터베이스에서 메세지 저장
-        Messages savedMessage = chatRepository.save(message);
-        return savedMessage;
+        return chatService.saveAndGetMessage(message);
     }
 
     @RequestMapping(value = "/sendMessage", method = RequestMethod.POST)
     public void sendMessage(@RequestBody Messages message)
     {
-        chatRepository.save(message);
+        chatService.saveMessage(message);
     }
 
-    @PostMapping("/updateRoom/{chatroomId}")
+    @RequestMapping(value = "/updateRoom/{chatroomId}", method = RequestMethod.POST)
     public void editChatroomName(@PathVariable("chatroomId") int chatroomId, @RequestBody String chatroomName)
     {
         System.out.println("room name change 하는 로직");
@@ -53,7 +49,7 @@ public class ChatController
     @PostMapping("/goOut/{chatroomId}")
     public void goOutAtChatroom(@PathVariable("chatroomId") int chatroomId, int userId)
     {
-        System.out.println("채팅방 나가기");
-        chatService.goOutAtChatroom(chatroomId, userId);
+//        System.out.println("채팅방 나가기");
+//        chatService.goOutAtChatroom(chatroomId, userId);
     }
 }
