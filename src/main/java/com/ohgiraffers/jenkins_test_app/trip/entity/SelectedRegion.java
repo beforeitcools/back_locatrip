@@ -1,5 +1,6 @@
 package com.ohgiraffers.jenkins_test_app.trip.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
 @Entity
@@ -17,6 +18,7 @@ public class SelectedRegion {
 
     @ManyToOne
     @JoinColumn(name = "trip_id", referencedColumnName = "id", insertable = false, updatable = false)
+    @JsonIgnore
     private Trip tripEntity;
 
     public SelectedRegion() {}

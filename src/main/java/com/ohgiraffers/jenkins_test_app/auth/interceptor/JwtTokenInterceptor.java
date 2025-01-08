@@ -18,12 +18,14 @@ public class JwtTokenInterceptor implements HandlerInterceptor {
         String header = request.getHeader(AuthConstants.AUTH_HEADER);
         // "Authorization" 헤더에서 토큰을 추출합니다. 예: "Bearer <token>"
         String token = TokenUtils.splitHeader(header);
+        System.out.println("설마 여기니.....");
         // 토큰이 존재하는지 확인
         if (token != null){
             //유효성체크
             if(TokenUtils.isValidToken(token)){
                 return true;
             }else {
+                System.out.println("너였어??????");
                 throw new RemoteException("token 만료");
             }
         }else {
