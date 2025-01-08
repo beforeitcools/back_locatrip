@@ -1,29 +1,24 @@
 package com.ohgiraffers.jenkins_test_app.chatting.entity;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 
 @Entity
 public class ChatRoom
 {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
     @Column(name = "chatroom_name")
     private String chatroomName;
 
-    @Column(name = "alarm")
-    private boolean isAlarmOn;
-
     public ChatRoom()
     {
     }
 
-    public ChatRoom(String chatroomName, boolean isAlarmOn)
+    public ChatRoom(String chatroomName)
     {
         this.chatroomName = chatroomName;
-        this.isAlarmOn = isAlarmOn;
     }
 
     public int getId()
@@ -44,15 +39,5 @@ public class ChatRoom
     public void setChatroomName(String chatroomName)
     {
         this.chatroomName = chatroomName;
-    }
-
-    public boolean isAlarmOn()
-    {
-        return isAlarmOn;
-    }
-
-    public void setAlarmOn(boolean alarmOn)
-    {
-        isAlarmOn = alarmOn;
     }
 }

@@ -1,9 +1,6 @@
 package com.ohgiraffers.jenkins_test_app.chatting.entity;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-
+import jakarta.persistence.*;
 
 @Entity
 public class ParticipateMembers
@@ -12,17 +9,28 @@ public class ParticipateMembers
     @Column(name = "user_id")
     private int userId;
 
-    @Column(name = "chatroom_id")
-    private int chatroomId;
+    @ManyToOne
+    @JoinColumn (name = "chatroom_id")
+    private ChatRoom chatroom;
 
     public ParticipateMembers()
     {
     }
 
-    public ParticipateMembers(int userId, int chatroomId)
+    public ParticipateMembers(int userId, ChatRoom chatroom)
     {
         this.userId = userId;
-        this.chatroomId = chatroomId;
+        this.chatroom = chatroom;
+    }
+
+    public ChatRoom getChatroom()
+    {
+        return chatroom;
+    }
+
+    public void setChatroom(ChatRoom chatroom)
+    {
+        this.chatroom = chatroom;
     }
 
     public int getUserId()
@@ -35,13 +43,4 @@ public class ParticipateMembers
         this.userId = userId;
     }
 
-    public int getChatroomId()
-    {
-        return chatroomId;
-    }
-
-    public void setChatroomId(int chatroomId)
-    {
-        this.chatroomId = chatroomId;
-    }
 }
