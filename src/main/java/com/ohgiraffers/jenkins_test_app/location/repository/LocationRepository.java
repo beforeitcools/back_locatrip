@@ -18,4 +18,7 @@ public interface LocationRepository extends JpaRepository<Location, Integer> {
     @Query("SELECT l.id FROM Location l WHERE l.name IN :locationNames")
     List<Integer> findIdByNameList(@Param("locationNames") List<String> locationNames);
 
+    @Query("SELECT l.id FROM Location l WHERE l.name = :locationName")
+    Optional<Integer> findIdByName(@Param("locationName") String locationName);
+
 }

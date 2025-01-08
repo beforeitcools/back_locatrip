@@ -90,4 +90,27 @@ public class LocationController {
         return ResponseEntity.ok(result);
     }
 
+
+    @GetMapping("specificFavorites/{locationName}")
+    public ResponseEntity specificFavorites(@PathVariable(name="locationName") String locationName) {
+
+
+        if(Objects.isNull(locationName)){
+            return ResponseEntity.status(404).body("올바른 값을 전달해주세요.");
+        }
+
+        Users authenticatedUser = securityUtil.getAuthenticatedUser();
+        Integer userId = authenticatedUser.getId();
+
+
+        Map<String, Boolean> result = locationService.selectSpecificFavorite(locationName, userId);
+        System.out.println("result = " + result);
+
+        if(Objects.isNull(result)){
+            return ResponseEntity.status(500).body("해당 장소에 대한 좋아요를 찾을 수 없습니다.");
+        }
+
+        return ResponseEntity.ok(result);
+    }
+
 }

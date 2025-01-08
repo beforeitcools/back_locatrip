@@ -11,6 +11,7 @@ import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.swing.text.html.Option;
 import java.util.*;
 
 @Service
@@ -137,5 +138,34 @@ public class LocationService {
         }
 
         return resultList;
+    }
+
+    public Map<String, Boolean> selectSpecificFavorite(String locationName, Integer userId) {
+        Map<String, Boolean> resultMap = new HashMap<>();
+
+        // locationName이나 userId가 null이면 false 반환
+        if(locationName == null || userId == null) {
+            resultMap.put(locationName != null ? locationName : "unknown", false);
+            System.out.println("resultMap = " + resultMap);
+            return resultMap;
+        }
+
+        Optional<Integer> locationIdOpt = locationRepository.findIdByName(locationName);
+
+        if (locationIdOpt.isEmpty()) {
+            resultMap.put(locationName, false);
+            System.out.println("장소 없음: " + locationName);
+            return resultMap;
+        }
+
+        Integer locationId = locationIdOpt.get();
+        System.out.println("locationId = " + locationId);
+
+        // 즐겨찾기 상태 확인
+        boolean isFavorite = locationFavoriteRepository.findByLocationIdAndUserId(locationId, userId).isPresent();
+        resultMap.put(locationName, isFavorite);
+
+        System.out.println("즐겨찾기 상태: " + (isFavorite ? "저장됨" : "저장 안됨") + " for " + locationName);
+        return resultMap;
     }
 }
