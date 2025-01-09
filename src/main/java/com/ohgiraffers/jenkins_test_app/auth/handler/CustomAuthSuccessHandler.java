@@ -57,7 +57,8 @@ public class CustomAuthSuccessHandler extends SavedRequestAwareAuthenticationSuc
             System.out.println("refresh토큰 저장 성공");
 
             // 정상 로그인 시 사용자 정보와 성공 메시지, 생성된 토큰을 응답에 담습니다.
-            responseMap.put("userInfo",jsonValue);
+            // responseMap.put("userInfo",jsonValue);
+            responseMap.put("userId",user.getId());
             responseMap.put("message","로그인 성공");
             // 생성된 토큰을 HTTP 응답 헤더에 추가합니다.
             // AuthConstants.AUTH_HEADER: 헤더 이름 (예: Authorization)

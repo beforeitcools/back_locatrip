@@ -125,4 +125,14 @@ public class MypageController {
 
         return ResponseEntity.ok(mypageData);
     }
+
+    /**마이페이지 내여행 삭제*/
+    @DeleteMapping("deleteTrip/{tripId}")
+    public ResponseEntity<String> deleteTrip(@PathVariable("tripId") Integer tripId) {
+
+        String result = mypageService.deleteTrip(tripId);
+
+
+        return ResponseEntity.ok(result);
+    }
 }
