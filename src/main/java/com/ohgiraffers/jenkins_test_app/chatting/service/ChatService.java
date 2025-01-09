@@ -35,7 +35,7 @@ public class ChatService
     {
         Users authenticatedUser = securityUtil.getAuthenticatedUser();
         // 테스트용 1
-        List<RecentChatDTO> messages = chatroomRepository.selectRecentMessages(1);
+        List<RecentChatDTO> messages = chatroomRepository.selectRecentMessages(authenticatedUser.getId());
         if(messages == null || messages.isEmpty()){
             return null;
         }

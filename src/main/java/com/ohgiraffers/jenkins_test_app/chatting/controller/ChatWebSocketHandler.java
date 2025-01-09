@@ -12,7 +12,7 @@ import java.util.Set;
 
 public class ChatWebSocketHandler extends TextWebSocketHandler
 {
-    private static Set<WebSocketSession> clients = Collections.synchronizedSet(new HashSet<>());
+    private static final Set<WebSocketSession> clients = Collections.synchronizedSet(new HashSet<>());
 
     @Override
     protected void handleTextMessage(WebSocketSession session, TextMessage message) throws Exception
