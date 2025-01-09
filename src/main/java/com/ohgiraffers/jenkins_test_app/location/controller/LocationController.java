@@ -3,6 +3,7 @@ package com.ohgiraffers.jenkins_test_app.location.controller;
 import com.ohgiraffers.jenkins_test_app.auth.entity.Users;
 import com.ohgiraffers.jenkins_test_app.common.utils.SecurityUtil;
 import com.ohgiraffers.jenkins_test_app.location.entity.Location;
+import com.ohgiraffers.jenkins_test_app.location.entity.LocationFavorite;
 import com.ohgiraffers.jenkins_test_app.location.service.LocationService;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +24,7 @@ public class LocationController {
     @Autowired
     private SecurityUtil securityUtil;
 
+    /**장소 저장*/
     @PostMapping("insert")
     public ResponseEntity insertLocation(@RequestBody Map<String, Object> placeData) {
 
@@ -43,9 +45,9 @@ public class LocationController {
         return ResponseEntity.ok(result);
     }
 
+    /**즐겨찾기 취소*/
     @PostMapping("deleteFavorite")
     public ResponseEntity deleteFavorite(@RequestBody Map<String, Object> placeData) {
-        System.out.println("placeData = " + placeData);
 
         if(Objects.isNull(placeData)){
             return ResponseEntity.status(404).body("올바른 값을 전달해주세요.");
