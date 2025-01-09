@@ -14,10 +14,10 @@ public class Location {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @Column(name = "name")
+    @Column(name = "name", unique = true, nullable = false)
     private String name;
 
-    @Column(name = "address")
+    @Column(name = "address", nullable = false)
     private String address;
 
     @Column(name = "latitude")
@@ -26,7 +26,7 @@ public class Location {
     @Column(name = "longitude")
     private Double longitude;
 
-    @Column(name = "category")
+    @Column(name = "category", nullable = false)
     private String category;
 
     @OneToMany(mappedBy = "locationEntity", cascade = CascadeType.ALL, orphanRemoval = true)

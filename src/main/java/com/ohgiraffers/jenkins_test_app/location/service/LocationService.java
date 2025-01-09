@@ -27,7 +27,7 @@ public class LocationService {
     private UserRepository userRepository;
 
     @Transactional
-    public Location addLocation(Map<String, Object> placeData) {
+    public Location addLocationFavorite(Map<String, Object> placeData) {
         // Location 객체 생성 및 저장
         Location location = new Location();
         location.setName((String) placeData.get("name"));

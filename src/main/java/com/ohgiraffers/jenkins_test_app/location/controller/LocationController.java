@@ -25,8 +25,8 @@ public class LocationController {
     private SecurityUtil securityUtil;
 
     /**장소 저장*/
-    @PostMapping("insert")
-    public ResponseEntity insertLocation(@RequestBody Map<String, Object> placeData) {
+    @PostMapping("insertFavorite")
+    public ResponseEntity insertFavorite(@RequestBody Map<String, Object> placeData) {
 
         if(Objects.isNull(placeData)){
             return ResponseEntity.status(404).body("장소를 입력해주세요.");
@@ -36,7 +36,7 @@ public class LocationController {
 
         placeData.put("userId", authenticatedUser.getId());
 
-        Location result = locationService.addLocation(placeData);
+        Location result = locationService.addLocationFavorite(placeData);
 
         if(Objects.isNull(result)){
             return ResponseEntity.status(500).body("장소 등록에 실패했습니다.");
