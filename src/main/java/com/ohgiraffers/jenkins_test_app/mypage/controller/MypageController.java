@@ -7,6 +7,7 @@ import com.ohgiraffers.jenkins_test_app.auth.dto.UsersDTO;
 import com.ohgiraffers.jenkins_test_app.auth.entity.Users;
 import com.ohgiraffers.jenkins_test_app.common.utils.SecurityUtil;
 import com.ohgiraffers.jenkins_test_app.common.ServerUrlConstants;
+import com.ohgiraffers.jenkins_test_app.mypage.dto.MyTripSummary;
 import com.ohgiraffers.jenkins_test_app.mypage.entity.MyTrip;
 import com.ohgiraffers.jenkins_test_app.mypage.service.MypageService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -107,32 +108,41 @@ public class MypageController {
     /**마이페이지 내여행 로드시*/
     @GetMapping("myTrip")
     public ResponseEntity<Map<String, Object>> getMyTripData() {
-        Map<String, Object> mypageData = new HashMap<>();
+        Map<String, Object> myTripData = new HashMap<>();
 
         Users authenticatedUser = securityUtil.getAuthenticatedUser();
-        List<MyTrip> myTripList = mypageService.getMyTrips(authenticatedUser.getId());
+        List<MyTripSummary> myTripList = mypageService.getMyTrips(authenticatedUser.getId());
 
-        List<MyTrip> futureTrips = myTripList.stream()
+        List<MyTripSummary> futureTrips = myTripList.stream()
                 .filter(trip -> trip.getStartDate().isAfter(LocalDate.now()))
+                .sorted(Comparator.comparing(MyTripSummary::getStartDate))
                 .collect(Collectors.toList());
 
-        List<MyTrip> pastTrips = myTripList.stream()
+        List<MyTripSummary> pastTrips = myTripList.stream()
                 .filter(trip -> trip.getStartDate().isBefore(LocalDate.now()))
+                .sorted(Comparator.comparing(MyTripSummary::getStartDate))
                 .collect(Collectors.toList());
 
-        mypageData.put("futureTrips", futureTrips);
-        mypageData.put("pastTrips", pastTrips);
+        System.out.println("controller layer: " + futureTrips);
+        System.out.println("controller layer: " + pastTrips);
 
-        return ResponseEntity.ok(mypageData);
+        myTripData.put("futureTrips", futureTrips);
+        myTripData.put("pastTrips", pastTrips);
+
+        return ResponseEntity.ok(myTripData);
     }
 
     /**마이페이지 내여행 삭제*/
-    @DeleteMapping("deleteTrip/{tripId}")
+    @PostMapping("deleteTrip/{tripId}")
     public ResponseEntity<String> deleteTrip(@PathVariable("tripId") Integer tripId) {
 
-        String result = mypageService.deleteTrip(tripId);
-
-
-        return ResponseEntity.ok(result);
+        try{
+            String result = mypageService.deleteTrip(tripId);
+            if (result.contains("성공")) {
+                return ResponseEntity.ok(result);
+            } else return ResponseEntity.status(500).body(result);
+        }catch (Exception e){
+            return ResponseEntity.status(500).body(e.getMessage());
+        }
     }
 }

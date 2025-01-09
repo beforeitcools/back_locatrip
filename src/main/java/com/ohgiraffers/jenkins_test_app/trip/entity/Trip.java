@@ -45,6 +45,9 @@ public class Trip {
     @Column(name = "chatting_id")
     private Integer chattingId;
 
+    @Column(name = "status")
+    private Integer status;
+
     @OneToMany(mappedBy = "tripEntity", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<SelectedRegion> selectedRegions = new ArrayList<>();
 
@@ -52,7 +55,7 @@ public class Trip {
     public Trip() {
     }
 
-    public Trip(Integer id, int userId, String title, LocalDate startDate, LocalDate endDate, LocalDateTime createdAt, LocalDateTime updatedAt, Integer chattingId) {
+    public Trip(Integer id, int userId, String title, LocalDate startDate, LocalDate endDate, LocalDateTime createdAt, LocalDateTime updatedAt, Integer chattingId, Integer status) {
         this.id = id;
         this.userId = userId;
         this.title = title;
@@ -61,6 +64,7 @@ public class Trip {
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
         this.chattingId = chattingId;
+        this.status = status;
     }
 
     public Integer getId() {
@@ -127,6 +131,14 @@ public class Trip {
         this.chattingId = chattingId;
     }
 
+    public Integer getStatus() {
+        return status;
+    }
+
+    public void setStatus(Integer status) {
+        this.status = status;
+    }
+
     public List<SelectedRegion> getSelectedRegions() {
         return selectedRegions;
     }
@@ -145,6 +157,7 @@ public class Trip {
                 ", createdAt=" + createdAt +
                 ", updatedAt=" + updatedAt +
                 ", chattingId=" + chattingId +
+                ", status=" + status +
                 '}';
     }
 }
