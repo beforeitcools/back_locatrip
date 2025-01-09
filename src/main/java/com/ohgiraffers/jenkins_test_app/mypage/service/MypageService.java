@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Objects;
 
 @Service
 public class MypageService {
@@ -42,5 +43,14 @@ public class MypageService {
 
     public List<MyTrip> getMyTrips(Integer userId) {
         return myTripRepository.findMyTripsByUserId(userId);
+    }
+
+    public String deleteTrip(Integer tripId) {
+        Object tripToDelete = myTripRepository.findById(tripId);
+        if(Objects.isNull(tripToDelete)){
+            return "삭제할 여행이 없습니다.";
+        }
+        myTripRepository.deleteById(tripId);
+        return "삭제 성공";
     }
 }
