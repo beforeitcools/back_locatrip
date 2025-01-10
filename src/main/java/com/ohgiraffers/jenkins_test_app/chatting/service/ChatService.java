@@ -35,7 +35,7 @@ public class ChatService
     {
         Users authenticatedUser = securityUtil.getAuthenticatedUser();
         // 테스트용 1
-        List<RecentChatDTO> messages = chatroomRepository.selectRecentMessages(1);
+        List<RecentChatDTO> messages = chatroomRepository.selectRecentMessages(authenticatedUser.getId());
         if(messages == null || messages.isEmpty()){
             return null;
         }
@@ -101,14 +101,10 @@ public class ChatService
 
     public void saveMessage(Messages message)
     {
-        Users authenticatedUser = securityUtil.getAuthenticatedUser();
-        message.setUserId(authenticatedUser.getId());
         chatRepository.save(message);
     }
 
     public Messages saveAndGetMessage(Messages message){
-        Users authenticatedUser = securityUtil.getAuthenticatedUser();
-        message.setUserId(authenticatedUser.getId());
         Messages savedMessage = chatRepository.save(message);
         return savedMessage;
     }
