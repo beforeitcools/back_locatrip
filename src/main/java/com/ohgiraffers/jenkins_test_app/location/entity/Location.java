@@ -14,10 +14,13 @@ public class Location {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @Column(name = "name")
+    @Column(name = "google_id", unique = true, nullable = false)
+    private String googleId;
+
+    @Column(name = "name", nullable = false)
     private String name;
 
-    @Column(name = "address")
+    @Column(name = "address", nullable = false)
     private String address;
 
     @Column(name = "latitude")
@@ -26,7 +29,7 @@ public class Location {
     @Column(name = "longitude")
     private Double longitude;
 
-    @Column(name = "category")
+    @Column(name = "category", nullable = false)
     private String category;
 
     @OneToMany(mappedBy = "locationEntity", cascade = CascadeType.ALL, orphanRemoval = true)
@@ -35,13 +38,15 @@ public class Location {
     public Location() {
     }
 
-    public Location(Integer id, String name, String address, Double latitude, Double longitude, String category) {
+    public Location(Integer id, String googleId, String name, String address, Double latitude, Double longitude, String category, List<LocationFavorite> favorites) {
         this.id = id;
+        this.googleId = googleId;
         this.name = name;
         this.address = address;
         this.latitude = latitude;
         this.longitude = longitude;
         this.category = category;
+        this.favorites = favorites;
     }
 
     public Integer getId() {
@@ -50,6 +55,14 @@ public class Location {
 
     public void setId(Integer id) {
         this.id = id;
+    }
+
+    public String getGoogleId() {
+        return googleId;
+    }
+
+    public void setGoogleId(String googleId) {
+        this.googleId = googleId;
     }
 
     public String getName() {
@@ -104,6 +117,7 @@ public class Location {
     public String toString() {
         return "Location{" +
                 "id=" + id +
+                ", googleId='" + googleId + '\'' +
                 ", name='" + name + '\'' +
                 ", address='" + address + '\'' +
                 ", latitude=" + latitude +

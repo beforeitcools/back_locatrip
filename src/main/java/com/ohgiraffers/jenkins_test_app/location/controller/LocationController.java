@@ -3,6 +3,7 @@ package com.ohgiraffers.jenkins_test_app.location.controller;
 import com.ohgiraffers.jenkins_test_app.auth.entity.Users;
 import com.ohgiraffers.jenkins_test_app.common.utils.SecurityUtil;
 import com.ohgiraffers.jenkins_test_app.location.entity.Location;
+import com.ohgiraffers.jenkins_test_app.location.entity.LocationFavorite;
 import com.ohgiraffers.jenkins_test_app.location.service.LocationService;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,18 +24,22 @@ public class LocationController {
     @Autowired
     private SecurityUtil securityUtil;
 
-    @PostMapping("insert")
-    public ResponseEntity insertLocation(@RequestBody Map<String, Object> placeData) {
+    /**장소 저장/즐겨찾기저장*/
+    @PostMapping("insertFavorite")
+    public ResponseEntity insertFavorite(@RequestBody Map<String, Object> placeData) {
 
         if(Objects.isNull(placeData)){
             return ResponseEntity.status(404).body("장소를 입력해주세요.");
         }
 
+        System.out.println("placeData = " + placeData);
+
         Users authenticatedUser = securityUtil.getAuthenticatedUser();
 
         placeData.put("userId", authenticatedUser.getId());
 
-        Location result = locationService.addLocation(placeData);
+        Location result = locationService.addLocationFavorite(placeData);
+        System.out.println("result!! = " + result);
 
         if(Objects.isNull(result)){
             return ResponseEntity.status(500).body("장소 등록에 실패했습니다.");
@@ -43,21 +48,21 @@ public class LocationController {
         return ResponseEntity.ok(result);
     }
 
+    /**즐겨찾기 취소*/
     @PostMapping("deleteFavorite")
-    public ResponseEntity deleteFavorite(@RequestBody Map<String, Object> placeData) {
-        System.out.println("placeData = " + placeData);
+    public ResponseEntity deleteFavorite(@RequestBody String googleId) {
 
-        if(Objects.isNull(placeData)){
+        if(Objects.isNull(googleId)){
             return ResponseEntity.status(404).body("올바른 값을 전달해주세요.");
         }
 
         Users authenticatedUser = securityUtil.getAuthenticatedUser();
 
-        placeData.put("userId", authenticatedUser.getId());
-        System.out.println("placeData = " + placeData);
+        /*placeData.put("userId", authenticatedUser.getId());*/
+        System.out.println("googleId = " + googleId);
+        Integer userId = authenticatedUser.getId();
 
-
-        boolean isDeleted = locationService.deleteFavorite(placeData);
+        boolean isDeleted = locationService.deleteFavorite(googleId, userId);
 
 
         if(!isDeleted){

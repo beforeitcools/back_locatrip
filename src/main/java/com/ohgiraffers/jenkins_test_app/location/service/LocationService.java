@@ -27,29 +27,32 @@ public class LocationService {
     private UserRepository userRepository;
 
     @Transactional
-    public Location addLocation(Map<String, Object> placeData) {
+    public Location addLocationFavorite(Map<String, Object> placeData) {
         // Location 객체 생성 및 저장
         Location location = new Location();
+        location.setGoogleId((String) placeData.get("googleId"));
         location.setName((String) placeData.get("name"));
         location.setAddress((String) placeData.get("address"));
         location.setLatitude((Double) placeData.get("latitude"));
         location.setLongitude((Double) placeData.get("longitude"));
         location.setCategory((String) placeData.get("category"));
 
+        System.out.println("placeData = " + placeData);
+
         // 장소 중복 확인
-        Optional<Location> existingLocation = locationRepository.findByNameAndAddress(
-                location.getName(), location.getAddress()
-        );
+        Optional<Location> existingLocation = locationRepository.findByGoogleId(location.getGoogleId());
 
         if (existingLocation.isPresent()) {
             location = existingLocation.get();  // 기존 장소 사용
         } else {
             location = locationRepository.save(location);  // 새 장소 저장
+
         }
 
         // 사용자 조회
         Integer userId = (Integer) placeData.get("userId");
         Optional<Users> userOptional = userRepository.findById(userId);
+
 
         if (userOptional.isEmpty()) {
             throw new RuntimeException("User not found with id: " + userId);
@@ -67,29 +70,30 @@ public class LocationService {
             locationFavoriteRepository.save(locationFavorite);
         }
 
+
         return location;
     }
 
-    public boolean deleteFavorite(Map<String, Object> placeData) {
+    @Transactional
+    public boolean deleteFavorite(String googleId, Integer userId) {
 
-        if(placeData == null){
+        if(googleId == null || userId == null){
             return false;
         }
 
         Location location = new Location();
-        location.setName((String) placeData.get("name"));
-        location.setAddress((String) placeData.get("address"));
+
 
         // 장소 중복 확인
-        Optional<Location> existingLocation = locationRepository.findByNameAndAddress(
+        /*Optional<Location> existingLocation = locationRepository.findByNameAndAddress(
                 location.getName(), location.getAddress()
-        );
+        );*/
+        Optional<Location> existingLocation = locationRepository.findByGoogleId(googleId);
 
         Integer locationId = existingLocation.isPresent() ? existingLocation.get().getId() : 0;
 
 
         // 사용자 조회
-        Integer userId = (Integer) placeData.get("userId");
         Optional<Users> userOptional = userRepository.findById(userId);
 
         if (userOptional.isEmpty()) {
