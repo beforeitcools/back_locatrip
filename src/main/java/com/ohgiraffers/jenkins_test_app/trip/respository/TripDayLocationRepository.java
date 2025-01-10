@@ -5,9 +5,11 @@ import com.ohgiraffers.jenkins_test_app.trip.entity.TripDayLocation;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -22,5 +24,6 @@ public interface TripDayLocationRepository extends JpaRepository<TripDayLocation
     @Query("UPDATE TripDayLocation t SET t.orderIndex = t.orderIndex - 1 WHERE t.tripId = :tripId AND t.date = :date AND t.orderIndex > :deletedOrderIndex")
     void shiftOrderIndexAfterDeletion(Integer tripId, LocalDate date, Integer deletedOrderIndex);
 
-
+    @Query("SELECT t FROM TripDayLocation t WHERE t.tripId = :tripId")
+    List<TripDayLocation> findByTripId(@Param("tripId") Integer tripId);
 }

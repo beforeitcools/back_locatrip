@@ -12,6 +12,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -27,7 +29,7 @@ public class TripDayLocationService {
 
     /**날짜별 장소 추가*/
     @Transactional
-    public TripDayLocation addLocationToTripDay(Map<String, Object> data) {
+    public TripDayLocation addTripDayLocation(Map<String, Object> data) {
 
         TripDayLocation tripDayLocation = new TripDayLocation();
         Location location = new Location();
@@ -99,5 +101,19 @@ public class TripDayLocationService {
     }
 
 
+    /**조회*/
+    public List<TripDayLocation> selectTripDayLocation(Integer tripId) {
 
+        if(tripId == null){
+            return null;
+        }
+
+        List<TripDayLocation> resultList = tripDayLocationRepository.findByTripId(tripId);
+        System.out.println("resultList = " + resultList);
+        if(resultList == null){
+            return null;
+        }
+
+        return resultList;
+    }
 }

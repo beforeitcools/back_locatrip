@@ -7,13 +7,12 @@ import com.ohgiraffers.jenkins_test_app.trip.entity.TripDayLocation;
 import com.ohgiraffers.jenkins_test_app.trip.service.TripDayLocationService;
 import com.ohgiraffers.jenkins_test_app.trip.service.TripService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Map;
 
 @Controller
@@ -35,11 +34,24 @@ public class TripDayLocationController {
         System.out.println("data = " + data);
 
 
-        TripDayLocation tripDayLocation = tripDayLocationService.addLocationToTripDay(data);
+        TripDayLocation tripDayLocation = tripDayLocationService.addTripDayLocation(data);
         if(tripDayLocation == null){
             return ResponseEntity.status(500).body("등록에 실패했습니다.");
         }
         System.out.println("tripDayLocation = " + tripDayLocation);
+        return ResponseEntity.ok(tripDayLocation);
+    }
+
+    @GetMapping("selectTripDayLocation/{tripId}")
+    public ResponseEntity selectTripDayLocation(@PathVariable(name="tripId") Integer tripId) {
+        System.out.println("백까진 와");
+
+        System.out.println("!tripId = " + tripId);
+        List<TripDayLocation> tripDayLocation = tripDayLocationService.selectTripDayLocation(tripId);
+        if(tripDayLocation == null){
+            return ResponseEntity.status(500).body("조회에 실패했습니다.");
+        }
+        System.out.println("!결과보낸다 !tripDayLocation = " + tripDayLocation);
         return ResponseEntity.ok(tripDayLocation);
     }
 }

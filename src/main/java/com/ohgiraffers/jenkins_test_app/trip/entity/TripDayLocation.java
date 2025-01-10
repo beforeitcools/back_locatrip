@@ -40,22 +40,22 @@ public class TripDayLocation {
     private Integer expenseId;
 
     // 연관관계 매핑
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "trip_id", insertable = false, updatable = false)
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "trip_id",  referencedColumnName = "id", insertable = false, updatable = false)
     private Trip trip;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "location_id", insertable = false, updatable = false)
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "location_id", referencedColumnName = "id", insertable = false, updatable = false)
     private Location location;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "expense_id", insertable = false, updatable = false)
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "expense_id", referencedColumnName = "id", insertable = false, updatable = false)
     private Expense expense;
 
     public TripDayLocation() {
     }
 
-    public TripDayLocation(Integer id, Integer tripId, Integer locationId, LocalDate date, LocalTime visitTime, int orderIndex, String memo, Integer expenseId, Trip trip, Location location, Expense expense) {
+    public TripDayLocation(Integer id, Integer tripId, Integer locationId, LocalDate date, LocalTime visitTime, int orderIndex, String memo, Integer expenseId) {
         this.id = id;
         this.tripId = tripId;
         this.locationId = locationId;
@@ -64,9 +64,6 @@ public class TripDayLocation {
         this.orderIndex = orderIndex;
         this.memo = memo;
         this.expenseId = expenseId;
-        this.trip = trip;
-        this.location = location;
-        this.expense = expense;
     }
 
     public Integer getId() {
