@@ -24,7 +24,7 @@ public class LocationController {
     @Autowired
     private SecurityUtil securityUtil;
 
-    /**장소 저장*/
+    /**장소 저장/즐겨찾기저장*/
     @PostMapping("insertFavorite")
     public ResponseEntity insertFavorite(@RequestBody Map<String, Object> placeData) {
 
@@ -32,11 +32,14 @@ public class LocationController {
             return ResponseEntity.status(404).body("장소를 입력해주세요.");
         }
 
+        System.out.println("placeData = " + placeData);
+
         Users authenticatedUser = securityUtil.getAuthenticatedUser();
 
         placeData.put("userId", authenticatedUser.getId());
 
         Location result = locationService.addLocationFavorite(placeData);
+        System.out.println("result!! = " + result);
 
         if(Objects.isNull(result)){
             return ResponseEntity.status(500).body("장소 등록에 실패했습니다.");
@@ -47,19 +50,19 @@ public class LocationController {
 
     /**즐겨찾기 취소*/
     @PostMapping("deleteFavorite")
-    public ResponseEntity deleteFavorite(@RequestBody Map<String, Object> placeData) {
+    public ResponseEntity deleteFavorite(@RequestBody String googleId) {
 
-        if(Objects.isNull(placeData)){
+        if(Objects.isNull(googleId)){
             return ResponseEntity.status(404).body("올바른 값을 전달해주세요.");
         }
 
         Users authenticatedUser = securityUtil.getAuthenticatedUser();
 
-        placeData.put("userId", authenticatedUser.getId());
-        System.out.println("placeData = " + placeData);
+        /*placeData.put("userId", authenticatedUser.getId());*/
+        System.out.println("googleId = " + googleId);
+        Integer userId = authenticatedUser.getId();
 
-
-        boolean isDeleted = locationService.deleteFavorite(placeData);
+        boolean isDeleted = locationService.deleteFavorite(googleId, userId);
 
 
         if(!isDeleted){

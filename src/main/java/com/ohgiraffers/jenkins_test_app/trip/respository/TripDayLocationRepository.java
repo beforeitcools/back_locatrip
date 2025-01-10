@@ -15,7 +15,7 @@ public interface TripDayLocationRepository extends JpaRepository<TripDayLocation
 
     // 등록 시 장소순서 확인
     @Query("SELECT COALESCE(MAX(t.orderIndex), 0) FROM TripDayLocation t WHERE t.tripId = :tripId AND t.date = :date")
-    Integer findMaxOrderIndexByTripIdAndDate(Integer tripId, LocalDate date);
+    int findMaxOrderIndexByTripIdAndDate(Integer tripId, LocalDate date);
 
     // 지우는 숫자보다 큰 숫자는 지워짐
     @Modifying

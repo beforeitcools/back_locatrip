@@ -14,7 +14,10 @@ public class Location {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @Column(name = "name", unique = true, nullable = false)
+    @Column(name = "google_id", unique = true, nullable = false)
+    private String googleId;
+
+    @Column(name = "name", nullable = false)
     private String name;
 
     @Column(name = "address", nullable = false)
@@ -35,13 +38,15 @@ public class Location {
     public Location() {
     }
 
-    public Location(Integer id, String name, String address, Double latitude, Double longitude, String category) {
+    public Location(Integer id, String googleId, String name, String address, Double latitude, Double longitude, String category, List<LocationFavorite> favorites) {
         this.id = id;
+        this.googleId = googleId;
         this.name = name;
         this.address = address;
         this.latitude = latitude;
         this.longitude = longitude;
         this.category = category;
+        this.favorites = favorites;
     }
 
     public Integer getId() {
@@ -50,6 +55,14 @@ public class Location {
 
     public void setId(Integer id) {
         this.id = id;
+    }
+
+    public String getGoogleId() {
+        return googleId;
+    }
+
+    public void setGoogleId(String googleId) {
+        this.googleId = googleId;
     }
 
     public String getName() {
@@ -104,6 +117,7 @@ public class Location {
     public String toString() {
         return "Location{" +
                 "id=" + id +
+                ", googleId='" + googleId + '\'' +
                 ", name='" + name + '\'' +
                 ", address='" + address + '\'' +
                 ", latitude=" + latitude +

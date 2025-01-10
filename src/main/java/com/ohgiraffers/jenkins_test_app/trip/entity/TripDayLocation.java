@@ -1,5 +1,6 @@
 package com.ohgiraffers.jenkins_test_app.trip.entity;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.ohgiraffers.jenkins_test_app.expense.entity.Expense;
 import com.ohgiraffers.jenkins_test_app.location.entity.Location;
 import jakarta.persistence.*;
@@ -21,9 +22,11 @@ public class TripDayLocation {
     @Column(name = "location_id", nullable = false)
     private Integer locationId;
 
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     @Column(name = "date", nullable = false)
     private LocalDate date;
 
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "HH:mm:ss")
     @Column(name = "visit_time")
     private LocalTime visitTime;
 
