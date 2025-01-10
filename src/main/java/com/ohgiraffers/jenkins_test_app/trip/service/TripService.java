@@ -5,16 +5,20 @@ import com.ohgiraffers.jenkins_test_app.trip.entity.SelectedRegion;
 import com.ohgiraffers.jenkins_test_app.trip.entity.Trip;
 import com.ohgiraffers.jenkins_test_app.trip.respository.SelectedRegionRepository;
 import com.ohgiraffers.jenkins_test_app.trip.respository.TripRepository;
+import com.ohgiraffers.jenkins_test_app.trip.common.ConvertStringToDate;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
 
+
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
 import java.util.Objects;
 import java.util.Optional;
+
+import static com.ohgiraffers.jenkins_test_app.trip.common.ConvertStringToDate.convertStringToDate;
 
 @Service
 public class TripService {
@@ -24,26 +28,12 @@ public class TripService {
     @Autowired
     SelectedRegionRepository selectedRegionRepository;
 
-    // 날짜 변환 로직 (공통 메서드로 분리)
-    private LocalDate convertStringToDate(String dateString) {
-        try {
-            if (dateString == null || dateString.isEmpty()) {
-                return null;
-            }
-            String parsedDate = dateString.split("T")[0];
-            return LocalDate.parse(parsedDate);
-        } catch (DateTimeParseException e) {
-            throw new IllegalArgumentException("Invalid date format: " + dateString, e);
-        }
-    }
-
 
     @Transactional
     public Trip addTrip(TripDTO trip) {
         if (trip == null || trip.getTitle() == null || trip.getRegions() == null) {
             throw new IllegalArgumentException("Invalid TripDTO input");
         }
-
 
         // String -> LocalDate 변환
         LocalDate startDate = convertStringToDate(trip.getStartDate());
@@ -55,6 +45,8 @@ public class TripService {
         newTrip.setStartDate(startDate);
         newTrip.setEndDate(endDate);
         newTrip.setChattingId(null);
+        newTrip.setStatus(1);
+
 
         try {
             Trip savedTrip = tripRepository.save(newTrip);
@@ -76,7 +68,7 @@ public class TripService {
             return Optional.empty();
         }
 
-        Optional<Trip> trip = tripRepository.findById(id);
+        Optional<Trip> trip = tripRepository.findActiveTripById(id);
 
 
         return trip;
