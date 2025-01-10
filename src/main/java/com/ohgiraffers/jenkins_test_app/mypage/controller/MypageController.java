@@ -7,8 +7,9 @@ import com.ohgiraffers.jenkins_test_app.auth.dto.UsersDTO;
 import com.ohgiraffers.jenkins_test_app.auth.entity.Users;
 import com.ohgiraffers.jenkins_test_app.common.utils.SecurityUtil;
 import com.ohgiraffers.jenkins_test_app.common.ServerUrlConstants;
-import com.ohgiraffers.jenkins_test_app.mypage.dto.MyTripSummary;
-import com.ohgiraffers.jenkins_test_app.mypage.entity.MyTrip;
+import com.ohgiraffers.jenkins_test_app.mypage.dto.MyAdviceSummaryDTO;
+import com.ohgiraffers.jenkins_test_app.mypage.dto.MyPostSummaryDTO;
+import com.ohgiraffers.jenkins_test_app.mypage.dto.MyTripSummaryDTO;
 import com.ohgiraffers.jenkins_test_app.mypage.service.MypageService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -111,16 +112,16 @@ public class MypageController {
         Map<String, Object> myTripData = new HashMap<>();
 
         Users authenticatedUser = securityUtil.getAuthenticatedUser();
-        List<MyTripSummary> myTripList = mypageService.getMyTrips(authenticatedUser.getId());
+        List<MyTripSummaryDTO> myTripList = mypageService.getMyTrips(authenticatedUser.getId());
 
-        List<MyTripSummary> futureTrips = myTripList.stream()
+        List<MyTripSummaryDTO> futureTrips = myTripList.stream()
                 .filter(trip -> trip.getStartDate().isAfter(LocalDate.now()))
-                .sorted(Comparator.comparing(MyTripSummary::getStartDate))
+                .sorted(Comparator.comparing(MyTripSummaryDTO::getStartDate))
                 .collect(Collectors.toList());
 
-        List<MyTripSummary> pastTrips = myTripList.stream()
+        List<MyTripSummaryDTO> pastTrips = myTripList.stream()
                 .filter(trip -> trip.getStartDate().isBefore(LocalDate.now()))
-                .sorted(Comparator.comparing(MyTripSummary::getStartDate))
+                .sorted(Comparator.comparing(MyTripSummaryDTO::getStartDate))
                 .collect(Collectors.toList());
 
         System.out.println("controller layer: " + futureTrips);
@@ -145,4 +146,45 @@ public class MypageController {
             return ResponseEntity.status(500).body(e.getMessage());
         }
     }
+
+//    /**마이페이지 내여행 로드시*/
+//    @GetMapping("myFavorites/{userId}")
+//    public ResponseEntity<Map<String, Object>> getMyFavoritesData(@PathVariable("userId") Integer userId) {
+//
+//        Map<String, Object> myFavoritesList = mypageService.getMyFavoritesData(userId);
+//
+//        /*List<MyTripSummary> futureTrips = myTripList.stream()
+//                .filter(trip -> trip.getStartDate().isAfter(LocalDate.now()))
+//                .sorted(Comparator.comparing(MyTripSummary::getStartDate))
+//                .collect(Collectors.toList());
+//
+//        List<MyTripSummary> pastTrips = myTripList.stream()
+//                .filter(trip -> trip.getStartDate().isBefore(LocalDate.now()))
+//                .sorted(Comparator.comparing(MyTripSummary::getStartDate))
+//                .collect(Collectors.toList());
+//
+//        System.out.println("controller layer: " + futureTrips);
+//        System.out.println("controller layer: " + pastTrips);*/
+//
+//
+//        return ResponseEntity.ok(myFavoritesList);
+//    }
+
+    /**마이페이지 내포스트 로드시*/
+    @GetMapping("myPost/{userId}")
+    public ResponseEntity<List> getMyTripData(@PathVariable("userId") Integer userId) {
+
+        List<MyPostSummaryDTO> myPostList = mypageService.getMyPosts(userId);
+
+        return ResponseEntity.ok(myPostList);
+    }
+
+//    /**마이페이지 내첨삭 로드시*/
+//    @GetMapping("myAdvice/{userId}")
+//    public ResponseEntity<List> getMyAdviceData(@PathVariable("userId") Integer userId) {
+//
+//        List<MyAdviceSummaryDTO> myAdviceList = mypageService.getMyAdvices(userId);
+//
+//        return ResponseEntity.ok(myAdviceList);
+//    }
 }

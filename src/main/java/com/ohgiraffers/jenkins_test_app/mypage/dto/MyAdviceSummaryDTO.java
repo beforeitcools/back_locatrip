@@ -1,40 +1,41 @@
 package com.ohgiraffers.jenkins_test_app.mypage.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-
 import java.time.LocalDate;
 
-public class MyTripSummary {
+public class MyAdviceSummaryDTO {
 
-    private Integer tripId;
+    private Integer adviceId;
     private String title;
+    private String nickname;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy.MM.dd")
     private LocalDate startDate;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy.MM.dd")
     private LocalDate endDate;
-    private Long memberCount;               // 나 빼고
+    private String region;
     private Long regionCount;
-    private boolean isCreator;        // 여행 만든 유저인지 초대받은 멤버인지(true: creator, false: member)
+    private int isSelected;
 
-    public MyTripSummary() {
+    public MyAdviceSummaryDTO() {
     }
 
-    public MyTripSummary(Integer tripId, String title, LocalDate startDate, LocalDate endDate, Long memberCount, Long regionCount, boolean isCreator) {
-        this.tripId = tripId;
+    public MyAdviceSummaryDTO(Integer adviceId, String title, String nickname, LocalDate startDate, LocalDate endDate, String region, Long regionCount, int isSelected) {
+        this.adviceId = adviceId;
         this.title = title;
+        this.nickname = nickname;
         this.startDate = startDate;
         this.endDate = endDate;
-        this.memberCount = memberCount;
+        this.region = region;
         this.regionCount = regionCount;
-        this.isCreator = isCreator;
+        this.isSelected = isSelected;
     }
 
-    public Integer getTripId() {
-        return tripId;
+    public Integer getAdviceId() {
+        return adviceId;
     }
 
-    public void setTripId(Integer tripId) {
-        this.tripId = tripId;
+    public void setAdviceId(Integer adviceId) {
+        this.adviceId = adviceId;
     }
 
     public String getTitle() {
@@ -43,6 +44,14 @@ public class MyTripSummary {
 
     public void setTitle(String title) {
         this.title = title;
+    }
+
+    public String getNickname() {
+        return nickname;
+    }
+
+    public void setNickname(String nickname) {
+        this.nickname = nickname;
     }
 
     public LocalDate getStartDate() {
@@ -61,12 +70,12 @@ public class MyTripSummary {
         this.endDate = endDate;
     }
 
-    public Long getMemberCount() {
-        return memberCount;
+    public String getRegion() {
+        return region;
     }
 
-    public void setMemberCount(Long memberCount) {
-        this.memberCount = memberCount;
+    public void setRegion(String region) {
+        this.region = region;
     }
 
     public Long getRegionCount() {
@@ -77,24 +86,25 @@ public class MyTripSummary {
         this.regionCount = regionCount;
     }
 
-    public boolean getIsCreator() {
-        return isCreator;
+    public int getIsSelected() {
+        return isSelected;
     }
 
-    public void setIsCreator(boolean isCreator) {
-        this.isCreator = isCreator;
+    public void setIsSelected(int isSelected) {
+        this.isSelected = isSelected;
     }
 
     @Override
     public String toString() {
-        return "MyTripSummary{" +
-                "tripId=" + tripId +
+        return "MyAdviceSummaryDTO{" +
+                "adviceId=" + adviceId +
                 ", title='" + title + '\'' +
+                ", nickname='" + nickname + '\'' +
                 ", startDate=" + startDate +
                 ", endDate=" + endDate +
-                ", memberCount=" + memberCount +
+                ", region='" + region + '\'' +
                 ", regionCount=" + regionCount +
-                ", isCreator=" + isCreator +
+                ", isSelected=" + isSelected +
                 '}';
     }
 }

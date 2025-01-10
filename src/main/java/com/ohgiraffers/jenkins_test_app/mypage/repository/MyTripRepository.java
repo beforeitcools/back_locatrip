@@ -1,6 +1,7 @@
 package com.ohgiraffers.jenkins_test_app.mypage.repository;
 
-import com.ohgiraffers.jenkins_test_app.mypage.dto.MyTripSummary;
+import com.ohgiraffers.jenkins_test_app.mypage.dto.MyAdviceSummaryDTO;
+import com.ohgiraffers.jenkins_test_app.mypage.dto.MyTripSummaryDTO;
 import com.ohgiraffers.jenkins_test_app.mypage.entity.MyTrip;
 import com.ohgiraffers.jenkins_test_app.trip.entity.Trip;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -17,13 +18,13 @@ public interface MyTripRepository extends JpaRepository<Trip, Integer> {
 
 
     @Query("""
-    SELECT new com.ohgiraffers.jenkins_test_app.mypage.dto.MyTripSummary(
+    SELECT new com.ohgiraffers.jenkins_test_app.mypage.dto.MyTripSummaryDTO(
         t.id, 
         t.title, 
         t.startDate, 
         t.endDate, 
-        COUNT(DISTINCT tu.user.id), 
-        COUNT(DISTINCT sr.region),
+        COUNT(tu.user.id), 
+        COUNT(sr.region),
         true
     )
     FROM Trip t
@@ -32,17 +33,17 @@ public interface MyTripRepository extends JpaRepository<Trip, Integer> {
     WHERE t.userId = :userId AND t.status = 1
     GROUP BY t.id
 """)
-    List<MyTripSummary> findTripsOwnedByUser(@Param("userId") Integer userId);
+    List<MyTripSummaryDTO> findTripsOwnedByUser(@Param("userId") Integer userId);
 
 
     @Query("""
-    SELECT new com.ohgiraffers.jenkins_test_app.mypage.dto.MyTripSummary(
+    SELECT new com.ohgiraffers.jenkins_test_app.mypage.dto.MyTripSummaryDTO(
         t.id, 
         t.title, 
         t.startDate, 
         t.endDate, 
-        COUNT(DISTINCT tu.user.id), 
-        COUNT(DISTINCT sr.region),
+        COUNT(tu.user.id), 
+        COUNT(sr.region),
         false
     )
     FROM Trip t
@@ -52,5 +53,8 @@ public interface MyTripRepository extends JpaRepository<Trip, Integer> {
     WHERE tuUser.user.id = :userId AND t.userId != :userId AND t.status = 1
     GROUP BY t.id
 """)
-    List<MyTripSummary> findTripsWhereImMember(@Param("userId") Integer userId);
+    List<MyTripSummaryDTO> findTripsWhereImMember(@Param("userId") Integer userId);
+
+
+
 }
