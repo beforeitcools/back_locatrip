@@ -1,7 +1,6 @@
 package com.ohgiraffers.jenkins_test_app.location.repository;
 
 
-import com.ohgiraffers.jenkins_test_app.location.dto.LocationDTO;
 import com.ohgiraffers.jenkins_test_app.location.entity.Location;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -22,6 +21,9 @@ public interface LocationRepository extends JpaRepository<Location, Integer> {
     @Query("SELECT l.id FROM Location l WHERE l.name = :locationName")
     Optional<Integer> findIdByName(@Param("locationName") String locationName);
 
+    @Query("SELECT l FROM Location l WHERE l.googleId = :googleId")
+    Optional<Location> findByGoogleId(@Param("googleId") String googleId);
+
 
     /*@Query("""
     SELECT new com.ohgiraffers.jenkins_test_app.location.dto.LocationDTO(
@@ -36,4 +38,5 @@ public interface LocationRepository extends JpaRepository<Location, Integer> {
     GROUP BY t.id
 """)*/
 //    List<LocationDTO> getMyFavoriteLocationsData(@Param("userId") Integer userId);
+
 }

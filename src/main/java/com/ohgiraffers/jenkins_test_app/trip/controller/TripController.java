@@ -27,7 +27,6 @@ public class TripController {
     /** 일정 생성 */
     @PostMapping("insert")
     public ResponseEntity addTrip(@RequestBody TripDTO trip) {
-
         
         if(Objects.isNull(trip)){
             return ResponseEntity.status(404).body("일정 내용을 입력해주세요.");

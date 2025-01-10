@@ -38,7 +38,7 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
 
         // 권한이 필요 없는 URL 리스트
         List<String> roleLeessList = Arrays.asList(
-                "/auth/signup", "/auth/login", "/auth/checkUserId", "/auth/checkNickname", "/auth/logout", "/auth/refreshAccessToken"
+                "/auth/signup", "/auth/login", "/auth/checkUserId", "/auth/checkNickname", "/auth/logout", "/auth/refreshAccessToken", "/chattingServer"
         );
 
 

@@ -11,7 +11,7 @@ import jakarta.persistence.*;
 public class LocationFavorite {
 
     @Id
-    @Column(name = "location_id")
+    @Column(name = "location_id", nullable = false)
     private Integer locationId;
 
     @Id
