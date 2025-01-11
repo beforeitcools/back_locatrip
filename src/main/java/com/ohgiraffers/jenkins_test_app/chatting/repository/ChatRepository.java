@@ -14,9 +14,6 @@ import java.util.List;
 @Repository
 public interface ChatRepository extends JpaRepository<Messages, Integer>
 {
-    @Query(value = "SELECT m FROM Messages m WHERE m.chatroom.id = :chatroomId")
-    List<Messages> selectChatsByChatroomId(@PathVariable("chatroomId") int chatroomId);
-
     void findByMessageContents(@Param("keyword") String keyword);
 
 //    Integer getUnreadMessagesCount(int chatroomId, int userId);

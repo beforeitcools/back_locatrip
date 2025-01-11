@@ -2,9 +2,12 @@ package com.ohgiraffers.jenkins_test_app.chatting.controller;
 
 import com.ohgiraffers.jenkins_test_app.chatting.dto.RecentChatDTO;
 import com.ohgiraffers.jenkins_test_app.chatting.entity.Messages;
+import com.ohgiraffers.jenkins_test_app.chatting.service.ChatHistoryService;
 import com.ohgiraffers.jenkins_test_app.chatting.service.ChatService;
+import com.ohgiraffers.jenkins_test_app.chatting.service.ChatroomService;
 import com.ohgiraffers.jenkins_test_app.common.utils.SecurityUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -14,16 +17,13 @@ import java.util.List;
 public class ChatHistoryController
 {
     @Autowired
-    private ChatService chatService;
-
-    @Autowired
-    private SecurityUtil securityUtil;
+    private ChatHistoryService chatHistoryService;
 
     @GetMapping("/recent")
     public List<RecentChatDTO> selectAllChats()
     {
         //List<RecentChatDTO> messages = chatService.selectRecentMessages();
-        List<RecentChatDTO> messages =chatService.selectRecentMessagesByUserId();
+        List<RecentChatDTO> messages = chatHistoryService.selectRecentMessagesByUserId();
         System.out.println(messages);
         return messages;
     }
@@ -31,13 +31,10 @@ public class ChatHistoryController
     @GetMapping("/{chatroomId}")
     public List<Messages> selectChatsByUserId(@PathVariable("chatroomId") int chatroomId)
     {
+        // 채팅방 내의 메세지들 불러오는 로직
+
         System.out.println("chatroomId = " + chatroomId);
-        List<Messages> messages = chatService.selectChatsByChatroomId(chatroomId);
+        List<Messages> messages = chatHistoryService.selectChatsByChatroomId(chatroomId);
         return messages;
     }
-
-//    @GetMapping("/unread/count")
-//    public Integer getUnreadMessagesCount(int chatroomId, int userId){
-//        return chatService.getUnreadMessagesCount(chatroomId, userId);
-//    }
 }

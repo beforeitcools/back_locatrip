@@ -1,8 +1,10 @@
 package com.ohgiraffers.jenkins_test_app.chatting.controller;
 
+import com.ohgiraffers.jenkins_test_app.chatting.dto.UnreadMessageCountDTO;
 import com.ohgiraffers.jenkins_test_app.chatting.entity.Messages;
 import com.ohgiraffers.jenkins_test_app.chatting.service.ChatService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
@@ -31,13 +33,6 @@ public class ChatController
         chatService.saveMessage(message);
     }
 
-    @RequestMapping(value = "/updateRoom/{chatroomId}", method = RequestMethod.POST)
-    public void editChatroomName(@PathVariable("chatroomId") int chatroomId, @RequestBody String chatroomName)
-    {
-        System.out.println("room name change 하는 로직");
-        chatService.updateChatroomName(chatroomId, chatroomName);
-    }
-
     @PostMapping("/createChatooom")
     public void createChatooom()
     {
@@ -50,5 +45,11 @@ public class ChatController
     {
 //        System.out.println("채팅방 나가기");
 //        chatService.goOutAtChatroom(chatroomId, userId);
+    }
+
+    @GetMapping("/unread/count")
+    public ResponseEntity<Integer> getUnreadMessagesCount(@RequestParam int chatroomId){
+        int unreadCount = chatService.getUnreadMessagesCount(chatroomId);
+        return ResponseEntity.ok(unreadCount);
     }
 }

@@ -23,42 +23,7 @@ public class ChatService
     private ChatRepository chatRepository;
 
     @Autowired
-    private ChatroomRepository chatroomRepository;
-
-    @Autowired
-    private ParticipateRepository participateRepository;
-
-    @Autowired
     private SecurityUtil securityUtil;
-
-    public List<RecentChatDTO> selectRecentMessagesByUserId()
-    {
-        Users authenticatedUser = securityUtil.getAuthenticatedUser();
-        // 테스트용 1
-        List<RecentChatDTO> messages = chatroomRepository.selectRecentMessages(authenticatedUser.getId());
-        if(messages == null || messages.isEmpty()){
-            return null;
-        }
-        return messages;
-    }
-
-    public List<Messages> selectChatsByChatroomId(int chatroomId)
-    {
-        List<Messages> messages = chatRepository.selectChatsByChatroomId(chatroomId);
-        return(messages == null || messages.isEmpty() ? null : messages);
-    }
-
-    public void updateChatroomName(int chatroomId, String chatroomName)
-    {
-        Optional<ChatRoom> chatroomOptional = chatroomRepository.findById(chatroomId);
-        if (chatroomOptional.isPresent()) {
-            ChatRoom chatroom = chatroomOptional.get();
-            chatroom.setChatroomName(chatroomName);
-            chatroomRepository.save(chatroom);
-        } else {
-            throw new RuntimeException("Chatroom not found with ID: " + chatroomId);
-        }
-    }
 
 //    public void goOutAtChatroom(int chatroomId, int userId)
 //    {
@@ -66,37 +31,16 @@ public class ChatService
 //        participateRepository.delete(new ParticipateMembers(userId, chatroomId));
 //    }
 
-    public void createNewChatroom(int chatroomId, String chatroomName)
-    {
-        //새로운 채팅방 생성
-        // 1. 일정에서 가져오기
-        //    chatroomName = 일정제목
-        //    제일 처음 누르는 채팅방 들어가기 누르는 사람만 채팅방에 존재
-        //    일대일, 일대다 가능
-
-        // 2. 현지인과 대화
-        //    chatroomName = 내가 대화하고 있는 사람 닉네임, 이름
-        //    1:1 대화
-
-        Optional<ChatRoom> chatroomOptional = chatroomRepository.findById(chatroomId);
-        if (chatroomId == 0 ||chatroomOptional.isPresent()) {
-            chatroomRepository.save(new ChatRoom(chatroomName));
-
-        }
-        else {
-
-        }
-    }
 
 //    public void insertParticipateMember(int chatroomId, int userId)
 //    {
 //        participateRepository.save(new ParticipateMembers(userId, chatroomId));
 //    }
 
-    public void searchAllInChatPage(String keyword)
+    public void searchChatsByKeyword(String keyword)
     {
         chatRepository.findByMessageContents(keyword);
-        chatroomRepository.findByChatroomName(keyword);
+        //chatroomRepository.findByChatroomName(keyword); // 컨트롤러에서 해줘야지!!
     }
 
     public void saveMessage(Messages message)
@@ -109,12 +53,17 @@ public class ChatService
         return savedMessage;
     }
 
-//    public Integer getUnreadMessagesCount(int chatroomId, int userId)
-//    {
-//        Integer result = 0;
-//        result = chatRepository.getUnreadMessagesCount(chatroomId, userId);
-//        return result;
-//    }
+    public Integer getUnreadMessagesCount(int chatroomId)
+    {
+        // 안 읽은 메세지 가져오기
+        Users authenticatedUser = securityUtil.getAuthenticatedUser();
+        //return chatRepository.countByReadStatus(chatroomId, authenticatedUser.getId(), false);
+        return 1;
+    }
+
+    public void updateReadState(int chatroomId){
+
+    }
 
 //    public List<RecentChatDTO> selectRecentMessages()
 //    {
