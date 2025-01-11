@@ -1,5 +1,6 @@
 package com.ohgiraffers.jenkins_test_app.trip.entity;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
 import org.hibernate.annotations.CreationTimestamp;
@@ -48,14 +49,17 @@ public class Trip {
     @Column(name = "status")
     private Integer status;
 
+    @OneToMany(mappedBy = "trip", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference // 순환 참조 방지
+    private List<TripNote> tripNotes = new ArrayList<>();
+
     @OneToMany(mappedBy = "tripEntity", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<SelectedRegion> selectedRegions = new ArrayList<>();
-
 
     public Trip() {
     }
 
-    public Trip(Integer id, int userId, String title, LocalDate startDate, LocalDate endDate, LocalDateTime createdAt, LocalDateTime updatedAt, Integer chattingId, Integer status) {
+    public Trip(Integer id, int userId, String title, LocalDate startDate, LocalDate endDate, LocalDateTime createdAt, LocalDateTime updatedAt, Integer chattingId, Integer status, List<TripNote> tripNotes, List<SelectedRegion> selectedRegions) {
         this.id = id;
         this.userId = userId;
         this.title = title;
@@ -65,6 +69,8 @@ public class Trip {
         this.updatedAt = updatedAt;
         this.chattingId = chattingId;
         this.status = status;
+        this.tripNotes = tripNotes;
+        this.selectedRegions = selectedRegions;
     }
 
     public Integer getId() {
@@ -139,25 +145,19 @@ public class Trip {
         this.status = status;
     }
 
+    public List<TripNote> getMemos() {
+        return tripNotes;
+    }
+
+    public void setMemos(List<TripNote> tripNotes) {
+        this.tripNotes = tripNotes;
+    }
+
     public List<SelectedRegion> getSelectedRegions() {
         return selectedRegions;
     }
+
     public void setSelectedRegions(List<SelectedRegion> selectedRegions) {
         this.selectedRegions = selectedRegions;
-    }
-
-    @Override
-    public String toString() {
-        return "Trip{" +
-                "id=" + id +
-                ", userId=" + userId +
-                ", title='" + title + '\'' +
-                ", startDate=" + startDate +
-                ", endDate=" + endDate +
-                ", createdAt=" + createdAt +
-                ", updatedAt=" + updatedAt +
-                ", chattingId=" + chattingId +
-                ", status=" + status +
-                '}';
     }
 }

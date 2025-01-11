@@ -16,12 +16,6 @@ public class TripDayLocation {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @Column(name = "trip_id", nullable = false)
-    private Integer tripId;
-
-    @Column(name = "location_id", nullable = false)
-    private Integer locationId;
-
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     @Column(name = "date", nullable = false)
     private LocalDate date;
@@ -39,35 +33,36 @@ public class TripDayLocation {
     @Column(name = "expense_id")
     private Integer expenseId;
 
+    @Column(name = "date_index")
+    private int dateIndex;
+
     // 연관관계 매핑
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "trip_id", insertable = false, updatable = false)
-    private Trip trip;
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "trip_id", referencedColumnName = "id")
+    private Trip trip; // Trip 엔티티 객체로 참조
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "location_id", insertable = false, updatable = false)
-    private Location location;
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "location_id", referencedColumnName = "id")
+    private Location location; // Location 엔티티 객체로 참조
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "expense_id", insertable = false, updatable = false)
-    private Expense expense;
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "expense_id", referencedColumnName = "id", insertable = false, updatable = false)
+    private Expense expense; // Expense 엔티티 객체로 참조
 
     public TripDayLocation() {
     }
 
-    public TripDayLocation(Integer id, Integer tripId, Integer locationId, LocalDate date, LocalTime visitTime, int orderIndex, String memo, Integer expenseId, Trip trip, Location location, Expense expense) {
+    public TripDayLocation(Integer id, LocalDate date, LocalTime visitTime, int orderIndex, String memo, Integer expenseId, int dateIndex) {
         this.id = id;
-        this.tripId = tripId;
-        this.locationId = locationId;
         this.date = date;
         this.visitTime = visitTime;
         this.orderIndex = orderIndex;
         this.memo = memo;
         this.expenseId = expenseId;
-        this.trip = trip;
-        this.location = location;
-        this.expense = expense;
+        this.dateIndex = dateIndex;
     }
+
+
 
     public Integer getId() {
         return id;
@@ -75,22 +70,6 @@ public class TripDayLocation {
 
     public void setId(Integer id) {
         this.id = id;
-    }
-
-    public Integer getTripId() {
-        return tripId;
-    }
-
-    public void setTripId(Integer tripId) {
-        this.tripId = tripId;
-    }
-
-    public Integer getLocationId() {
-        return locationId;
-    }
-
-    public void setLocationId(Integer locationId) {
-        this.locationId = locationId;
     }
 
     public LocalDate getDate() {
@@ -157,20 +136,24 @@ public class TripDayLocation {
         this.expense = expense;
     }
 
+    public int getDateIndex() {
+        return dateIndex;
+    }
+
+    public void setDateIndex(int dateIndex) {
+        this.dateIndex = dateIndex;
+    }
+
     @Override
     public String toString() {
         return "TripDayLocation{" +
                 "id=" + id +
-                ", tripId=" + tripId +
-                ", locationId=" + locationId +
                 ", date=" + date +
                 ", visitTime=" + visitTime +
                 ", orderIndex=" + orderIndex +
                 ", memo='" + memo + '\'' +
                 ", expenseId=" + expenseId +
-                ", trip=" + trip +
-                ", location=" + location +
-                ", expense=" + expense +
+                ", dateIndex=" + dateIndex +
                 '}';
     }
 }

@@ -67,9 +67,9 @@ public class TripService {
         if(Objects.isNull(id)){
             return Optional.empty();
         }
-
+        System.out.println("i!d = " + id);
         Optional<Trip> trip = tripRepository.findActiveTripById(id);
-
+        System.out.println("trip = " + trip);
 
         return trip;
     }

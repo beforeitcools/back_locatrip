@@ -38,7 +38,7 @@ public class Location {
     public Location() {
     }
 
-    public Location(Integer id, String googleId, String name, String address, Double latitude, Double longitude, String category, List<LocationFavorite> favorites) {
+    public Location(Integer id, String googleId, String name, String address, Double latitude, Double longitude, String category) {
         this.id = id;
         this.googleId = googleId;
         this.name = name;
@@ -46,7 +46,6 @@ public class Location {
         this.latitude = latitude;
         this.longitude = longitude;
         this.category = category;
-        this.favorites = favorites;
     }
 
     public Integer getId() {

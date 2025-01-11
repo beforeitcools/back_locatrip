@@ -12,11 +12,12 @@ public class TripDayLocationDTO {
     private int orderIndex;
     private String memo;
     private Integer expenseId;
+    private int dateIndex;
 
     public TripDayLocationDTO() {
     }
 
-    public TripDayLocationDTO(Integer id, Integer tripId, Integer locationId, LocalDate date, LocalTime visitTime, int orderIndex, String memo, Integer expenseId) {
+    public TripDayLocationDTO(Integer id, Integer tripId, Integer locationId, LocalDate date, LocalTime visitTime, int orderIndex, String memo, Integer expenseId, int dateIndex) {
         this.id = id;
         this.tripId = tripId;
         this.locationId = locationId;
@@ -25,6 +26,7 @@ public class TripDayLocationDTO {
         this.orderIndex = orderIndex;
         this.memo = memo;
         this.expenseId = expenseId;
+        this.dateIndex = dateIndex;
     }
 
     public Integer getId() {
@@ -91,6 +93,14 @@ public class TripDayLocationDTO {
         this.expenseId = expenseId;
     }
 
+    public int getDateIndex() {
+        return dateIndex;
+    }
+
+    public void setDateIndex(int dateIndex) {
+        this.dateIndex = dateIndex;
+    }
+
     @Override
     public String toString() {
         return "TripDayLocationDTO{" +
@@ -102,6 +112,7 @@ public class TripDayLocationDTO {
                 ", orderIndex=" + orderIndex +
                 ", memo='" + memo + '\'' +
                 ", expenseId=" + expenseId +
+                ", dateIndex=" + dateIndex +
                 '}';
     }
 }
