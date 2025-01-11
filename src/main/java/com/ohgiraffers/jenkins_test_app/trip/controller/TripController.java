@@ -50,7 +50,7 @@ public class TripController {
     @GetMapping("select/{id}")
     public ResponseEntity selectTrip(@PathVariable(name = "id") Integer id) {
 
-
+        System.out.println("id = " + id);
         if (Objects.isNull(id) || id <= 0) {
             return ResponseEntity.badRequest().body("잘못된 일정 ID입니다.");
         }

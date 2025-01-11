@@ -4,6 +4,7 @@ import com.ohgiraffers.jenkins_test_app.location.dto.LocationDTO;
 import com.ohgiraffers.jenkins_test_app.location.entity.Location;
 import com.ohgiraffers.jenkins_test_app.location.repository.LocationRepository;
 import com.ohgiraffers.jenkins_test_app.trip.dto.TripDayLocationDTO;
+import com.ohgiraffers.jenkins_test_app.trip.entity.Trip;
 import com.ohgiraffers.jenkins_test_app.trip.entity.TripDayLocation;
 import com.ohgiraffers.jenkins_test_app.trip.respository.TripDayLocationRepository;
 import com.ohgiraffers.jenkins_test_app.trip.respository.TripRepository;
@@ -25,13 +26,15 @@ public class TripDayLocationService {
     @Autowired
     LocationRepository locationRepository;
     @Autowired
+    TripRepository tripRepository;
+    @Autowired
     TripDayLocationRepository tripDayLocationRepository;
 
     /**날짜별 장소 추가*/
     @Transactional
     public TripDayLocation addTripDayLocation(Map<String, Object> data) {
 
-        TripDayLocation tripDayLocation = new TripDayLocation();
+
         Location location = new Location();
         location.setGoogleId((String)data.get("googleId"));
         location.setName((String)data.get("name"));
@@ -47,18 +50,21 @@ public class TripDayLocationService {
             location = locationRepository.save(location);  // 새 장소 저장
         }
 
-
+        // Trip 엔티티 조회
         Integer tripId = (Integer) data.get("tripId");
-        LocalDate date = convertStringToDate((String) data.get("date"));
+        Optional<Trip> trip = tripRepository.findById(tripId);
+        if (!trip.isPresent()) {
+            throw new IllegalArgumentException("Trip not found for ID: " + tripId);
+        }
 
+        LocalDate date = convertStringToDate((String) data.get("date"));
         // 해당 날짜의 가장 큰 orderIndex 조회
-        int maxOrderIndex = tripDayLocationRepository.findMaxOrderIndexByTripIdAndDate(tripId, date);
+        int maxOrderIndex = tripDayLocationRepository.findMaxOrderIndexByTripAndDate(trip.get(), date);
         System.out.println("maxOrderIndex = " + maxOrderIndex);
 
-        System.out.println(tripId + " " +  tripDayLocation.getLocationId() + " " + date + " " +  maxOrderIndex+1);
-        // 새로운 장소 추가
-        tripDayLocation.setTripId(tripId);
-        tripDayLocation.setLocationId(location.getId());
+        TripDayLocation tripDayLocation = new TripDayLocation();
+        tripDayLocation.setTrip(trip.get());
+        tripDayLocation.setLocation(location);
         tripDayLocation.setDate(date);
         tripDayLocation.setOrderIndex(maxOrderIndex + 1);
         tripDayLocation.setDateIndex((Integer) data.get("dateIndex"));
@@ -90,31 +96,32 @@ public class TripDayLocationService {
         TripDayLocation tripDayLocation = tripDayLocationRepository.findById(tripDayLocationId)
                 .orElseThrow(() -> new IllegalArgumentException("Invalid TripDayLocation ID"));
 
+
         int deletedOrderIndex = tripDayLocation.getOrderIndex();
         LocalDate date = tripDayLocation.getDate();
-        Integer tripId = tripDayLocation.getTripId();
+
 
         // 장소 삭제
         tripDayLocationRepository.delete(tripDayLocation);
 
         // 순서 재정렬
-        tripDayLocationRepository.shiftOrderIndexAfterDeletion(tripId, date, deletedOrderIndex);
+        tripDayLocationRepository.shiftOrderIndexAfterDeletion(tripDayLocation.getTrip(), date, deletedOrderIndex);
     }
 
 
     /**조회*/
     public List<TripDayLocation> selectTripDayLocation(Integer tripId) {
 
-        if(tripId == null){
+        if (tripId == null) {
             return null;
         }
 
-        List<TripDayLocation> resultList = tripDayLocationRepository.findByTripId(tripId);
-        System.out.println("resultList = " + resultList);
-        if(resultList == null){
-            return null;
+        Optional<Trip> trip = tripRepository.findById(tripId);
+        System.out.println("trip = " + trip);
+        if (trip.isPresent()) {
+            return tripDayLocationRepository.findByTrip(trip.get());
         }
 
-        return resultList;
+        return null;
     }
 }

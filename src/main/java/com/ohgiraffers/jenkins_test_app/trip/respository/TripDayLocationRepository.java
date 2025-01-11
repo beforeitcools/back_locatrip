@@ -16,14 +16,17 @@ import java.util.Optional;
 public interface TripDayLocationRepository extends JpaRepository<TripDayLocation, Integer> {
 
     // 등록 시 장소순서 확인
-    @Query("SELECT COALESCE(MAX(t.orderIndex), 0) FROM TripDayLocation t WHERE t.tripId = :tripId AND t.date = :date")
-    int findMaxOrderIndexByTripIdAndDate(Integer tripId, LocalDate date);
+    @Query("SELECT COALESCE(MAX(t.orderIndex), 0) FROM TripDayLocation t WHERE t.trip = :trip AND t.date = :date")
+    int findMaxOrderIndexByTripAndDate(@Param("trip") Trip trip, @Param("date") LocalDate date);
 
-    // 지우는 숫자보다 큰 숫자는 지워짐
+    // 장소 삭제 시, 지운 순서 이후의 순서들을 재조정
     @Modifying
-    @Query("UPDATE TripDayLocation t SET t.orderIndex = t.orderIndex - 1 WHERE t.tripId = :tripId AND t.date = :date AND t.orderIndex > :deletedOrderIndex")
-    void shiftOrderIndexAfterDeletion(Integer tripId, LocalDate date, Integer deletedOrderIndex);
+    @Query("UPDATE TripDayLocation t SET t.orderIndex = t.orderIndex - 1 WHERE t.trip = :trip AND t.date = :date AND t.orderIndex > :deletedOrderIndex")
+    void shiftOrderIndexAfterDeletion(@Param("trip") Trip trip, @Param("date") LocalDate date, @Param("deletedOrderIndex") Integer deletedOrderIndex);
 
-    @Query("SELECT t FROM TripDayLocation t WHERE t.tripId = :tripId")
-    List<TripDayLocation> findByTripId(@Param("tripId") Integer tripId);
+    // 특정 tripId로 TripDayLocation 목록 조회
+    @Query("SELECT t FROM TripDayLocation t WHERE t.trip = :trip")
+    List<TripDayLocation> findByTrip(@Param("trip") Trip trip);
+
+
 }
