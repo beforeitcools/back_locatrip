@@ -39,6 +39,9 @@ public class TripDayLocation {
     @Column(name = "expense_id")
     private Integer expenseId;
 
+    @Column(name = "date_index")
+    private int dateIndex;
+
     // 연관관계 매핑
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "trip_id",  referencedColumnName = "id", insertable = false, updatable = false)
@@ -55,7 +58,7 @@ public class TripDayLocation {
     public TripDayLocation() {
     }
 
-    public TripDayLocation(Integer id, Integer tripId, Integer locationId, LocalDate date, LocalTime visitTime, int orderIndex, String memo, Integer expenseId) {
+    public TripDayLocation(Integer id, Integer tripId, Integer locationId, LocalDate date, LocalTime visitTime, int orderIndex, String memo, Integer expenseId, int dateIndex) {
         this.id = id;
         this.tripId = tripId;
         this.locationId = locationId;
@@ -64,6 +67,7 @@ public class TripDayLocation {
         this.orderIndex = orderIndex;
         this.memo = memo;
         this.expenseId = expenseId;
+        this.dateIndex = dateIndex;
     }
 
     public Integer getId() {
@@ -154,6 +158,14 @@ public class TripDayLocation {
         this.expense = expense;
     }
 
+    public int getDateIndex() {
+        return dateIndex;
+    }
+
+    public void setDateIndex(int dateIndex) {
+        this.dateIndex = dateIndex;
+    }
+
     @Override
     public String toString() {
         return "TripDayLocation{" +
@@ -165,6 +177,7 @@ public class TripDayLocation {
                 ", orderIndex=" + orderIndex +
                 ", memo='" + memo + '\'' +
                 ", expenseId=" + expenseId +
+                ", dateIndex=" + dateIndex +
                 ", trip=" + trip +
                 ", location=" + location +
                 ", expense=" + expense +

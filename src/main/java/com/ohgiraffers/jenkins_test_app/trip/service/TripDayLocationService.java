@@ -61,6 +61,7 @@ public class TripDayLocationService {
         tripDayLocation.setLocationId(location.getId());
         tripDayLocation.setDate(date);
         tripDayLocation.setOrderIndex(maxOrderIndex + 1);
+        tripDayLocation.setDateIndex((Integer) data.get("dateIndex"));
 
         TripDayLocation result = tripDayLocationRepository.save(tripDayLocation);
         if(result == null){
