@@ -1,20 +1,11 @@
 package com.ohgiraffers.jenkins_test_app.chatting.service;
 
 import com.ohgiraffers.jenkins_test_app.auth.entity.Users;
-import com.ohgiraffers.jenkins_test_app.chatting.dto.MessageDTO;
-import com.ohgiraffers.jenkins_test_app.chatting.dto.RecentChatDTO;
-import com.ohgiraffers.jenkins_test_app.chatting.entity.ChatRoom;
 import com.ohgiraffers.jenkins_test_app.chatting.entity.Messages;
-import com.ohgiraffers.jenkins_test_app.chatting.entity.ParticipateMembers;
 import com.ohgiraffers.jenkins_test_app.chatting.repository.ChatRepository;
-import com.ohgiraffers.jenkins_test_app.chatting.repository.ChatroomRepository;
-import com.ohgiraffers.jenkins_test_app.chatting.repository.ParticipateRepository;
 import com.ohgiraffers.jenkins_test_app.common.utils.SecurityUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
-import java.util.Optional;
 
 @Service
 public class ChatService

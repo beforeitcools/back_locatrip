@@ -3,11 +3,7 @@ package com.ohgiraffers.jenkins_test_app.chatting.controller;
 import com.ohgiraffers.jenkins_test_app.chatting.dto.RecentChatDTO;
 import com.ohgiraffers.jenkins_test_app.chatting.entity.Messages;
 import com.ohgiraffers.jenkins_test_app.chatting.service.ChatHistoryService;
-import com.ohgiraffers.jenkins_test_app.chatting.service.ChatService;
-import com.ohgiraffers.jenkins_test_app.chatting.service.ChatroomService;
-import com.ohgiraffers.jenkins_test_app.common.utils.SecurityUtil;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;

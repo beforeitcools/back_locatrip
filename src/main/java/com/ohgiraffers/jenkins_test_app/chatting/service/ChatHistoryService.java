@@ -4,7 +4,6 @@ import com.ohgiraffers.jenkins_test_app.auth.entity.Users;
 import com.ohgiraffers.jenkins_test_app.chatting.dto.RecentChatDTO;
 import com.ohgiraffers.jenkins_test_app.chatting.entity.Messages;
 import com.ohgiraffers.jenkins_test_app.chatting.repository.ChatHistoryRepository;
-import com.ohgiraffers.jenkins_test_app.chatting.repository.ChatroomRepository;
 import com.ohgiraffers.jenkins_test_app.common.utils.SecurityUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
