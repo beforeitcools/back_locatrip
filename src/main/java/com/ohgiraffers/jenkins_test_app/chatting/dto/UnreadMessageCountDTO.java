@@ -2,7 +2,7 @@ package com.ohgiraffers.jenkins_test_app.chatting.dto;
 
 public class UnreadMessageCountDTO
 {
-    private int chatroomId;
+    private Integer chatroomId;
     private int recipientUserId;
     private int unreadCount;
     // 참여하고 있는 멤버 테이블에 추가해서 구별할 수 있나?

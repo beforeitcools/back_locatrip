@@ -27,11 +27,14 @@ public class Messages
     @Column(name = "is_read")
     private boolean isRead;
 
+    @Column(name = "readCount")
+    private int readCount;
+
     public Messages()
     {
     }
 
-    public Messages(int id, ChatRoom chatroom, int userId, String messageContents, String sendTime, boolean isRead)
+    public Messages(int id, ChatRoom chatroom, int userId, String messageContents, String sendTime, boolean isRead, int readCount)
     {
         this.id = id;
         this.chatroom = chatroom;
@@ -39,6 +42,7 @@ public class Messages
         this.messageContents = messageContents;
         this.sendTime = sendTime;
         this.isRead = isRead;
+        this.readCount = readCount;
     }
 
     public Messages(int id, ChatRoom chatroom, String messageContents, String sendTime, boolean isRead)
@@ -108,5 +112,15 @@ public class Messages
     public void setRead(boolean read)
     {
         isRead = read;
+    }
+
+    public int getReadCount()
+    {
+        return readCount;
+    }
+
+    public void setReadCount(int readCount)
+    {
+        this.readCount = readCount;
     }
 }

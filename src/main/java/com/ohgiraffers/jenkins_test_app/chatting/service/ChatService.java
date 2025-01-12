@@ -31,7 +31,7 @@ public class ChatService
     public void searchChatsByKeyword(String keyword)
     {
         chatRepository.findByMessageContents(keyword);
-        //chatroomRepository.findByChatroomName(keyword); // 컨트롤러에서 해줘야지!!
+        //chatroomRepository.findByChatroomName(keyword);
     }
 
     public void saveMessage(Messages message)
@@ -44,21 +44,21 @@ public class ChatService
         return savedMessage;
     }
 
-    public Integer getUnreadMessagesCount(int chatroomId)
+    public int getUnreadMessagesCount(int chatroomId)
     {
-        // 안 읽은 메세지 가져오기
+        // 안 읽은 메세지 카운트 가져오기
+        // participate_member에서 가장 마지막에 있는 메세지 아이디 들고와서
+        // 해당 아이디보다 큰 메세지들 (채팅룸 아이디 같음) 다 읽었다고 인서트 날려야 함
+        // 만약에 마지막에 있는 메세지 아이디가 없으면
+        // 0으로 넣어주고 시작
+        System.out.println(" *************** STILL IN GET UNREAD MESSAGES COUNT FUNCTION. YOU ARE IN SERVICE ***************");
         Users authenticatedUser = securityUtil.getAuthenticatedUser();
-        //return chatRepository.countByReadStatus(chatroomId, authenticatedUser.getId(), false);
-        return 1;
+        return chatRepository.countByReadStatus(chatroomId, authenticatedUser.getId(), false);
     }
 
-    public void updateReadState(int chatroomId){
-
+    public void updateLastReadMessage(int chatroomId)
+    {
+        Users authenticatedUser = securityUtil.getAuthenticatedUser();
+        chatRepository.updateLastReadMessageId(chatroomId, authenticatedUser.getId());
     }
-
-//    public List<RecentChatDTO> selectRecentMessages()
-//    {
-//        System.out.println("걍 못 찾느 ㄴ다고?");
-//        return chatMapper.selectRecentMessages();
-//    }
 }
