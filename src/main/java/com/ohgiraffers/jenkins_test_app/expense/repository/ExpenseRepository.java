@@ -32,4 +32,7 @@ public interface ExpenseRepository extends JpaRepository<Expense, Integer> {
             "SELECT u.id, u.nickname FROM users_signup u " +
             "WHERE u.id = (SELECT t.userId FROM Trip t WHERE t.id = :tripId)")
     List<Object[]> findUsersAndTripByTripId(@Param("tripId") int tripId);
+
+    @Query("SELECT sr.region FROM SelectedRegion sr WHERE sr.tripId = :tripId")
+    List<Object[]> findTripIdAndRegionByTripId(@Param("tripId") int tripId);
 }
