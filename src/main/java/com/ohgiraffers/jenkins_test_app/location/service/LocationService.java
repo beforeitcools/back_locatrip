@@ -47,7 +47,6 @@ public class LocationService {
             location = existingLocation.get();  // 기존 장소 사용
         } else {
             location = locationRepository.save(location);  // 새 장소 저장
-
         }
 
         // 사용자 조회
@@ -55,6 +54,8 @@ public class LocationService {
         Optional<Users> userOptional = userRepository.findById(userId);
 
         if (userOptional.isEmpty()) {
+            System.out.println("여기 오나????????");
+            System.out.println(userOptional);
             throw new RuntimeException("User not found with id: " + userId);
         }
 
