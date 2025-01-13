@@ -4,6 +4,7 @@ import com.ohgiraffers.jenkins_test_app.auth.entity.Users;
 import com.ohgiraffers.jenkins_test_app.chatting.entity.Messages;
 import com.ohgiraffers.jenkins_test_app.chatting.repository.ChatRepository;
 import com.ohgiraffers.jenkins_test_app.common.utils.SecurityUtil;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -53,12 +54,18 @@ public class ChatService
         // 0으로 넣어주고 시작
         System.out.println(" *************** STILL IN GET UNREAD MESSAGES COUNT FUNCTION. YOU ARE IN SERVICE ***************");
         Users authenticatedUser = securityUtil.getAuthenticatedUser();
-        return chatRepository.countByReadStatus(chatroomId, authenticatedUser.getId(), false);
+        return chatRepository.countByReadStatus(chatroomId, authenticatedUser.getId());
     }
 
+    @Transactional
     public void updateLastReadMessage(int chatroomId)
     {
+        Integer latestMessageId = chatRepository.selectLatestMessageId(chatroomId);
         Users authenticatedUser = securityUtil.getAuthenticatedUser();
-        chatRepository.updateLastReadMessageId(chatroomId, authenticatedUser.getId());
+
+        if(latestMessageId == null || latestMessageId == 0){
+            latestMessageId = 0;
+        }
+        chatRepository.updateLastReadMessageId(chatroomId, authenticatedUser.getId(), latestMessageId);
     }
 }
