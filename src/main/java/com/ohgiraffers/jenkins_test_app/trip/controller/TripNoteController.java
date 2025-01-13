@@ -27,6 +27,7 @@ public class TripNoteController {
         memoDTO.setTripId((Integer) data.get("id"));
         memoDTO.setContent((String) data.get("content"));
         memoDTO.setDateIndex((Integer) data.get("dateIndex"));
+        memoDTO.setSortIndex((Integer) data.get("sortIndex"));
 
         TripNote result = tripNoteService.addMemo(memoDTO);
 

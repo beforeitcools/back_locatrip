@@ -6,11 +6,10 @@ import com.ohgiraffers.jenkins_test_app.trip.entity.Trip;
 import com.ohgiraffers.jenkins_test_app.trip.respository.SelectedRegionRepository;
 import com.ohgiraffers.jenkins_test_app.trip.respository.TripRepository;
 import com.ohgiraffers.jenkins_test_app.trip.common.ConvertStringToDate;
-import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
-
+import org.springframework.transaction.annotation.Transactional;
 
 
 import java.time.LocalDate;
