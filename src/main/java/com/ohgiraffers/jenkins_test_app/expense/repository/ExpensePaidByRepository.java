@@ -12,7 +12,7 @@ import java.util.List;
 public interface ExpensePaidByRepository extends JpaRepository<ExpensePaidBy, Integer> {
     void deleteByExpenseId(int expenseId);
 
-    @Query("SELECT pb.user.id, u.nickname, pb.amount " +
+    @Query("SELECT pb.user.id, u.nickname, u.profilePic, pb.amount " +
             "FROM ExpensePaidBy pb JOIN pb.user u " +
             "WHERE pb.expense.id = :expenseId")
     List<Object[]> findPaidByUsersWithNickname(@Param("expenseId") int expenseId);
