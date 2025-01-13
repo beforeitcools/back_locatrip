@@ -7,9 +7,10 @@ import com.ohgiraffers.jenkins_test_app.location.entity.LocationFavoriteId;
 import com.ohgiraffers.jenkins_test_app.location.repository.LocationFavoriteRepository;
 import com.ohgiraffers.jenkins_test_app.location.repository.LocationRepository;
 
-import jakarta.transaction.Transactional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.swing.text.html.Option;
 import java.util.*;
@@ -46,7 +47,6 @@ public class LocationService {
             location = existingLocation.get();  // 기존 장소 사용
         } else {
             location = locationRepository.save(location);  // 새 장소 저장
-
         }
 
         // 사용자 조회
@@ -55,6 +55,8 @@ public class LocationService {
 
 
         if (userOptional.isEmpty()) {
+            System.out.println("여기 오나????????");
+            System.out.println(userOptional);
             throw new RuntimeException("User not found with id: " + userId);
         }
 
