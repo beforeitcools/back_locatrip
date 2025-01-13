@@ -3,6 +3,8 @@ package com.ohgiraffers.jenkins_test_app.chatting.controller;
 import com.ohgiraffers.jenkins_test_app.chatting.entity.Messages;
 import com.ohgiraffers.jenkins_test_app.chatting.service.ChatService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.repository.query.Param;
+import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
@@ -18,24 +20,19 @@ public class ChatController
     private ChatService chatService;
 
     @MessageMapping("/sendMessage")
-    @SendTo("/topic/messages")
+    @SendTo("/topic/unreadCount")
     public Messages handleMessage(Messages message)
     {
-        // 데이터베이스에서 메세지 저장
+        System.out.println("저기요 이거 타세요? ChatController.handleMessage");
         return chatService.saveAndGetMessage(message);
     }
 
     @RequestMapping(value = "/sendMessage", method = RequestMethod.POST)
     public void sendMessage(@RequestBody Messages message)
     {
+        // 데이터베이스에서 메세지 저장
         chatService.saveMessage(message);
-    }
-
-    @RequestMapping(value = "/updateRoom/{chatroomId}", method = RequestMethod.POST)
-    public void editChatroomName(@PathVariable("chatroomId") int chatroomId, @RequestBody String chatroomName)
-    {
-        System.out.println("room name change 하는 로직");
-        chatService.updateChatroomName(chatroomId, chatroomName);
+        // 여기서 UnreadMessageCountDTO를 굳이 리턴해줄 필요가 있낭
     }
 
     @PostMapping("/createChatooom")
@@ -50,5 +47,20 @@ public class ChatController
     {
 //        System.out.println("채팅방 나가기");
 //        chatService.goOutAtChatroom(chatroomId, userId);
+    }
+
+    @RequestMapping(value = "/unread/count", method = RequestMethod.GET)
+    public int getUnreadMessagesCount(@Param("chatroomId") int chatroomId)
+    {
+        System.out.println(" *************** GET UNREAD MESSAGES COUNT FUNCTION ***************");
+        int unreadCount = chatService.getUnreadMessagesCount(chatroomId);
+        return unreadCount;
+    }
+
+    @RequestMapping(value = "/updateLastMessage/{chatroomId}", method = RequestMethod.POST)
+    public void updateUnreadMessageId(@PathVariable("chatroomId") int chatroomId)
+    {
+        System.out.println(" *************** UPDATE UNREAD MESSAGE ID FUNCTION ***************");
+        chatService.updateLastReadMessage(chatroomId);
     }
 }
