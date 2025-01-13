@@ -7,9 +7,10 @@ import com.ohgiraffers.jenkins_test_app.location.entity.LocationFavoriteId;
 import com.ohgiraffers.jenkins_test_app.location.repository.LocationFavoriteRepository;
 import com.ohgiraffers.jenkins_test_app.location.repository.LocationRepository;
 
-import jakarta.transaction.Transactional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.swing.text.html.Option;
 import java.util.*;
@@ -52,7 +53,6 @@ public class LocationService {
         // 사용자 조회
         Integer userId = (Integer) placeData.get("userId");
         Optional<Users> userOptional = userRepository.findById(userId);
-
 
         if (userOptional.isEmpty()) {
             throw new RuntimeException("User not found with id: " + userId);

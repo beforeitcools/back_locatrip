@@ -8,9 +8,9 @@ import com.ohgiraffers.jenkins_test_app.trip.entity.Trip;
 import com.ohgiraffers.jenkins_test_app.trip.entity.TripDayLocation;
 import com.ohgiraffers.jenkins_test_app.trip.respository.TripDayLocationRepository;
 import com.ohgiraffers.jenkins_test_app.trip.respository.TripRepository;
-import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -33,7 +33,6 @@ public class TripDayLocationService {
     /**날짜별 장소 추가*/
     @Transactional
     public TripDayLocation addTripDayLocation(Map<String, Object> data) {
-
 
         Location location = new Location();
         location.setGoogleId((String)data.get("googleId"));
@@ -68,6 +67,7 @@ public class TripDayLocationService {
         tripDayLocation.setDate(date);
         tripDayLocation.setOrderIndex(maxOrderIndex + 1);
         tripDayLocation.setDateIndex((Integer) data.get("dateIndex"));
+        tripDayLocation.setSortIndex((Integer) data.get("sortIndex"));
 
         TripDayLocation result = tripDayLocationRepository.save(tripDayLocation);
         if(result == null){
