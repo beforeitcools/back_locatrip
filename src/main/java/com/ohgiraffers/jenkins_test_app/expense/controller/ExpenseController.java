@@ -118,4 +118,9 @@ public class ExpenseController {
         return ResponseEntity.noContent().build();
     }
 
+    @GetMapping("/trip/{tripId}/region")
+    public ResponseEntity<List<Object[]>> getRegionByTripId(@PathVariable int tripId){
+        List<Object[]> region = expenseService.getRegionByTripId(tripId);
+        return ResponseEntity.ok(region);
+    }
 }

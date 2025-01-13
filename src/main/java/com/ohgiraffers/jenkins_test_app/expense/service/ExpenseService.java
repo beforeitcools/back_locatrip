@@ -152,7 +152,8 @@ public class ExpenseService {
                 .map(row -> new ExpensePaidByDTO(
                         (Integer) row[0],
                         (String) row[1],
-                        (BigDecimal) row[2]
+                        (String) row[2],
+                        (BigDecimal) row[3]
                 ))
                 .collect(Collectors.toList());
 
@@ -238,6 +239,10 @@ public class ExpenseService {
         } catch (Exception e) {
             throw new RuntimeException("Failed to delete expense: " + e.getMessage());
         }
+    }
+
+    public List<Object[]> getRegionByTripId(int tripId) {
+        return expenseRepository.findTripIdAndRegionByTripId(tripId);
     }
 
 }
