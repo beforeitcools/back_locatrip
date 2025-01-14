@@ -35,13 +35,6 @@ public class ChatController
         // 여기서 UnreadMessageCountDTO를 굳이 리턴해줄 필요가 있낭
     }
 
-    @PostMapping("/createChatooom")
-    public void createChatooom()
-    {
-        // 새로운 채팅방 생성
-
-    }
-
     @PostMapping("/goOut/{chatroomId}")
     public void goOutAtChatroom(@PathVariable("chatroomId") int chatroomId, int userId)
     {
