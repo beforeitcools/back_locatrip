@@ -86,7 +86,7 @@ public class TokenUtils {
     public static Claims getClaimsFromToken(String token){
 //  Jwts.parser()와 parseClaimsJws(token)는 JWT의 유효성을 검증합니다. 만약 JWT가 유효하지 않으면 예외가 발생합니다.
         // JWT 파서를 사용하여 토큰을 파싱합니다. // 서명 검증을 위한 비밀 키 설정
-        System.out.println("여기까진 오냐??");
+        System.out.println("여기까진 오냐?? tokenUtil이란다 token 문제다 이말이야~");
         return Jwts.parser().setSigningKey(DatatypeConverter.parseBase64Binary(jwtSecretKey))
                 // 토큰을 파싱하고 JWS(서명된 JWT)를 처리합니다.
                 .parseClaimsJws(token).getBody(); // 토큰의 페이로드(Claims)를 반환합니다.
