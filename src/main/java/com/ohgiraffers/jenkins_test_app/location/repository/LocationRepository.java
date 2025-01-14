@@ -2,6 +2,7 @@ package com.ohgiraffers.jenkins_test_app.location.repository;
 
 
 import com.ohgiraffers.jenkins_test_app.location.entity.Location;
+import com.ohgiraffers.jenkins_test_app.mypage.dto.MyFavoriteLocationSummaryDTO;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -25,18 +26,17 @@ public interface LocationRepository extends JpaRepository<Location, Integer> {
     Optional<Location> findByGoogleId(@Param("googleId") String googleId);
 
 
-    /*@Query("""
-    SELECT new com.ohgiraffers.jenkins_test_app.location.dto.LocationDTO(
+    @Query("""
+    SELECT new com.ohgiraffers.jenkins_test_app.mypage.dto.MyFavoriteLocationSummaryDTO(
+        l.googleId,
         l.name,
-        l.address
+        l.address,
+        true
     )
     FROM Location l
-    JOIN TripUsers tuUser ON t.id = tuUser.trip.id
-    LEFT JOIN TripUsers tu ON t.id = tu.trip.id
-    LEFT JOIN SelectedRegion sr ON t.id = sr.tripEntity.id
-    WHERE tuUser.user.id = :userId AND t.userId != :userId AND t.status = 1
-    GROUP BY t.id
-""")*/
-//    List<LocationDTO> getMyFavoriteLocationsData(@Param("userId") Integer userId);
+    JOIN LocationFavorite lf ON l.id = lf.locationId 
+    WHERE lf.userId = :userId
+""")
+    List<MyFavoriteLocationSummaryDTO> getMyFavoriteLocationsData(@Param("userId") Integer userId);
 
 }

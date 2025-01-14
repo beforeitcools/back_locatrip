@@ -3,6 +3,7 @@ package com.ohgiraffers.jenkins_test_app.mypage.controller;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.ohgiraffers.jenkins_test_app.advice.entity.PostFavorite;
 import com.ohgiraffers.jenkins_test_app.auth.dto.UsersDTO;
 import com.ohgiraffers.jenkins_test_app.auth.entity.Users;
 import com.ohgiraffers.jenkins_test_app.common.utils.SecurityUtil;
@@ -10,6 +11,7 @@ import com.ohgiraffers.jenkins_test_app.common.ServerUrlConstants;
 import com.ohgiraffers.jenkins_test_app.mypage.dto.MyAdviceSummaryDTO;
 import com.ohgiraffers.jenkins_test_app.mypage.dto.MyPostSummaryDTO;
 import com.ohgiraffers.jenkins_test_app.mypage.dto.MyTripSummaryDTO;
+import com.ohgiraffers.jenkins_test_app.mypage.dto.PostFavoriteDTO;
 import com.ohgiraffers.jenkins_test_app.mypage.service.MypageService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -147,28 +149,40 @@ public class MypageController {
         }
     }
 
-//    /**마이페이지 내여행 로드시*/
-//    @GetMapping("myFavorites/{userId}")
-//    public ResponseEntity<Map<String, Object>> getMyFavoritesData(@PathVariable("userId") Integer userId) {
-//
-//        Map<String, Object> myFavoritesList = mypageService.getMyFavoritesData(userId);
-//
-//        /*List<MyTripSummary> futureTrips = myTripList.stream()
-//                .filter(trip -> trip.getStartDate().isAfter(LocalDate.now()))
-//                .sorted(Comparator.comparing(MyTripSummary::getStartDate))
-//                .collect(Collectors.toList());
-//
-//        List<MyTripSummary> pastTrips = myTripList.stream()
-//                .filter(trip -> trip.getStartDate().isBefore(LocalDate.now()))
-//                .sorted(Comparator.comparing(MyTripSummary::getStartDate))
-//                .collect(Collectors.toList());
-//
-//        System.out.println("controller layer: " + futureTrips);
-//        System.out.println("controller layer: " + pastTrips);*/
-//
-//
-//        return ResponseEntity.ok(myFavoritesList);
-//    }
+    /**마이페이지 내저장 로드시*/
+    @GetMapping("myFavorite/{userId}")
+    public ResponseEntity<Map<String, Object>> getMyFavoriteData(@PathVariable("userId") Integer userId) {
+
+        Map<String, Object> myFavoriteList = mypageService.getMyFavorites(userId);
+
+        return ResponseEntity.ok(myFavoriteList);
+    }
+
+    /**마이페이지 내저장게시글 insert*/
+    @PostMapping("insertFavoritePost")
+    public ResponseEntity insertFavoritePost(@RequestBody PostFavoriteDTO postFavoriteDTO) {
+
+        Object result = mypageService.insertFavoritePost(postFavoriteDTO);
+
+        if(result instanceof PostFavorite){
+            return ResponseEntity.ok(result);
+        } else return ResponseEntity.status(500).body(result);
+    }
+
+    /**마이페이지 내저장게시글 delete*/
+    @PostMapping("deleteFavoritePost")
+    public ResponseEntity deleteFavoritePost(@RequestBody PostFavoriteDTO postFavoriteDTO) {
+        Map<String, String> response = new HashMap<>();
+
+        if(mypageService.deleteFavoritePost(postFavoriteDTO)){
+            response.put("message", "게시글 좋아요 삭제 성공");
+            return ResponseEntity.ok(response);
+        } else {
+            response.put("message", "저장되어 있지 않은 게시글 입니다.");
+            return ResponseEntity.status(500).body(response);
+        }
+    }
+
 
     /**마이페이지 내포스트 로드시*/
     @GetMapping("myPost/{userId}")
@@ -178,6 +192,32 @@ public class MypageController {
 
         return ResponseEntity.ok(myPostList);
     }
+
+    /**마이페이지 현지인 인증하기 로드시*/
+    @GetMapping("myLocalArea/{userId}")
+    public ResponseEntity<Users> getMyLocalAreaAuthData(@PathVariable("userId") Integer userId) {
+
+        Users authenticatedUser = securityUtil.getAuthenticatedUser();
+
+        return ResponseEntity.ok(authenticatedUser);
+    }
+
+    /**마이페이지 현지인 인증하기 update*/
+    @PostMapping("updateMyLocalArea")
+    public ResponseEntity updateMyLocalArea(@RequestBody UsersDTO usersDTO) {
+        Map<String, String> response = new HashMap<>();
+        Object result = mypageService.updateMyLocalArea(usersDTO);
+
+        if(result instanceof Users){
+            return ResponseEntity.ok(result);
+        } else {
+            response.put("message", "현지인 인증 db추가 실패");
+            System.out.println("현지인 인증 db추가 실패");
+            return ResponseEntity.status(500).body(response);
+        }
+    }
+
+
 
 //    /**마이페이지 내첨삭 로드시*/
 //    @GetMapping("myAdvice/{userId}")
