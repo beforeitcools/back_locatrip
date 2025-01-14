@@ -43,7 +43,6 @@ public class Users {
     @Column(name = "local_area")
     private String localArea;
 
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     @Column(name = "local_area_auth_date")
     private LocalDateTime localAreaAuthDate;
 
