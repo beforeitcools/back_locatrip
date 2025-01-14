@@ -1,20 +1,12 @@
 package com.ohgiraffers.jenkins_test_app.chatting.service;
 
 import com.ohgiraffers.jenkins_test_app.auth.entity.Users;
-import com.ohgiraffers.jenkins_test_app.chatting.dto.MessageDTO;
-import com.ohgiraffers.jenkins_test_app.chatting.dto.RecentChatDTO;
-import com.ohgiraffers.jenkins_test_app.chatting.entity.ChatRoom;
 import com.ohgiraffers.jenkins_test_app.chatting.entity.Messages;
-import com.ohgiraffers.jenkins_test_app.chatting.entity.ParticipateMembers;
 import com.ohgiraffers.jenkins_test_app.chatting.repository.ChatRepository;
-import com.ohgiraffers.jenkins_test_app.chatting.repository.ChatroomRepository;
-import com.ohgiraffers.jenkins_test_app.chatting.repository.ParticipateRepository;
 import com.ohgiraffers.jenkins_test_app.common.utils.SecurityUtil;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
-import java.util.Optional;
 
 @Service
 public class ChatService
@@ -23,42 +15,7 @@ public class ChatService
     private ChatRepository chatRepository;
 
     @Autowired
-    private ChatroomRepository chatroomRepository;
-
-    @Autowired
-    private ParticipateRepository participateRepository;
-
-    @Autowired
     private SecurityUtil securityUtil;
-
-    public List<RecentChatDTO> selectRecentMessagesByUserId()
-    {
-        Users authenticatedUser = securityUtil.getAuthenticatedUser();
-        // 테스트용 1
-        List<RecentChatDTO> messages = chatroomRepository.selectRecentMessages(authenticatedUser.getId());
-        if(messages == null || messages.isEmpty()){
-            return null;
-        }
-        return messages;
-    }
-
-    public List<Messages> selectChatsByChatroomId(int chatroomId)
-    {
-        List<Messages> messages = chatRepository.selectChatsByChatroomId(chatroomId);
-        return(messages == null || messages.isEmpty() ? null : messages);
-    }
-
-    public void updateChatroomName(int chatroomId, String chatroomName)
-    {
-        Optional<ChatRoom> chatroomOptional = chatroomRepository.findById(chatroomId);
-        if (chatroomOptional.isPresent()) {
-            ChatRoom chatroom = chatroomOptional.get();
-            chatroom.setChatroomName(chatroomName);
-            chatroomRepository.save(chatroom);
-        } else {
-            throw new RuntimeException("Chatroom not found with ID: " + chatroomId);
-        }
-    }
 
 //    public void goOutAtChatroom(int chatroomId, int userId)
 //    {
@@ -66,37 +23,16 @@ public class ChatService
 //        participateRepository.delete(new ParticipateMembers(userId, chatroomId));
 //    }
 
-    public void createNewChatroom(int chatroomId, String chatroomName)
-    {
-        //새로운 채팅방 생성
-        // 1. 일정에서 가져오기
-        //    chatroomName = 일정제목
-        //    제일 처음 누르는 채팅방 들어가기 누르는 사람만 채팅방에 존재
-        //    일대일, 일대다 가능
-
-        // 2. 현지인과 대화
-        //    chatroomName = 내가 대화하고 있는 사람 닉네임, 이름
-        //    1:1 대화
-
-        Optional<ChatRoom> chatroomOptional = chatroomRepository.findById(chatroomId);
-        if (chatroomId == 0 ||chatroomOptional.isPresent()) {
-            chatroomRepository.save(new ChatRoom(chatroomName));
-
-        }
-        else {
-
-        }
-    }
 
 //    public void insertParticipateMember(int chatroomId, int userId)
 //    {
 //        participateRepository.save(new ParticipateMembers(userId, chatroomId));
 //    }
 
-    public void searchAllInChatPage(String keyword)
+    public void searchChatsByKeyword(String keyword)
     {
         chatRepository.findByMessageContents(keyword);
-        chatroomRepository.findByChatroomName(keyword);
+        //chatroomRepository.findByChatroomName(keyword);
     }
 
     public void saveMessage(Messages message)
@@ -109,16 +45,27 @@ public class ChatService
         return savedMessage;
     }
 
-//    public Integer getUnreadMessagesCount(int chatroomId, int userId)
-//    {
-//        Integer result = 0;
-//        result = chatRepository.getUnreadMessagesCount(chatroomId, userId);
-//        return result;
-//    }
+    public int getUnreadMessagesCount(int chatroomId)
+    {
+        // 안 읽은 메세지 카운트 가져오기
+        // participate_member에서 가장 마지막에 있는 메세지 아이디 들고와서
+        // 해당 아이디보다 큰 메세지들 (채팅룸 아이디 같음) 다 읽었다고 인서트 날려야 함
+        // 만약에 마지막에 있는 메세지 아이디가 없으면
+        // 0으로 넣어주고 시작
+        System.out.println(" *************** STILL IN GET UNREAD MESSAGES COUNT FUNCTION. YOU ARE IN SERVICE ***************");
+        Users authenticatedUser = securityUtil.getAuthenticatedUser();
+        return chatRepository.countByReadStatus(chatroomId, authenticatedUser.getId());
+    }
 
-//    public List<RecentChatDTO> selectRecentMessages()
-//    {
-//        System.out.println("걍 못 찾느 ㄴ다고?");
-//        return chatMapper.selectRecentMessages();
-//    }
+    @Transactional
+    public void updateLastReadMessage(int chatroomId)
+    {
+        Integer latestMessageId = chatRepository.selectLatestMessageId(chatroomId);
+        Users authenticatedUser = securityUtil.getAuthenticatedUser();
+
+        if(latestMessageId == null || latestMessageId == 0){
+            latestMessageId = 0;
+        }
+        chatRepository.updateLastReadMessageId(chatroomId, authenticatedUser.getId(), latestMessageId);
+    }
 }

@@ -1,13 +1,16 @@
 package com.ohgiraffers.jenkins_test_app.mypage.repository;
 
 import com.ohgiraffers.jenkins_test_app.advice.entity.Posts;
+import com.ohgiraffers.jenkins_test_app.mypage.dto.MyFavoritePostSummaryDTO;
 import com.ohgiraffers.jenkins_test_app.mypage.dto.MyPostSummaryDTO;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
+@Repository
 public interface MyPostRepository extends JpaRepository<Posts, Integer> {
 
     @Query("""
@@ -29,4 +32,5 @@ public interface MyPostRepository extends JpaRepository<Posts, Integer> {
     List<MyPostSummaryDTO> findMyPosts(@Param("userId") Integer userId);
 
 
+    boolean existsByIdAndStatus(Integer postId, int i);
 }

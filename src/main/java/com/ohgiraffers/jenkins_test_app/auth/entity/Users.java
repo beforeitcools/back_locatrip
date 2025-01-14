@@ -1,5 +1,6 @@
 package com.ohgiraffers.jenkins_test_app.auth.entity;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.ohgiraffers.jenkins_test_app.auth.Enum.UserRole;
 import com.ohgiraffers.jenkins_test_app.location.entity.LocationFavorite;
@@ -42,6 +43,7 @@ public class Users {
     @Column(name = "local_area")
     private String localArea;
 
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     @Column(name = "local_area_auth_date")
     private LocalDateTime localAreaAuthDate;
 
