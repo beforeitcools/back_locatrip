@@ -16,6 +16,7 @@ public class Expense {
     @Column(name = "trip_id", nullable = false)
     private Integer tripId;
 
+    @Column(name = "date", nullable = true)
     private LocalDate date;
 
     private String category;
@@ -26,7 +27,6 @@ public class Expense {
 
     private String paymentMethod;
 
-
     public Expense(int id, Integer tripId, LocalDate date, String category, String description, BigDecimal amount, String paymentMethod) {
         this.id = id;
         this.tripId = tripId;
@@ -36,11 +36,11 @@ public class Expense {
         this.amount = amount;
         this.paymentMethod = paymentMethod;
     }
-/*
-    @ManyToOne
-    @JoinColumn(name = "location_id")
-    private Location location;
-    */
+
+//    @ManyToOne
+//    @JoinColumn(name = "location_id")
+//    private Location location;
+
 
     public Expense() {
     }

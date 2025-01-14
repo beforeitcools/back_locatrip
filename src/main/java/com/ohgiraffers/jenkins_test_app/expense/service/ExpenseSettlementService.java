@@ -1,6 +1,5 @@
 package com.ohgiraffers.jenkins_test_app.expense.service;
 
-import com.ohgiraffers.jenkins_test_app.expense.entity.*;
 import com.ohgiraffers.jenkins_test_app.expense.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -81,6 +80,8 @@ public class ExpenseSettlementService {
                 BigDecimal amount = creditor.getValue().min(debtor.getValue().abs());
                 if (amount.compareTo(BigDecimal.ZERO) > 0) {
                     transactions.add(Map.of(
+                            "fromUserId", debtor.getKey(),  // flutter에서 현재 로그인된 userId를 갖고오기 위한 키 추가
+                            "toUserId", creditor.getKey(),
                             "fromNickname", userNicknameMap.get(debtor.getKey()), // 닉네임 사용
                             "toNickname", userNicknameMap.get(creditor.getKey()), // 닉네임 사용
                             "amount", amount

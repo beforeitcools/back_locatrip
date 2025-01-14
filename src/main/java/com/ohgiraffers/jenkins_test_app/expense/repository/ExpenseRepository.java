@@ -35,4 +35,7 @@ public interface ExpenseRepository extends JpaRepository<Expense, Integer> {
 
     @Query("SELECT sr.region FROM SelectedRegion sr WHERE sr.tripId = :tripId")
     List<Object[]> findTripIdAndRegionByTripId(@Param("tripId") int tripId);
+
+    @Query(value = "SELECT t.start_date, t.end_date FROM trip t WHERE t.id = :tripId", nativeQuery = true)
+    Object[] findTripDatesByTripId(@Param("tripId") int tripId);
 }
