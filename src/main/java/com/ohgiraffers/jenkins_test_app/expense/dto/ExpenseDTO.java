@@ -1,5 +1,7 @@
 package com.ohgiraffers.jenkins_test_app.expense.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.OptBoolean;
 import com.ohgiraffers.jenkins_test_app.expense.entity.Expense;
 import com.ohgiraffers.jenkins_test_app.expense.entity.ExpensePaidBy;
 import com.ohgiraffers.jenkins_test_app.expense.entity.ExpenseParticipants;
@@ -9,9 +11,13 @@ import java.time.LocalDate;
 import java.util.List;
 
 public class ExpenseDTO {
+
     private Integer id;
     private Integer tripId;
+
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd", lenient = OptBoolean.TRUE)
     private LocalDate date;
+
     private String category;
     private String description;
     private BigDecimal amount;

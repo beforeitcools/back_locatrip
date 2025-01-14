@@ -41,13 +41,25 @@ public class ExpenseService {
     private ExpenseParticipantsRepository expenseParticipantsRepository;
 
 
-    private String formatDate (LocalDate date) {
+    private String formatDate(LocalDate date) {
         return date.format(formatter);
     }
 
     public Map<String, Map<String, Object>> getExpensesGroupedByTripDays(int tripId) {
         List<Object[]> results = expenseRepository.findExpensesGroupedByTripDays(tripId);
         List<Object[]> preparationResults = expenseRepository.findPreparationExpenses(tripId);
+
+        Object[] tripInfo = expenseRepository.findTripDatesByTripId(tripId);
+
+        Object[] tripDates = (Object[]) tripInfo[0];
+
+        System.out.println(tripDates);
+        if (tripDates == null || tripDates.length < 2) {
+            throw new RuntimeException("해당 tripId의 여행일정이 제대로 설정 안되었습니다: " + tripId);
+        }
+
+        LocalDate startDate = LocalDate.parse(tripDates[0].toString());
+        LocalDate endDate = LocalDate.parse(tripDates[1].toString());
 
         Map<String, Map<String, Object>> groupedExpenses = new LinkedHashMap<>();
 
@@ -73,16 +85,28 @@ public class ExpenseService {
             preparationList.add(expense);
         }
 
+
+        for (LocalDate date = startDate; !date.isAfter(endDate); date = date.plusDays(1)) {
+            String formattedDate = formatDate(date);
+            String dayKey = formattedDate;
+
+            groupedExpenses.putIfAbsent(dayKey, new LinkedHashMap<>());
+            Map<String, Object> dayExpenses = groupedExpenses.get(dayKey);
+            dayExpenses.putIfAbsent("date", formattedDate);
+            dayExpenses.putIfAbsent("expenses", new ArrayList<Map<String, Object>>());
+        }
+
         for (Object[] row : results) {
             int dayNumber = ((Number) row[0]).intValue();
             LocalDate date = ((java.sql.Date) row[1]).toLocalDate();
-            String formattedDate = formatDate(date);
 
             String category = (String) row[2];
             double amount = ((Number) row[3]).doubleValue();
             String description = (String) row[4];
 
             String dayKey = "day" + dayNumber;
+            String formattedDate = "day" + dayNumber + " " + formatDate(date);
+
             groupedExpenses.putIfAbsent(dayKey, new LinkedHashMap<>());
             Map<String, Object> dayExpenses = groupedExpenses.get(dayKey);
 
@@ -105,7 +129,7 @@ public class ExpenseService {
     public Expense saveExpenseWithDetails(
             Expense expense,
             List<Map<String, Object>> paidByDetails,
-            List<Map<String, Object>> participantDetails){
+            List<Map<String, Object>> participantDetails) {
 
         Expense savedExpense = expenseRepository.save(expense);
 
@@ -245,4 +269,26 @@ public class ExpenseService {
         return expenseRepository.findTripIdAndRegionByTripId(tripId);
     }
 
+    public Map<String, Object> getTripDetails(int tripId) {
+        List<Object[]> region = expenseRepository.findTripIdAndRegionByTripId(tripId);
+        Object[] tripInfo = expenseRepository.findTripDatesByTripId(tripId);
+
+        System.out.println("TripInfo for tripId " + tripId + ": " + Arrays.deepToString(new Object[]{tripInfo}));
+
+        if (tripInfo == null || tripInfo.length == 0 || !(tripInfo[0] instanceof Object[])) {
+            throw new RuntimeException("Trip details not found for tripId: " + tripId);
+        }
+
+        Object[] tripDates = (Object[]) tripInfo[0];
+
+        if (tripDates.length < 2) {
+            throw new RuntimeException("Incomplete trip dates for tripId: " + tripId);
+        }
+
+        Map<String, Object> tripDetails = new HashMap<>();
+        tripDetails.put("startDate", tripDates[0].toString());
+        tripDetails.put("endDate", tripDates[1].toString());
+        tripDetails.put("region", region.stream().map(row -> row[0]).collect(Collectors.toList()));
+        return tripDetails;
+    }
 }
