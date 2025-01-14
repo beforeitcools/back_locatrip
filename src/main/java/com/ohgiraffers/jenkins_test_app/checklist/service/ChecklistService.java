@@ -21,6 +21,7 @@ public class ChecklistService {
 
     @Autowired
     private ChecklistItemRepository itemRepository;
+
     @Autowired
     private ChecklistCategoryRepository checklistCategoryRepository;
 

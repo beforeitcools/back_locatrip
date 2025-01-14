@@ -2,11 +2,6 @@ package com.ohgiraffers.jenkins_test_app.expense.controller;
 
 import com.ohgiraffers.jenkins_test_app.expense.dto.ExpenseDTO;
 import com.ohgiraffers.jenkins_test_app.expense.entity.Expense;
-import com.ohgiraffers.jenkins_test_app.expense.entity.ExpensePaidBy;
-import com.ohgiraffers.jenkins_test_app.expense.entity.ExpenseParticipants;
-import com.ohgiraffers.jenkins_test_app.expense.repository.ExpensePaidByRepository;
-import com.ohgiraffers.jenkins_test_app.expense.repository.ExpenseParticipantsRepository;
-import com.ohgiraffers.jenkins_test_app.expense.repository.ExpenseRepository;
 import com.ohgiraffers.jenkins_test_app.expense.service.ExpenseService;
 import com.ohgiraffers.jenkins_test_app.expense.service.ExpenseSettlementService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,13 +33,11 @@ public class ExpenseController {
 
     @PostMapping("/insert")
     public ResponseEntity<Void> addExpense(@RequestBody ExpenseDTO expenseDTO) {
-        Integer defaultTripId = 1;
-
-        LocalDate date = expenseDTO.getDate();
+        Integer tripId = expenseDTO.getTripId();
 
         Expense expense = new Expense();
-        expense.setTripId(defaultTripId);
-        expense.setDate(date);
+        expense.setTripId(tripId);
+        expense.setDate(expenseDTO.getDate());
         expense.setCategory(expenseDTO.getCategory());
         expense.setDescription(expenseDTO.getDescription());
         expense.setAmount(expenseDTO.getAmount());
@@ -86,6 +79,7 @@ public class ExpenseController {
         return ResponseEntity.ok().build();
     }
 
+
     @GetMapping("/{expenseId}")
     public ResponseEntity<ExpenseDTO> getExpenseById(@PathVariable int expenseId) {
         ExpenseDTO expense = expenseService.getExpenseById(expenseId);
@@ -122,5 +116,11 @@ public class ExpenseController {
     public ResponseEntity<List<Object[]>> getRegionByTripId(@PathVariable int tripId){
         List<Object[]> region = expenseService.getRegionByTripId(tripId);
         return ResponseEntity.ok(region);
+    }
+
+    @GetMapping("/trip/{tripId}/details")
+    public ResponseEntity<Map<String,Object>> getTripDetails(@PathVariable int tripId){
+        Map<String, Object> tripDetails = expenseService.getTripDetails(tripId);
+        return ResponseEntity.ok(tripDetails);
     }
 }
