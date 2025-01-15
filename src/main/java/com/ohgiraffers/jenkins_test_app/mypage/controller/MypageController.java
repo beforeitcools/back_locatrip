@@ -12,6 +12,7 @@ import com.ohgiraffers.jenkins_test_app.mypage.dto.MyAdviceSummaryDTO;
 import com.ohgiraffers.jenkins_test_app.mypage.dto.MyPostSummaryDTO;
 import com.ohgiraffers.jenkins_test_app.mypage.dto.MyTripSummaryDTO;
 import com.ohgiraffers.jenkins_test_app.mypage.dto.PostFavoriteDTO;
+import com.ohgiraffers.jenkins_test_app.mypage.entity.UserAlarm;
 import com.ohgiraffers.jenkins_test_app.mypage.service.MypageService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -49,9 +50,11 @@ public class MypageController {
         Long selectedAdviceCount = mypageService.getSelectedAdviceCount(authenticatedUser.getId());
 
         // 알림(안 읽은거 있는지)
+        boolean unreadAlarmExists = mypageService.getUnreadAlarmExists(authenticatedUser.getId());
 
         mypageData.put("user", authenticatedUser);
         mypageData.put("selectedAdviceCount", selectedAdviceCount);
+        mypageData.put("unreadAlarmExists", unreadAlarmExists);
 
         return ResponseEntity.ok(mypageData);
     }
@@ -227,4 +230,35 @@ public class MypageController {
 //
 //        return ResponseEntity.ok(myAdviceList);
 //    }
+
+
+    /**유제페이지 스크린 로드시*/
+    @GetMapping("userpage/{userId}")
+    public ResponseEntity<Map<String, Object>> getUserPageData(@PathVariable("userId") Integer userId) {
+        Map<String, Object> mypageData = new HashMap<>();
+
+        // 프로필 info
+        Object result = mypageService.getUserData(userId);
+
+        // 채택수
+        Long selectedAdviceCount = mypageService.getSelectedAdviceCount(userId);
+        if(result instanceof Users){
+            mypageData.put("user", result);
+        } else {
+            mypageData.put("user", null);
+        }
+
+        mypageData.put("selectedAdviceCount", selectedAdviceCount);
+
+        return ResponseEntity.ok(mypageData);
+    }
+
+    /**알림페이지 스크린 로드시*/
+    @GetMapping("alarm/{userId}")
+    public ResponseEntity<Object> getAlarmData(@PathVariable("userId") Integer userId) {
+        List<UserAlarm> alarmList = mypageService.getMyAlarmData(userId);
+        return ResponseEntity.ok(alarmList);
+    }
+
+
 }
