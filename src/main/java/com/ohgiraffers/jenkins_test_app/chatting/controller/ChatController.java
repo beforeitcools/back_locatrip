@@ -4,7 +4,6 @@ import com.ohgiraffers.jenkins_test_app.chatting.entity.Messages;
 import com.ohgiraffers.jenkins_test_app.chatting.service.ChatService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.repository.query.Param;
-import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
@@ -14,16 +13,13 @@ import org.springframework.web.bind.annotation.*;
 public class ChatController
 {
     @Autowired
-    private SimpMessagingTemplate messagingTemplate;
-
-    @Autowired
     private ChatService chatService;
 
     @MessageMapping("/sendMessage")
     @SendTo("/topic/unreadCount")
     public Messages handleMessage(Messages message)
     {
-        System.out.println("저기요 이거 타세요? ChatController.handleMessage");
+        System.out.println("ChatController.handleMessage");
         return chatService.saveAndGetMessage(message);
     }
 
@@ -33,13 +29,6 @@ public class ChatController
         // 데이터베이스에서 메세지 저장
         chatService.saveMessage(message);
         // 여기서 UnreadMessageCountDTO를 굳이 리턴해줄 필요가 있낭
-    }
-
-    @PostMapping("/createChatooom")
-    public void createChatooom()
-    {
-        // 새로운 채팅방 생성
-
     }
 
     @PostMapping("/goOut/{chatroomId}")
