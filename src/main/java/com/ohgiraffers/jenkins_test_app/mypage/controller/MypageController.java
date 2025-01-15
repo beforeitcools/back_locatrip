@@ -120,7 +120,7 @@ public class MypageController {
         List<MyTripSummaryDTO> myTripList = mypageService.getMyTrips(authenticatedUser.getId());
 
         List<MyTripSummaryDTO> futureTrips = myTripList.stream()
-                .filter(trip -> trip.getStartDate().isAfter(LocalDate.now()))
+                .filter(trip -> !trip.getStartDate().isBefore(LocalDate.now()))
                 .sorted(Comparator.comparing(MyTripSummaryDTO::getStartDate))
                 .collect(Collectors.toList());
 
