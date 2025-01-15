@@ -12,6 +12,15 @@ public class ChatRoom
     @Column(name = "chatroom_name")
     private String chatroomName;
 
+    @Column(name = "alarm")
+    private int alarm;
+
+    @Column(name = "is_for_trip")
+    private boolean isForTrip;
+
+    @Column(name = "status")
+    private int status;
+
     public ChatRoom()
     {
     }
@@ -19,6 +28,20 @@ public class ChatRoom
     public ChatRoom(String chatroomName)
     {
         this.chatroomName = chatroomName;
+    }
+
+    public ChatRoom(String chatroomName, boolean isForTrip)
+    {
+        this.chatroomName = chatroomName;
+        this.isForTrip = isForTrip;
+    }
+
+    public ChatRoom(String chatroomName, int alarm, boolean isForTrip, int status)
+    {
+        this.chatroomName = chatroomName;
+        this.alarm = alarm;
+        this.isForTrip = isForTrip;
+        this.status = status;
     }
 
     public int getId()
@@ -39,5 +62,35 @@ public class ChatRoom
     public void setChatroomName(String chatroomName)
     {
         this.chatroomName = chatroomName;
+    }
+
+    public boolean isForTrip()
+    {
+        return isForTrip;
+    }
+
+    public void setForTrip(boolean forTrip)
+    {
+        isForTrip = forTrip;
+    }
+
+    public int getAlarm()
+    {
+        return alarm;
+    }
+
+    public void setAlarm(int alarm)
+    {
+        this.alarm = alarm;
+    }
+
+    public int getStatus()
+    {
+        return status;
+    }
+
+    public void setStatus(int status)
+    {
+        this.status = status;
     }
 }
