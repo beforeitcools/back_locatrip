@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -29,4 +30,8 @@ public interface TripDayLocationRepository extends JpaRepository<TripDayLocation
     List<TripDayLocation> findByTrip(@Param("trip") Trip trip);
 
 
+    @Modifying
+    @Transactional
+    @Query("DELETE FROM TripDayLocation t WHERE t.id IN :placeId")
+    int deleteByIds(@Param("placeId") List<Integer> placeId);
 }

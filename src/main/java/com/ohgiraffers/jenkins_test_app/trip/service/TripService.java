@@ -49,9 +49,15 @@ public class TripService {
 
         try {
             Trip savedTrip = tripRepository.save(newTrip);
-
+            int orderIndex = 0; // 순서 인덱스 초기화
             for (String region : trip.getRegions()) {
-                SelectedRegion selectedRegion = new SelectedRegion(savedTrip.getId(), region, savedTrip);
+
+               SelectedRegion selectedRegion = new SelectedRegion();
+               selectedRegion.setTripId(savedTrip.getId());
+               selectedRegion.setRegion(region);
+               selectedRegion.setOrderIndex(orderIndex++);
+               selectedRegion.setTripEntity(savedTrip);
+
                 selectedRegionRepository.save(selectedRegion);
 
             }
