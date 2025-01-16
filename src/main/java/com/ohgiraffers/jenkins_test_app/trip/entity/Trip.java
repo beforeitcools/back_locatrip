@@ -56,10 +56,14 @@ public class Trip {
     @OneToMany(mappedBy = "tripEntity", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<SelectedRegion> selectedRegions = new ArrayList<>();
 
+    @JsonManagedReference
+    @OneToMany(mappedBy = "trip", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<TripUsers> tripUsers = new ArrayList<>();
+
     public Trip() {
     }
 
-    public Trip(Integer id, int userId, String title, LocalDate startDate, LocalDate endDate, LocalDateTime createdAt, LocalDateTime updatedAt, Integer chattingId, Integer status, List<TripNote> tripNotes, List<SelectedRegion> selectedRegions) {
+    public Trip(Integer id, int userId, String title, LocalDate startDate, LocalDate endDate, LocalDateTime createdAt, LocalDateTime updatedAt, Integer chattingId, Integer status, List<TripNote> tripNotes, List<SelectedRegion> selectedRegions, List<TripUsers> tripUsers) {
         this.id = id;
         this.userId = userId;
         this.title = title;
@@ -71,7 +75,22 @@ public class Trip {
         this.status = status;
         this.tripNotes = tripNotes;
         this.selectedRegions = selectedRegions;
+        this.tripUsers = tripUsers;
     }
+
+    /*public Trip(Integer id, int userId, String title, LocalDate startDate, LocalDate endDate, LocalDateTime createdAt, LocalDateTime updatedAt, Integer chattingId, Integer status, List<TripNote> tripNotes, List<SelectedRegion> selectedRegions) {
+        this.id = id;
+        this.userId = userId;
+        this.title = title;
+        this.startDate = startDate;
+        this.endDate = endDate;
+        this.createdAt = createdAt;
+        this.updatedAt = updatedAt;
+        this.chattingId = chattingId;
+        this.status = status;
+        this.tripNotes = tripNotes;
+        this.selectedRegions = selectedRegions;
+    }*/
 
     public Integer getId() {
         return id;
@@ -160,4 +179,21 @@ public class Trip {
     public void setSelectedRegions(List<SelectedRegion> selectedRegions) {
         this.selectedRegions = selectedRegions;
     }
+
+    public List<TripNote> getTripNotes() {
+        return tripNotes;
+    }
+
+    public void setTripNotes(List<TripNote> tripNotes) {
+        this.tripNotes = tripNotes;
+    }
+
+    public List<TripUsers> getTripUsers() {
+        return tripUsers;
+    }
+
+    public void setTripUsers(List<TripUsers> tripUsers) {
+        this.tripUsers = tripUsers;
+    }
 }
+
