@@ -53,7 +53,6 @@ public class LocationService {
         Integer userId = (Integer) placeData.get("userId");
         Optional<Users> userOptional = userRepository.findById(userId);
 
-
         if (userOptional.isEmpty()) {
             System.out.println("여기 오나????????");
             System.out.println(userOptional);

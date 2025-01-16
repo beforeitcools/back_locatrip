@@ -6,16 +6,12 @@ public class TripNoteDTO {
     Integer tripId;
     String content;
     int dateIndex;
+    int sortIndex;
 
     public TripNoteDTO() {
     }
 
-    public TripNoteDTO(Integer id, Integer tripId, String content, int dateIndex) {
-        this.id = id;
-        this.tripId = tripId;
-        this.content = content;
-        this.dateIndex = dateIndex;
-    }
+
 
     public Integer getId() {
         return id;
@@ -49,6 +45,14 @@ public class TripNoteDTO {
         this.dateIndex = dateIndex;
     }
 
+    public int getSortIndex() {
+        return sortIndex;
+    }
+
+    public void setSortIndex(int sortIndex) {
+        this.sortIndex = sortIndex;
+    }
+
     @Override
     public String toString() {
         return "TripNoteDTO{" +
@@ -56,6 +60,7 @@ public class TripNoteDTO {
                 ", tripId=" + tripId +
                 ", content='" + content + '\'' +
                 ", dateIndex=" + dateIndex +
+                ", sortIndex=" + sortIndex +
                 '}';
     }
 }

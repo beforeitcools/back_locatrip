@@ -6,17 +6,20 @@ import com.ohgiraffers.jenkins_test_app.location.repository.LocationRepository;
 import com.ohgiraffers.jenkins_test_app.trip.dto.TripDayLocationDTO;
 import com.ohgiraffers.jenkins_test_app.trip.entity.Trip;
 import com.ohgiraffers.jenkins_test_app.trip.entity.TripDayLocation;
+import com.ohgiraffers.jenkins_test_app.trip.entity.TripDayLocationIndex;
+import com.ohgiraffers.jenkins_test_app.trip.respository.TripDayLocationIndexRepository;
 import com.ohgiraffers.jenkins_test_app.trip.respository.TripDayLocationRepository;
 import com.ohgiraffers.jenkins_test_app.trip.respository.TripRepository;
-import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import static com.ohgiraffers.jenkins_test_app.trip.common.ConvertStringToDate.convertStringToDate;
 
@@ -29,11 +32,12 @@ public class TripDayLocationService {
     TripRepository tripRepository;
     @Autowired
     TripDayLocationRepository tripDayLocationRepository;
+    @Autowired
+    TripDayLocationIndexRepository tripDayLocationIndexRepository;
 
     /**날짜별 장소 추가*/
     @Transactional
     public TripDayLocation addTripDayLocation(Map<String, Object> data) {
-
 
         Location location = new Location();
         location.setGoogleId((String)data.get("googleId"));
@@ -68,6 +72,7 @@ public class TripDayLocationService {
         tripDayLocation.setDate(date);
         tripDayLocation.setOrderIndex(maxOrderIndex + 1);
         tripDayLocation.setDateIndex((Integer) data.get("dateIndex"));
+        tripDayLocation.setSortIndex((Integer) data.get("sortIndex"));
 
         TripDayLocation result = tripDayLocationRepository.save(tripDayLocation);
         if(result == null){
@@ -77,20 +82,7 @@ public class TripDayLocationService {
     }
 
 
-    /**장소순서 변경*/
-    @Transactional
-    public void updateLocationOrder(Integer tripDayLocationId, int newOrderIndex) {
-        TripDayLocation tripDayLocation = tripDayLocationRepository.findById(tripDayLocationId)
-                .orElseThrow(() -> new IllegalArgumentException("Invalid TripDayLocation ID"));
-
-        // 기존 순서 업데이트
-        tripDayLocation.setOrderIndex(newOrderIndex);
-
-        tripDayLocationRepository.save(tripDayLocation);
-    }
-
-
-    /**장소삭제*/
+    /**장소삭제*//*
     @Transactional
     public void deleteLocationFromTripDay(Integer tripDayLocationId) {
         TripDayLocation tripDayLocation = tripDayLocationRepository.findById(tripDayLocationId)
@@ -106,7 +98,7 @@ public class TripDayLocationService {
 
         // 순서 재정렬
         tripDayLocationRepository.shiftOrderIndexAfterDeletion(tripDayLocation.getTrip(), date, deletedOrderIndex);
-    }
+    }*/
 
 
     /**조회*/
@@ -123,5 +115,42 @@ public class TripDayLocationService {
         }
 
         return null;
+    }
+
+    /** 순서 변경 저장 */
+    @Transactional
+    public List<TripDayLocationIndex> insertTripDayIndex(List<TripDayLocationDTO> tempDTOList) {
+        if (tempDTOList.isEmpty()) {
+            return null;
+        }
+
+        // DTO를 Entity로 변환
+        List<TripDayLocationIndex> tripDayLocationEntities = tempDTOList.stream()
+                .map(dto -> new TripDayLocationIndex(
+                    dto.getId(),
+                    dto.getOrderIndex(),
+                    dto.getSortIndex()
+                ))
+                .collect(Collectors.toList());
+
+        // saveAll로 리스트 저장
+        List<TripDayLocationIndex> tripDayLocationList = tripDayLocationIndexRepository.saveAll(tripDayLocationEntities);
+        System.out.println("tripDayLocationList = " + tripDayLocationList);
+        return tripDayLocationList;
+    }
+
+
+    /** 날짜별 일정 삭제*/
+    @Transactional
+    public Boolean deleteTripDay(List<Integer> placeId) {
+
+        if(placeId.isEmpty()){
+            return false;
+        }
+
+        int deletedCount = tripDayLocationRepository.deleteByIds(placeId);
+
+        return deletedCount > 0;
+
     }
 }
