@@ -1,6 +1,7 @@
 package com.ohgiraffers.jenkins_test_app.mypage.service;
 
 import com.ohgiraffers.jenkins_test_app.advice.entity.PostFavorite;
+import com.ohgiraffers.jenkins_test_app.advice.repository.AdviceRepository;
 import com.ohgiraffers.jenkins_test_app.auth.dto.UsersDTO;
 import com.ohgiraffers.jenkins_test_app.auth.entity.Users;
 import com.ohgiraffers.jenkins_test_app.auth.repository.UserRepository;
@@ -43,6 +44,9 @@ public class MypageService {
     @Autowired
     UserAlarmRepository userAlarmRepository;
 
+    @Autowired
+    AdviceRepository adviceRepository;
+
 
     @Transactional
     public Object updateProfile(UsersDTO usersDTO, Users authenticatedUser) {
@@ -59,7 +63,7 @@ public class MypageService {
 
     public Long getSelectedAdviceCount(Integer userId) {
 
-        return mypageRepository.countSelectedAdvicesByUser(userId);
+        return adviceRepository.countSelectedAdvicesByUser(userId);
     }
 
     public List<MyTripSummaryDTO> getMyTrips(Integer userId) {
