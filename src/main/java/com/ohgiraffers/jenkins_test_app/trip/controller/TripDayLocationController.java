@@ -102,4 +102,17 @@ public class TripDayLocationController {
 
         return ResponseEntity.ok(result);
     }
+
+    @GetMapping("getTripDayCount/{tripId}")
+    public ResponseEntity getTripDayCount(@PathVariable(name="tripId") Integer tripId) {
+        if(tripId == null){
+            return ResponseEntity.status(404).body("tripId를 입력해주세요.");
+        }
+
+        Integer result = tripDayLocationService.getTripDayCount(tripId);
+        if(result == null){
+            return ResponseEntity.status(500).body("트립데이 개수 조회에 실패했습니다.");
+        }
+        return ResponseEntity.ok(result);
+    }
 }

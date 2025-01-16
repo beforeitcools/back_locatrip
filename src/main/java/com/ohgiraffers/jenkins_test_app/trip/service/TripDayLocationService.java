@@ -153,4 +153,21 @@ public class TripDayLocationService {
         return deletedCount > 0;
 
     }
+
+    /** 여행별 장소 숫자 가져오기 */
+    public Integer getTripDayCount(Integer tripId) {
+        if(tripId == null){
+            return null;
+        }
+
+        // Trip 엔티티 조회
+        Optional<Trip> trip = tripRepository.findById(tripId);
+        if (!trip.isPresent()) {
+            throw new IllegalArgumentException("Trip not found for ID: " + tripId);
+        }
+
+        int count = tripDayLocationRepository.findCountByTripId(trip.get());
+
+        return count;
+    }
 }
