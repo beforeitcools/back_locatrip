@@ -100,11 +100,11 @@ public class ExpenseController {
         return ResponseEntity.ok(settlementDetails);
     }
 
-    /*@GetMapping("/trip/{tripId}/users")
+    @GetMapping("/trip/{tripId}/users")
     public ResponseEntity<List<Map<String, Object>>> getUsersByTripId(@PathVariable int tripId) {
         List<Map<String, Object>> users = expenseService.getUsersByTripId(tripId);
         return ResponseEntity.ok(users);
-    }*/
+    }
 
     @DeleteMapping("/{expenseId}")
     public ResponseEntity<Void> deleteExpense(@PathVariable int expenseId) {
