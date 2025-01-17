@@ -7,6 +7,7 @@ import com.ohgiraffers.jenkins_test_app.auth.entity.Users;
 import com.ohgiraffers.jenkins_test_app.common.utils.SecurityUtil;
 import com.ohgiraffers.jenkins_test_app.mypage.dto.MyPostSummaryDTO;
 import com.ohgiraffers.jenkins_test_app.mypage.service.MypageService;
+import com.ohgiraffers.jenkins_test_app.trip.entity.Trip;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -80,6 +81,21 @@ public class AdviceController {
         System.out.println(unreadAlarmExists);
 
         return ResponseEntity.ok(postsData);
+    }
+
+    /**
+     *  첨삭소 로드시
+     * @PathVariable("userId") Integer userId
+     * @return boolean 세개이상의 장소가 포함된 여행일정이 있는지, 해당하는 여행리스트
+     * */
+    @GetMapping("checkValidTrips/{userId}")
+    public ResponseEntity<List<Trip>> getValidTrips(@PathVariable("userId") Integer userId) {
+
+        // 세개이상의 장소가 포함된 여행일정
+        List<Trip> tripList = adviceService.getValidTrips(userId);
+        System.out.println(tripList);
+
+        return ResponseEntity.ok(tripList);
     }
 
 

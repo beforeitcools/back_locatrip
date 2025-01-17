@@ -7,6 +7,8 @@ import com.ohgiraffers.jenkins_test_app.advice.dto.PostsWithMyLocalAreaDTO;
 import com.ohgiraffers.jenkins_test_app.auth.entity.Users;
 import com.ohgiraffers.jenkins_test_app.auth.repository.UserRepository;
 import com.ohgiraffers.jenkins_test_app.mypage.repository.MyPostRepository;
+import com.ohgiraffers.jenkins_test_app.trip.entity.Trip;
+import com.ohgiraffers.jenkins_test_app.trip.respository.TripRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -25,6 +27,9 @@ public class AdviceService {
 
     @Autowired
     MyPostRepository myPostRepository;
+
+    @Autowired
+    TripRepository tripRepository;
 
     public List<PostsWithMyLocalAreaDTO> getPostWithMyLocalArea(String localArea) {
         List<Object[]> postsWithMyLocalArea = myPostRepository.getPostWithMyLocalArea(localArea);
@@ -79,5 +84,9 @@ public class AdviceService {
         }
         System.out.println("전체 service: " + postDataDTOList);
         return postDataDTOList;
+    }
+
+    public List<Trip> getValidTrips(Integer userId) {
+        return tripRepository.getValidTripsWithMoreThanThreeLocations(userId);
     }
 }
