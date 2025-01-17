@@ -50,5 +50,9 @@ public interface ChatroomRepository extends JpaRepository<ChatRoom, Integer>
     """)
     Optional<ChatRoom> findByParticipants(int myId, int userId, boolean b);
 
+
+    @Query("SELECT pm1.chatroom.id FROM ParticipateMembers pm1 JOIN ParticipateMembers pm2 ON pm1.chatroom.id = pm2.chatroom.id WHERE pm1.userId = :userId AND pm2.userId = :myId AND pm1.chatroom.isForTrip = false")
+    Optional<Integer> findChatRoomIdByUserId(@Param("userId") int userId, @Param("myId") int myId);
+
     //ChatRoom selectExistingChatRoom();
 }

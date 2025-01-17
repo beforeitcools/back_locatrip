@@ -30,9 +30,9 @@ public class ChatroomController
     }
 
     @PostMapping( "/onetoone")
-    public void createChatooom(@RequestBody Map<String, Object> userInfo)
+    public int createChatooom(@RequestBody Map<String, Object> userInfo)
     {
         // 새로운 채팅방 생성
-        chatroomService.getChatroom(userInfo);
+        return chatroomService.getOrCreateChatroom(userInfo);
     }
 }
