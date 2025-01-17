@@ -29,11 +29,15 @@ public class ChecklistController {
     public ResponseEntity<String> addCategory(
             @RequestBody Map<String, String> requestBody) {
         String categoryName = requestBody.get("name");
+        Integer tripId = Integer.parseInt(requestBody.get("tripId"));
+        Integer userId = Integer.parseInt(requestBody.get("userId"));
+        Integer status = Integer.parseInt(requestBody.get("status"));
+
         if (categoryName == null || categoryName.isEmpty()) {
             return ResponseEntity.badRequest().body("카테고리 이름을 입력해주세요.");
         }
         try{
-            checklistService.addCategory(categoryName);
+            checklistService.addCategory(categoryName, tripId, userId, status);
             return ResponseEntity.ok("카테고리가 추가되었습니다.");
         } catch (Exception e){
             return ResponseEntity.status(500).body("카테고리 추가 실패");
@@ -42,24 +46,26 @@ public class ChecklistController {
 
     @PostMapping("/categories/update")
     public ResponseEntity<String> updateCategory(
-            @RequestBody Map<String, String> requestBody){
-                String categoryName = requestBody.get("name");
-                if (categoryName == null || categoryName.isEmpty()) {
-                    return ResponseEntity.badRequest().body("카테고리 이름을 입력해주세요.");
-                }
-                try{
-                    checklistService.updateCategory(categoryName);
-                    return ResponseEntity.ok("카테고리가 수정되었습니다.");
-                } catch (Exception e){
-                    return ResponseEntity.status(500).body("카테고리 추가 실패");
-                }
+            @RequestBody Map<String, String> requestBody) {
+        try {
+            Integer categoryId = Integer.parseInt(requestBody.get("categoryId"));
+            String categoryName = requestBody.get("name");
+
+            if (categoryName == null || categoryName.isEmpty()) {
+                return ResponseEntity.badRequest().body("카테고리 이름을 입력해주세요.");
+            }
+
+            checklistService.updateCategory(categoryId, categoryName);
+            return ResponseEntity.ok("카테고리가 수정되었습니다.");
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body("카테고리 수정 실패: " + e.getMessage());
+        }
     }
 
     @DeleteMapping("/categories/delete")
     public ResponseEntity<String> deleteCategory(
             @RequestBody Map<String, Integer> requestBody
     ) {
-
         Integer categoryId = requestBody.get("categoryId");
 
         if (categoryId == null) {
@@ -100,6 +106,21 @@ public class ChecklistController {
         }
     }
 
+    @PostMapping("/items/update")
+    public ResponseEntity<String> updateItem(
+            @RequestBody Map<String, String> requestBody) {
+        try {
+            Integer itemId = Integer.parseInt(requestBody.get("itemId"));
+            String name = requestBody.get("name");
+
+
+            checklistService.updateItem(itemId, name);
+            return ResponseEntity.ok("아이템이 수정되었습니다.");
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body("아이템 수정 실패: " + e.getMessage());
+        }
+    }
+
     @PostMapping("/items/{itemId}/check")
     public ResponseEntity<Void> updateItemCheckedStatus(
             @PathVariable Integer itemId,
@@ -107,7 +128,6 @@ public class ChecklistController {
         checklistService.updateItemCheckedStatus(itemId, isChecked);
         return ResponseEntity.noContent().build();
     }
-
 
     @DeleteMapping("/items/delete")
     public ResponseEntity<String> deleteItems(
@@ -124,6 +144,24 @@ public class ChecklistController {
             return ResponseEntity.ok("선택한 항목이 삭제되었습니다.");
         } catch (Exception e) {
             return ResponseEntity.status(500).body("항목 삭제 실패: " + e.getMessage());
+        }
+    }
+
+    @GetMapping("/trip/{tripId}/region")
+    public ResponseEntity<List<Object[]>> getRegionByTripId(@PathVariable int tripId){
+        List<Object[]> region = checklistService.getRegionByTripId(tripId);
+        return ResponseEntity.ok(region);
+    }
+
+    @GetMapping("/trip/{tripId}/duration")
+    public ResponseEntity<String> getTripDuration(@PathVariable int tripId){
+        try {
+            String duration = checklistService.calculateTripDuration(tripId);
+            return ResponseEntity.ok()
+                    .header("Content-Type", "text/plain; charset=UTF-8")
+                    .body(duration);
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body("여행 기간 계산 실패: " + e.getMessage());
         }
     }
 }
