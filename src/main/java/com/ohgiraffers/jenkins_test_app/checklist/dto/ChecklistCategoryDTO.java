@@ -7,15 +7,25 @@ public class ChecklistCategoryDTO {
     private Integer tripId;
     private Integer userId;
     private String name;
+    private Integer status;
 
     public ChecklistCategoryDTO() {
     }
 
-    public ChecklistCategoryDTO(Integer id, Integer tripId, Integer userId, String name) {
+    public ChecklistCategoryDTO(Integer id, Integer tripId, Integer userId, String name, Integer status) {
         this.id = id;
         this.tripId = tripId;
         this.userId = userId;
         this.name = name;
+        this.status = status;
+    }
+
+    public Integer getStatus() {
+        return status;
+    }
+
+    public void setStatus(Integer status) {
+        this.status = status;
     }
 
     public Integer getId() {
@@ -57,6 +67,7 @@ public class ChecklistCategoryDTO {
                 ", tripId=" + tripId +
                 ", userId=" + userId +
                 ", name='" + name + '\'' +
+                ", status=" + status +
                 '}';
     }
 
