@@ -258,7 +258,7 @@ public class ExpenseService {
         }
     }
 
-   /* public List<Map<String, Object>> getUsersByTripId(int tripId) {
+    public List<Map<String, Object>> getUsersByTripId(int tripId) {
         List<Object[]> results = expenseRepository.findUsersAndTripByTripId(tripId);
         return results.stream().map(row -> {
             Map<String, Object> user = new HashMap<>();
@@ -266,7 +266,7 @@ public class ExpenseService {
             user.put("nickname", row[1]); // 닉네임
             return user;
         }).collect(Collectors.toList());
-    }*/
+    }
 
     @Transactional
     public void deleteExpense(int expenseId) {
