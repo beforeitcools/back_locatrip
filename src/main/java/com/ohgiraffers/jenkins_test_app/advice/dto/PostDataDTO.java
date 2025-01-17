@@ -29,12 +29,12 @@ public class PostDataDTO {
     private LocalDate endDate;
 
     private List<String> selectedRegionsList;
-    private Integer adviceCount;
+    private Long adviceCount;
 
     public PostDataDTO() {
     }
 
-    public PostDataDTO(Integer postId, String title, String content, LocalDateTime createdAt, Integer userId, String nickname, String profilePic, LocalDate startDate, LocalDate endDate, List<String> selectedRegionsList, Integer adviceCount) {
+    public PostDataDTO(Integer postId, String title, String content, LocalDateTime createdAt, Integer userId, String nickname, String profilePic, LocalDate startDate, LocalDate endDate, List<String> selectedRegionsList, Long adviceCount) {
         this.postId = postId;
         this.title = title;
         this.content = content;
@@ -128,11 +128,11 @@ public class PostDataDTO {
         this.selectedRegionsList = selectedRegionsList;
     }
 
-    public Integer getAdviceCount() {
+    public Long getAdviceCount() {
         return adviceCount;
     }
 
-    public void setAdviceCount(Integer adviceCount) {
+    public void setAdviceCount(Long adviceCount) {
         this.adviceCount = adviceCount;
     }
 

@@ -52,7 +52,7 @@ public interface MyPostRepository extends JpaRepository<Posts, Integer> {
     @Query(value = """
     SELECT p.id,
            p.title,
-           GROUP_CONCAT(DISTINCT sr.region) AS regions,
+           p.adviced_trip_data,
            COUNT(la.id) AS adviceCount
     FROM posts p
     JOIN trip t ON p.trip_id = t.id
@@ -92,8 +92,7 @@ public interface MyPostRepository extends JpaRepository<Posts, Integer> {
 
     @Query(value = """
     SELECT p.id, p.title, p.contents, p.created_at, u.id AS userId, u.nickname, u.profile_pic,
-           t.start_date, t.end_date,
-           GROUP_CONCAT(DISTINCT sr.region) AS regions,
+           p.adviced_trip_data,
            COUNT(la.id) AS adviceCount
     FROM posts p
     JOIN trip t ON p.trip_id = t.id

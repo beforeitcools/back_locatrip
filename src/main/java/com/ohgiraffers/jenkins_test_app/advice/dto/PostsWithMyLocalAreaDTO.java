@@ -6,16 +6,16 @@ public class PostsWithMyLocalAreaDTO {
 
     private Integer postId;
     private String title;
-    private List<String> selectedRegionsList;
+    private String selectedRegion;
     private Integer adviceCount;
 
     public PostsWithMyLocalAreaDTO() {
     }
 
-    public PostsWithMyLocalAreaDTO(Integer postId, String title, List<String> selectedRegionsList, Integer adviceCount) {
+    public PostsWithMyLocalAreaDTO(Integer postId, String title, String selectedRegion, Integer adviceCount) {
         this.postId = postId;
         this.title = title;
-        this.selectedRegionsList = selectedRegionsList;
+        this.selectedRegion = selectedRegion;
         this.adviceCount = adviceCount;
     }
 
@@ -35,12 +35,12 @@ public class PostsWithMyLocalAreaDTO {
         this.title = title;
     }
 
-    public List<String> getSelectedRegionsList() {
-        return selectedRegionsList;
+    public String getSelectedRegion() {
+        return selectedRegion;
     }
 
-    public void setSelectedRegionsList(List<String> selectedRegionsList) {
-        this.selectedRegionsList = selectedRegionsList;
+    public void setSelectedRegion(String selectedRegion) {
+        this.selectedRegion = selectedRegion;
     }
 
     public Integer getAdviceCount() {
@@ -56,7 +56,7 @@ public class PostsWithMyLocalAreaDTO {
         return "PostsWithMyLocalAreaDTO{" +
                 "postId=" + postId +
                 ", title='" + title + '\'' +
-                ", selectedRegionsList=" + selectedRegionsList +
+                ", selectedRegion=" + selectedRegion +
                 ", adviceCount=" + adviceCount +
                 '}';
     }
