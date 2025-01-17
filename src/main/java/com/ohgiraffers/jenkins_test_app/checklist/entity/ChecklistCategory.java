@@ -25,13 +25,25 @@ public class ChecklistCategory {
     @OneToMany(mappedBy = "category", cascade = CascadeType.ALL)
     private List<ChecklistItem> items;
 
+    @Column(nullable = false, columnDefinition = "TINYINT(1) DEFAULT 1") // status 기본값 1
+    private Integer status;
+
     public ChecklistCategory() {
     }
 
-    public ChecklistCategory(Integer tripId, Integer userId, String name) {
+    public ChecklistCategory(Integer tripId, Integer userId, String name, Integer status) {
         this.tripId = tripId;
         this.userId = userId;
         this.name = name;
+        this.status = status;
+    }
+
+    public Integer getStatus() {
+        return status;
+    }
+
+    public void setStatus(Integer status) {
+        this.status = status;
     }
 
     public Integer getId() { return id; }
