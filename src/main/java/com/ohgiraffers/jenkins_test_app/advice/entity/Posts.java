@@ -37,6 +37,9 @@ public class Posts {
     @Column(name = "status")
     private Integer status;
 
+    @Column(name = "adviced_trip_data")
+    private String advicedTripData;
+
     @OneToMany(mappedBy = "postEntity", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<PostFavorite> favorites = new ArrayList<>();
 
@@ -51,6 +54,18 @@ public class Posts {
         this.userId = userId;
         this.createdAt = createdAt;
         this.status = status;
+    }
+
+    public Posts(Integer id, String title, String contents, int tripId, int userId, LocalDateTime createdAt, Integer status, String advicedTripData)
+    {
+        this.id = id;
+        this.title = title;
+        this.contents = contents;
+        this.tripId = tripId;
+        this.userId = userId;
+        this.createdAt = createdAt;
+        this.status = status;
+        this.advicedTripData = advicedTripData;
     }
 
     public Integer getId() {
@@ -107,6 +122,16 @@ public class Posts {
 
     public void setStatus(Integer status) {
         this.status = status;
+    }
+
+    public String getAdvicedTripData()
+    {
+        return advicedTripData;
+    }
+
+    public void setAdvicedTripData(String advicedTripData)
+    {
+        this.advicedTripData = advicedTripData;
     }
 
     @Override
