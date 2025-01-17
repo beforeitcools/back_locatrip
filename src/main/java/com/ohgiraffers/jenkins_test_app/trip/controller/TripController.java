@@ -2,6 +2,7 @@ package com.ohgiraffers.jenkins_test_app.trip.controller;
 
 import com.ohgiraffers.jenkins_test_app.auth.entity.Users;
 import com.ohgiraffers.jenkins_test_app.common.utils.SecurityUtil;
+import com.ohgiraffers.jenkins_test_app.mypage.service.MypageService;
 import com.ohgiraffers.jenkins_test_app.trip.dto.TripDTO;
 import com.ohgiraffers.jenkins_test_app.trip.entity.Trip;
 import com.ohgiraffers.jenkins_test_app.trip.service.TripService;
@@ -10,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
@@ -23,6 +25,9 @@ public class TripController {
 
     @Autowired
     private SecurityUtil securityUtil;
+
+    @Autowired
+    private MypageService mypageService;
 
     /** 일정 생성 */
     @PostMapping("insert")
@@ -62,7 +67,18 @@ public class TripController {
             return ResponseEntity.status(404).body("일정을 찾을 수 없습니다.");
         }
 
-        Trip result = optionalResult.get();
+        Trip trip = optionalResult.get();
+        System.out.println("trip = " + trip);
+
+
+        // 알림(안 읽은거 있는지)
+        Users authenticatedUser = securityUtil.getAuthenticatedUser();
+        boolean unreadAlarmExists = mypageService.getUnreadAlarmExists(authenticatedUser.getId());
+
+        Map<String, Object> result = new HashMap<>();
+        result.put("unreadAlarmExists", unreadAlarmExists);
+        result.put("trip", trip);
+
         System.out.println("result = " + result);
 
         return ResponseEntity.ok(result);
