@@ -1,6 +1,7 @@
 package com.ohgiraffers.jenkins_test_app.mypage.service;
 
 import com.ohgiraffers.jenkins_test_app.advice.entity.PostFavorite;
+import com.ohgiraffers.jenkins_test_app.advice.repository.AdviceRepository;
 import com.ohgiraffers.jenkins_test_app.auth.dto.UsersDTO;
 import com.ohgiraffers.jenkins_test_app.auth.entity.Users;
 import com.ohgiraffers.jenkins_test_app.auth.repository.UserRepository;
@@ -9,10 +10,8 @@ import com.ohgiraffers.jenkins_test_app.mypage.dto.MyAdviceSummaryDTO;
 import com.ohgiraffers.jenkins_test_app.mypage.dto.MyPostSummaryDTO;
 import com.ohgiraffers.jenkins_test_app.mypage.dto.MyTripSummaryDTO;
 import com.ohgiraffers.jenkins_test_app.mypage.dto.PostFavoriteDTO;
-import com.ohgiraffers.jenkins_test_app.mypage.repository.MyFavoritePostRepository;
-import com.ohgiraffers.jenkins_test_app.mypage.repository.MyPostRepository;
-import com.ohgiraffers.jenkins_test_app.mypage.repository.MyTripRepository;
-import com.ohgiraffers.jenkins_test_app.mypage.repository.MypageRepository;
+import com.ohgiraffers.jenkins_test_app.mypage.entity.UserAlarm;
+import com.ohgiraffers.jenkins_test_app.mypage.repository.*;
 import com.ohgiraffers.jenkins_test_app.trip.entity.Trip;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -42,6 +41,12 @@ public class MypageService {
     @Autowired
     MyFavoritePostRepository myFavoritePostRepository;
 
+    @Autowired
+    UserAlarmRepository userAlarmRepository;
+
+    @Autowired
+    AdviceRepository adviceRepository;
+
 
     @Transactional
     public Object updateProfile(UsersDTO usersDTO, Users authenticatedUser) {
@@ -58,7 +63,7 @@ public class MypageService {
 
     public Long getSelectedAdviceCount(Integer userId) {
 
-        return mypageRepository.countSelectedAdvicesByUser(userId);
+        return adviceRepository.countSelectedAdvicesByUser(userId);
     }
 
     public List<MyTripSummaryDTO> getMyTrips(Integer userId) {
@@ -155,6 +160,25 @@ public class MypageService {
             return userRepository.save(user);
         }
         return null;
+    }
+
+    public Object getUserData(Integer userId) {
+        Optional<Users> foundUser = userRepository.findById(userId);
+        if(foundUser.isPresent()){
+            return foundUser.get();
+        }
+        return null;
+    }
+
+    /**안 읽은 알림이 있는지 확인하는 메소드*/
+    public boolean getUnreadAlarmExists(Integer userId) {
+        return userAlarmRepository.existsByIsReadAndUserId(0, userId);
+    }
+
+    public List<UserAlarm> getMyAlarmData(Integer userId) {
+        List<UserAlarm> list = userAlarmRepository.findAllByUserId(userId);
+        System.out.println(list);
+        return list;
     }
 
     /*public List<MyAdviceSummaryDTO> getMyAdvices(Integer userId) {

@@ -6,11 +6,10 @@ import com.ohgiraffers.jenkins_test_app.trip.entity.Trip;
 import com.ohgiraffers.jenkins_test_app.trip.respository.SelectedRegionRepository;
 import com.ohgiraffers.jenkins_test_app.trip.respository.TripRepository;
 import com.ohgiraffers.jenkins_test_app.trip.common.ConvertStringToDate;
-import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
-
+import org.springframework.transaction.annotation.Transactional;
 
 
 import java.time.LocalDate;
@@ -50,9 +49,15 @@ public class TripService {
 
         try {
             Trip savedTrip = tripRepository.save(newTrip);
-
+            int orderIndex = 0; // 순서 인덱스 초기화
             for (String region : trip.getRegions()) {
-                SelectedRegion selectedRegion = new SelectedRegion(savedTrip.getId(), region, savedTrip);
+
+               SelectedRegion selectedRegion = new SelectedRegion();
+               selectedRegion.setTripId(savedTrip.getId());
+               selectedRegion.setRegion(region);
+               selectedRegion.setOrderIndex(orderIndex++);
+               selectedRegion.setTripEntity(savedTrip);
+
                 selectedRegionRepository.save(selectedRegion);
 
             }

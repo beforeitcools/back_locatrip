@@ -23,8 +23,11 @@ public class TripNote {
     @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt;
 
-    @Column(name="dateIndex")
+    @Column(name="date_index")
     int dateIndex;
+
+    @Column(name="sort_index")
+    int sortIndex;
 
     @ManyToOne
     @JoinColumn(name = "trip_id", nullable = false)
@@ -34,11 +37,12 @@ public class TripNote {
     public TripNote() {
     }
 
-    public TripNote(Integer id, String content, LocalDateTime createdAt, int dateIndex) {
+    public TripNote(Integer id, String content, LocalDateTime createdAt, int dateIndex, int sortIndex) {
         this.id = id;
         this.content = content;
         this.createdAt = createdAt;
         this.dateIndex = dateIndex;
+        this.sortIndex = sortIndex;
     }
 
     public Integer getId() {
@@ -79,5 +83,13 @@ public class TripNote {
 
     public void setDateIndex(int dateIndex) {
         this.dateIndex = dateIndex;
+    }
+
+    public int getSortIndex() {
+        return sortIndex;
+    }
+
+    public void setSortIndex(int sortIndex) {
+        this.sortIndex = sortIndex;
     }
 }

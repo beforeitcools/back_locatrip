@@ -25,13 +25,13 @@ public interface ExpenseRepository extends JpaRepository<Expense, Integer> {
                     "WHERE e.trip_id = :tripId AND e.date IS NULL", nativeQuery = true)
     List<Object[]> findPreparationExpenses(@Param("tripId") int tripId);
 
-    @Query("SELECT u.id, u.nickname FROM users_signup u " +
+    /*@Query("SELECT u.id, u.nickname FROM users_signup u " +
             "JOIN TripUsers tu ON u.id = tu.user.id " +
             "WHERE tu.trip.id = :tripId " +
             "UNION " +
             "SELECT u.id, u.nickname FROM users_signup u " +
             "WHERE u.id = (SELECT t.userId FROM Trip t WHERE t.id = :tripId)")
-    List<Object[]> findUsersAndTripByTripId(@Param("tripId") int tripId);
+    List<Object[]> findUsersAndTripByTripId(@Param("tripId") int tripId);*/
 
     @Query("SELECT sr.region FROM SelectedRegion sr WHERE sr.tripId = :tripId")
     List<Object[]> findTripIdAndRegionByTripId(@Param("tripId") int tripId);

@@ -4,9 +4,11 @@ import com.ohgiraffers.jenkins_test_app.trip.entity.TripNote;
 
 import com.ohgiraffers.jenkins_test_app.trip.entity.Trip;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -17,4 +19,8 @@ public interface TripNoteRepository extends JpaRepository<TripNote, Integer> {
     @Query("SELECT t FROM TripNote t WHERE t.trip = :trip")
     List<TripNote> findByTripId(@Param("trip") Trip trip);
 
+    @Modifying
+    @Transactional
+    @Query("DELETE FROM TripNote t WHERE t.id IN :memoId")
+    int deleteByIds(@Param("memoId") List<Integer> memoId);
 }

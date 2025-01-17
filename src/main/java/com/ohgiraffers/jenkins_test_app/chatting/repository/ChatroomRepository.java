@@ -3,12 +3,14 @@ package com.ohgiraffers.jenkins_test_app.chatting.repository;
 import com.ohgiraffers.jenkins_test_app.chatting.dto.RecentChatDTO;
 import com.ohgiraffers.jenkins_test_app.chatting.entity.ChatRoom;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import org.springframework.web.bind.annotation.PathVariable;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface ChatroomRepository extends JpaRepository<ChatRoom, Integer>
@@ -37,4 +39,20 @@ public interface ChatroomRepository extends JpaRepository<ChatRoom, Integer>
         ORDER BY m.sendTime DESC
     """, nativeQuery = false)
     List<RecentChatDTO> selectSearchMessages(@Param("userId")Integer userId, @PathVariable("keyword") String keyword);
+
+
+    @Query(value = """
+        SELECT cr FROM ChatRoom cr
+        JOIN ParticipateMembers pm ON pm.chatroom.id = cr.id
+        WHERE (pm.userId = :userId OR pm.userId = :myId)
+            AND cr.isForTrip = false
+            AND cr.status = 1
+    """)
+    Optional<ChatRoom> findByParticipants(int myId, int userId, boolean b);
+
+
+    @Query("SELECT pm1.chatroom.id FROM ParticipateMembers pm1 JOIN ParticipateMembers pm2 ON pm1.chatroom.id = pm2.chatroom.id WHERE pm1.userId = :userId AND pm2.userId = :myId AND pm1.chatroom.isForTrip = false")
+    Optional<Integer> findChatRoomIdByUserId(@Param("userId") int userId, @Param("myId") int myId);
+
+    //ChatRoom selectExistingChatRoom();
 }

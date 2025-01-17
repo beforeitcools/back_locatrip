@@ -36,6 +36,9 @@ public class TripDayLocation {
     @Column(name = "date_index")
     private int dateIndex;
 
+    @Column(name="sort_index")
+    private int sortIndex;
+
     // 연관관계 매핑
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "trip_id", referencedColumnName = "id")
@@ -52,7 +55,7 @@ public class TripDayLocation {
     public TripDayLocation() {
     }
 
-    public TripDayLocation(Integer id, LocalDate date, LocalTime visitTime, int orderIndex, String memo, Integer expenseId, int dateIndex) {
+    public TripDayLocation(Integer id, LocalDate date, LocalTime visitTime, int orderIndex, String memo, Integer expenseId, int dateIndex, int sortIndex) {
         this.id = id;
         this.date = date;
         this.visitTime = visitTime;
@@ -60,9 +63,8 @@ public class TripDayLocation {
         this.memo = memo;
         this.expenseId = expenseId;
         this.dateIndex = dateIndex;
+        this.sortIndex = sortIndex;
     }
-
-
 
     public Integer getId() {
         return id;
@@ -94,6 +96,14 @@ public class TripDayLocation {
 
     public void setOrderIndex(int orderIndex) {
         this.orderIndex = orderIndex;
+    }
+
+    public int getSortIndex() {
+        return sortIndex;
+    }
+
+    public void setSortIndex(int sortIndex) {
+        this.sortIndex = sortIndex;
     }
 
     public String getMemo() {
@@ -147,13 +157,14 @@ public class TripDayLocation {
     @Override
     public String toString() {
         return "TripDayLocation{" +
-                "id=" + id +
-                ", date=" + date +
-                ", visitTime=" + visitTime +
-                ", orderIndex=" + orderIndex +
-                ", memo='" + memo + '\'' +
-                ", expenseId=" + expenseId +
+                "sortIndex=" + sortIndex +
                 ", dateIndex=" + dateIndex +
+                ", expenseId=" + expenseId +
+                ", memo='" + memo + '\'' +
+                ", orderIndex=" + orderIndex +
+                ", visitTime=" + visitTime +
+                ", date=" + date +
+                ", id=" + id +
                 '}';
     }
 }

@@ -3,12 +3,16 @@ package com.ohgiraffers.jenkins_test_app.chatting.service;
 import com.ohgiraffers.jenkins_test_app.auth.entity.Users;
 import com.ohgiraffers.jenkins_test_app.chatting.dto.RecentChatDTO;
 import com.ohgiraffers.jenkins_test_app.chatting.entity.ChatRoom;
+import com.ohgiraffers.jenkins_test_app.chatting.entity.ParticipateMembers;
 import com.ohgiraffers.jenkins_test_app.chatting.repository.ChatroomRepository;
+import com.ohgiraffers.jenkins_test_app.chatting.repository.ParticipateRepository;
 import com.ohgiraffers.jenkins_test_app.common.utils.SecurityUtil;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @Service
@@ -16,6 +20,9 @@ public class ChatroomService
 {
     @Autowired
     private ChatroomRepository chatroomRepository;
+
+    @Autowired
+    private ParticipateRepository participateRepository;
 
     @Autowired
     private SecurityUtil securityUtil;
@@ -27,7 +34,8 @@ public class ChatroomService
         // 대화 내용에 포함되어 있는 거 add
         Users authenticatedUser = securityUtil.getAuthenticatedUser();
         List<RecentChatDTO> messages = chatroomRepository.selectSearchMessages(authenticatedUser.getId(), keyword);
-        if(messages == null || messages.isEmpty()){
+        if (messages == null || messages.isEmpty())
+        {
             return null;
         }
         return messages;
@@ -36,36 +44,102 @@ public class ChatroomService
     public void updateChatroomName(int chatroomId, String chatroomName)
     {
         Optional<ChatRoom> chatroomOptional = chatroomRepository.findById(chatroomId);
-        if (chatroomOptional.isPresent()) {
+        if (chatroomOptional.isPresent())
+        {
             ChatRoom chatroom = chatroomOptional.get();
             chatroom.setChatroomName(chatroomName);
             chatroomRepository.save(chatroom);
-        } else {
+        }
+        else
+        {
             throw new RuntimeException("Chatroom not found with ID: " + chatroomId);
         }
     }
 
-    public void createNewChatroom(int chatroomId, String chatroomName)
+//    @Transactional
+//    public int getChatroom(Map<String, Object> userInfo) {
+//        System.out.println("******* get Chat room function *****");
+//
+//        int chatroomId = 0;
+//
+//        // Validate input
+//        if (userInfo.get("userId") != null) {
+//            int userId = (Integer) userInfo.get("userId");
+//
+//            // Check if a chatroom already exists
+//            Optional<ChatRoom> existingChatroom = getInExistChatroom(userId);
+//            if (existingChatroom.isPresent()) {
+//                System.out.println("존재하는 룸 타?");
+//                chatroomId = existingChatroom.get().getId();
+//                System.out.println("존재하는 거 맞긔  ??? ?" + chatroomId);
+//            } else {
+//                // Create a new chatroom if none exists
+//                System.out.println("a만들어야하는 로직 타?");
+//                chatroomId = createNewChatroom(userInfo.get("chatroomName").toString());
+//            }
+//        } else {
+//            throw new IllegalArgumentException("User ID is required for creating or finding a chatroom.");
+//        }
+//
+//        return chatroomId;
+//    }
+//
+//    public Optional<ChatRoom> getInExistChatroom(int userId) {
+//        System.out.println("************ 존재하는 채팅방 ***********");
+//        return chatroomRepository.findByParticipants(securityUtil.getAuthenticatedUser().getId(), userId, false);
+//    }
+//
+//    public int createNewChatroom(String chatroomName) {
+//        System.out.println("************ 새로 만들어야 하는 채팅방!! ***********");
+//
+//        ChatRoom chatroom = new ChatRoom();
+//        chatroom.setChatroomName(chatroomName);
+//        chatroom.setAlarm(1);
+//        chatroom.setForTrip(false);
+//        chatroom.setStatus(1);
+//
+//        ChatRoom savedChatroom = chatroomRepository.save(chatroom);
+//        return savedChatroom.getId();
+//    }
+
+    public int getOrCreateChatroom(Map<String, Object> userInfo)
     {
-        //TODO 새로운 채팅방 생성
-        // 1. 일정에서 가져오기
-        //    chatroomName = 일정제목
-        //    제일 처음 누르는 채팅방 들어가기 누르는 사람만 채팅방에 존재
-        //    일대일, 일대다 가능
+        System.out.println("******* get Chat room function *****");
 
-        // 2. 현지인과 대화
-        //    chatroomName = 내가 대화하고 있는 사람 닉네임, 이름
-        //    1:1 대화
+        if (userInfo.get("userId") != null)
+        {
+            int userId = (Integer) userInfo.get("userId");
+            String chatroomName = (String) userInfo.get("chatroomName");
 
-        Optional<ChatRoom> chatroomOptional = chatroomRepository.findById(chatroomId);
-        if (chatroomId == 0 ||chatroomOptional.isPresent()) {
-            chatroomRepository.save(new ChatRoom(chatroomName));
+            Optional<Integer> existingChatRoomId = chatroomRepository.findChatRoomIdByUserId(userId, securityUtil.getAuthenticatedUser().getId());
 
+            if (existingChatRoomId.isPresent())
+            {
+                // 유저 아이디랑 일치하는 채팅방 잇는지 봐
+                System.out.println(" Chat room already exists with ID: " + existingChatRoomId.get());
+                return existingChatRoomId.get();
+            }
+
+            // 새 방 만들어
+            ChatRoom newChatRoom = new ChatRoom();
+            newChatRoom.setChatroomName(chatroomName);
+            chatroomRepository.save(newChatRoom);
+
+            ParticipateMembers chatRoomUser = new ParticipateMembers();
+            chatRoomUser.setChatroom(newChatRoom);
+            chatRoomUser.setUserId(userId);
+            participateRepository.save(chatRoomUser);
+
+            // save my Id too
+            chatRoomUser.setUserId(securityUtil.getAuthenticatedUser().getId());
+            participateRepository.save(chatRoomUser);
+
+            return newChatRoom.getId();
         }
-        else {
-
+        else
+        {
+            throw new IllegalArgumentException("User ID is required for creating or finding a chatroom.");
         }
     }
-
-
 }
+
