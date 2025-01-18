@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ohgiraffers.jenkins_test_app.advice.dto.PostDataDTO;
 import com.ohgiraffers.jenkins_test_app.advice.dto.PostsWithMyLocalAreaDTO;
+import com.ohgiraffers.jenkins_test_app.advice.dto.ValidTripForPostDTO;
 import com.ohgiraffers.jenkins_test_app.auth.entity.Users;
 import com.ohgiraffers.jenkins_test_app.auth.repository.UserRepository;
 import com.ohgiraffers.jenkins_test_app.mypage.repository.MyPostRepository;
@@ -86,7 +87,7 @@ public class AdviceService {
         return postDataDTOList;
     }
 
-    public List<Trip> getValidTrips(Integer userId) {
+    public List<ValidTripForPostDTO> getValidTrips(Integer userId) {
         return tripRepository.getValidTripsWithMoreThanThreeLocations(userId);
     }
 }
