@@ -17,7 +17,6 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @EnableWebMvc       // Spring MVC를 활성화하여 웹 애플리케이션에서 MVC 기능을 사용할 수 있게 해줌
 public class WebConfig implements WebMvcConfigurer {
 
-    /*
     @Bean
     public ServletWebServerFactory servletContainer() {
         TomcatServletWebServerFactory factory = new TomcatServletWebServerFactory();
@@ -33,7 +32,6 @@ public class WebConfig implements WebMvcConfigurer {
         connector.setRedirectPort(8082);  // HTTPS 포트
         return connector;
     }
-*/
 
     // local 환경(개발시에는) HTTP 요청을 HTTPS 로 변환해주어서는 안된다.
 
