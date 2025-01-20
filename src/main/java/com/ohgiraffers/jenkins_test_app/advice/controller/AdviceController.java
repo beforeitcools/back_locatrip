@@ -1,8 +1,11 @@
 package com.ohgiraffers.jenkins_test_app.advice.controller;
 
 import com.ohgiraffers.jenkins_test_app.advice.dto.PostDataDTO;
+import com.ohgiraffers.jenkins_test_app.advice.dto.PostIdAndLocattionIdDTO;
 import com.ohgiraffers.jenkins_test_app.advice.dto.PostsWithMyLocalAreaDTO;
 import com.ohgiraffers.jenkins_test_app.advice.dto.ValidTripForPostDTO;
+import com.ohgiraffers.jenkins_test_app.advice.entity.LocalAdvice;
+import com.ohgiraffers.jenkins_test_app.advice.entity.Posts;
 import com.ohgiraffers.jenkins_test_app.advice.service.AdviceService;
 import com.ohgiraffers.jenkins_test_app.auth.entity.Users;
 import com.ohgiraffers.jenkins_test_app.common.utils.SecurityUtil;
@@ -11,10 +14,7 @@ import com.ohgiraffers.jenkins_test_app.mypage.service.MypageService;
 import com.ohgiraffers.jenkins_test_app.trip.entity.Trip;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
 import java.util.List;
@@ -85,7 +85,7 @@ public class AdviceController {
     }
 
     /**
-     *  첨삭소 로드시
+     *  글쓰기 시도시
      * @PathVariable("userId") Integer userId
      * @return boolean 세개이상의 장소가 포함된 여행일정이 있는지, 해당하는 여행리스트
      * */
@@ -97,6 +97,30 @@ public class AdviceController {
         System.out.println(tripList);
 
         return ResponseEntity.ok(tripList);
+    }
+
+    /**
+     *  첨삭 등록시
+     * 저장항 데이터
+     * @return 저장 성공 여부
+     * */
+    @PostMapping("insertAdvice")
+    public ResponseEntity<String> getValidTrips(@RequestBody LocalAdvice localAdvice) {
+        return ResponseEntity.ok(adviceService.saveAdvice(localAdvice));
+    }
+
+    /**
+     *  첨삭보기
+     * @PathVariable("locationId") int locationId
+     * @return location.category, address, name, orderIndex  , loacalAdvice, user
+     * */
+    @GetMapping("getPosts/{localArea}")
+    public ResponseEntity<Map<String, Object>> getPostsData(@RequestBody PostIdAndLocattionIdDTO postIdAndLocattionIdDTO) {
+
+        // 해당하는 포스트
+        Map<String, Object> adviceData = adviceService.getAdviceData(postIdAndLocattionIdDTO);
+
+        return ResponseEntity.ok(adviceData);
     }
 
 
