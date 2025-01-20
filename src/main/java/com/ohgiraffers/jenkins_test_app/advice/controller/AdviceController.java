@@ -114,8 +114,8 @@ public class AdviceController {
      * @PathVariable("locationId") int locationId
      * @return location.category, address, name, orderIndex  , loacalAdvice, user
      * */
-    @GetMapping("getPosts/{localArea}")
-    public ResponseEntity<Map<String, Object>> getPostsData(@RequestBody PostIdAndLocattionIdDTO postIdAndLocattionIdDTO) {
+    @GetMapping("getAdvice")
+    public ResponseEntity<Map<String, Object>> getAdviceData(@RequestBody PostIdAndLocattionIdDTO postIdAndLocattionIdDTO) {
 
         // 해당하는 포스트
         Map<String, Object> adviceData = adviceService.getAdviceData(postIdAndLocattionIdDTO);
