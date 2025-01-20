@@ -112,17 +112,5 @@ public class Location {
         this.favorites = favorites;
     }
 
-    @Override
-    public String toString() {
-        return "Location{" +
-                "id=" + id +
-                ", googleId='" + googleId + '\'' +
-                ", name='" + name + '\'' +
-                ", address='" + address + '\'' +
-                ", latitude=" + latitude +
-                ", longitude=" + longitude +
-                ", category='" + category + '\'' +
-                ", favorites=" + favorites +
-                '}';
-    }
+
 }
