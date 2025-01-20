@@ -3,6 +3,7 @@ package com.ohgiraffers.jenkins_test_app.mypage.dto;
 import com.fasterxml.jackson.annotation.JsonFormat;
 
 import java.time.LocalDate;
+import java.util.List;
 
 public class MyTripSummaryDTO {
 
@@ -13,19 +14,19 @@ public class MyTripSummaryDTO {
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy.MM.dd")
     private LocalDate endDate;
     private Long memberCount;               // 나 빼고
-    private Long regionCount;
+    private List<String> selectedRegionsList;
     private boolean isCreator;        // 여행 만든 유저인지 초대받은 멤버인지(true: creator, false: member)
 
     public MyTripSummaryDTO() {
     }
 
-    public MyTripSummaryDTO(Integer tripId, String title, LocalDate startDate, LocalDate endDate, Long memberCount, Long regionCount, boolean isCreator) {
+    public MyTripSummaryDTO(Integer tripId, String title, LocalDate startDate, LocalDate endDate, Long memberCount, List<String> selectedRegionsList, boolean isCreator) {
         this.tripId = tripId;
         this.title = title;
         this.startDate = startDate;
         this.endDate = endDate;
         this.memberCount = memberCount;
-        this.regionCount = regionCount;
+        this.selectedRegionsList = selectedRegionsList;
         this.isCreator = isCreator;
     }
 
@@ -69,12 +70,12 @@ public class MyTripSummaryDTO {
         this.memberCount = memberCount;
     }
 
-    public Long getRegionCount() {
-        return regionCount;
+    public List<String> getSelectedRegionsList() {
+        return selectedRegionsList;
     }
 
-    public void setRegionCount(Long regionCount) {
-        this.regionCount = regionCount;
+    public void setSelectedRegionsList(List<String> selectedRegionsList) {
+        this.selectedRegionsList = selectedRegionsList;
     }
 
     public boolean getIsCreator() {
@@ -87,13 +88,13 @@ public class MyTripSummaryDTO {
 
     @Override
     public String toString() {
-        return "MyTripSummary{" +
+        return "MyTripSummaryDTO{" +
                 "tripId=" + tripId +
                 ", title='" + title + '\'' +
                 ", startDate=" + startDate +
                 ", endDate=" + endDate +
                 ", memberCount=" + memberCount +
-                ", regionCount=" + regionCount +
+                ", selectedRegionsList=" + selectedRegionsList +
                 ", isCreator=" + isCreator +
                 '}';
     }

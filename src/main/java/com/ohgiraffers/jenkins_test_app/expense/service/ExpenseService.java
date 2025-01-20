@@ -40,7 +40,6 @@ public class ExpenseService {
     @Autowired
     private ExpenseParticipantsRepository expenseParticipantsRepository;
 
-
     private String formatDate(LocalDate date) {
         return date.format(formatter);
     }
@@ -50,10 +49,8 @@ public class ExpenseService {
         List<Object[]> preparationResults = expenseRepository.findPreparationExpenses(tripId);
 
         Object[] tripInfo = expenseRepository.findTripDatesByTripId(tripId);
-
         Object[] tripDates = (Object[]) tripInfo[0];
 
-        System.out.println(tripDates);
         if (tripDates == null || tripDates.length < 2) {
             throw new RuntimeException("해당 tripId의 여행일정이 제대로 설정 안되었습니다: " + tripId);
         }
@@ -71,6 +68,7 @@ public class ExpenseService {
 
         // 여행 준비 항목
         List<Map<String, Object>> preparationList = (List<Map<String, Object>>) preparationExpenses.get("expenses");
+
         for (Object[] row : preparationResults) {
             String category = (String) row[0];
             double amount = ((Number) row[1]).doubleValue();
@@ -82,13 +80,25 @@ public class ExpenseService {
             expense.put("amount", amount);
             expense.put("description", description);
 
+            int expenseId = ((Number) row[3]).intValue();
+            List<Map<String, Object>> participantsUser = participantsRepository.findParticipantsWithNickname(expenseId)
+                    .stream()
+                    .map(participant -> {
+                        Map<String, Object> participantMap = new HashMap<>();
+                        participantMap.put("id", participant[0]); // userId
+                        participantMap.put("nickname", participant[1]); // 닉네임
+                        return participantMap;
+                    }).collect(Collectors.toList());
+            expense.put("participants", participantsUser);
+
             preparationList.add(expense);
         }
 
-
+        // 여행 날짜 생성
         for (LocalDate date = startDate; !date.isAfter(endDate); date = date.plusDays(1)) {
-            String formattedDate = formatDate(date);
-            String dayKey = formattedDate;
+            int dayNumber = (int) startDate.until(date).getDays() + 1;
+            String dayKey = "day" + dayNumber;
+            String formattedDate = dayKey + " " + formatDate(date);
 
             groupedExpenses.putIfAbsent(dayKey, new LinkedHashMap<>());
             Map<String, Object> dayExpenses = groupedExpenses.get(dayKey);
@@ -105,7 +115,7 @@ public class ExpenseService {
             String description = (String) row[4];
 
             String dayKey = "day" + dayNumber;
-            String formattedDate = "day" + dayNumber + " " + formatDate(date);
+            String formattedDate = dayKey + " " + formatDate(date);
 
             groupedExpenses.putIfAbsent(dayKey, new LinkedHashMap<>());
             Map<String, Object> dayExpenses = groupedExpenses.get(dayKey);
@@ -118,6 +128,17 @@ public class ExpenseService {
             expense.put("category", category);
             expense.put("amount", amount);
             expense.put("description", description);
+
+            int expenseId = ((Number) row[5]).intValue();
+            List<Map<String, Object>> participantsUser = participantsRepository.findParticipantsWithNickname(expenseId)
+                    .stream()
+                    .map(participant -> {
+                        Map<String, Object> participantMap = new HashMap<>();
+                        participantMap.put("id", participant[0]); // userId
+                        participantMap.put("nickname", participant[1]); // 닉네임
+                        return participantMap;
+                    }).collect(Collectors.toList());
+            expense.put("participants", participantsUser);
 
             expenses.add(expense);
             dayExpenses.put("expenses", expenses);
@@ -170,6 +191,7 @@ public class ExpenseService {
     public ExpenseDTO getExpenseById(int expenseId) {
         Expense expense = expenseRepository.findById(expenseId)
                 .orElseThrow(() -> new RuntimeException("Expense not found"));
+
 
         List<ExpensePaidByDTO> paidByUsers = paidByRepository.findPaidByUsersWithNickname(expenseId)
                 .stream()
@@ -236,7 +258,7 @@ public class ExpenseService {
         }
     }
 
-   /* public List<Map<String, Object>> getUsersByTripId(int tripId) {
+    public List<Map<String, Object>> getUsersByTripId(int tripId) {
         List<Object[]> results = expenseRepository.findUsersAndTripByTripId(tripId);
         return results.stream().map(row -> {
             Map<String, Object> user = new HashMap<>();
@@ -244,7 +266,7 @@ public class ExpenseService {
             user.put("nickname", row[1]); // 닉네임
             return user;
         }).collect(Collectors.toList());
-    }*/
+    }
 
     @Transactional
     public void deleteExpense(int expenseId) {

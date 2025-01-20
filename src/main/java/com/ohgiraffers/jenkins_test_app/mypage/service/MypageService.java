@@ -17,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.*;
 
@@ -67,16 +68,44 @@ public class MypageService {
     }
 
     public List<MyTripSummaryDTO> getMyTrips(Integer userId) {
+        List<Object[]> myTripsOwnedByMeList = myTripRepository.findTripsOwnedByUser(userId);
+        List<MyTripSummaryDTO> allMyTrips = new ArrayList<>();
+        for(Object[] o : myTripsOwnedByMeList){
+            MyTripSummaryDTO dto = new MyTripSummaryDTO();
+            dto.setTripId((Integer) o[0]);
+            dto.setTitle((String) o[1]);
+            dto.setStartDate(((java.sql.Date) o[2]).toLocalDate());
+            dto.setEndDate(((java.sql.Date) o[3]).toLocalDate());
+            dto.setMemberCount((Long) o[4]);
+            String concatenatedRegions = (String) o[5];
+            if (concatenatedRegions != null && !concatenatedRegions.isEmpty()) {
+                dto.setSelectedRegionsList(Arrays.asList(concatenatedRegions.split(",")));
+            } else {
+                dto.setSelectedRegionsList(new ArrayList<>());
+            }
+            dto.setIsCreator(true);
+            allMyTrips.add(dto);
+        }
+        System.out.println(allMyTrips);
 
-        List<MyTripSummaryDTO> myTripsOwnedByMe = myTripRepository.findTripsOwnedByUser(userId);
-        List<MyTripSummaryDTO> myTripsWhereImMember = myTripRepository.findTripsWhereImMember(userId);
-
-        List<MyTripSummaryDTO> allMyTrips = new ArrayList<>(myTripsOwnedByMe);
-        allMyTrips.addAll(myTripsWhereImMember);
-
-        System.out.println("service layer: " + myTripsOwnedByMe);
-        System.out.println("service layer: " + myTripsWhereImMember);
-        System.out.println("service layer: " + allMyTrips);
+        List<Object[]> myTripsWhereImMemberList = myTripRepository.findTripsWhereImMember(userId);
+        for(Object[] o : myTripsWhereImMemberList){
+            MyTripSummaryDTO dto = new MyTripSummaryDTO();
+            dto.setTripId((Integer) o[0]);
+            dto.setTitle((String) o[1]);
+            dto.setStartDate(((java.sql.Date) o[2]).toLocalDate());
+            dto.setEndDate(((java.sql.Date) o[3]).toLocalDate());
+            dto.setMemberCount((Long) o[4]);
+            String concatenatedRegions = (String) o[5];
+            if (concatenatedRegions != null && !concatenatedRegions.isEmpty()) {
+                dto.setSelectedRegionsList(Arrays.asList(concatenatedRegions.split(",")));
+            } else {
+                dto.setSelectedRegionsList(new ArrayList<>());
+            }
+            dto.setIsCreator(false);
+            allMyTrips.add(dto);
+        }
+        System.out.println(allMyTrips);
 
         return allMyTrips;
     }
