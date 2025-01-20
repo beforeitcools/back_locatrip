@@ -13,8 +13,9 @@ public class ParticipateMembers
     @JoinColumn (name = "chatroom_id")
     private ChatRoom chatroom;
 
-    @Column (name = "last_read_message_id")
-    private int lastReadMessageId;
+    @ManyToOne
+    @JoinColumn (name = "last_read_message_id")
+    private Messages lastReadMessageId;
 
     public ParticipateMembers()
     {
@@ -46,12 +47,12 @@ public class ParticipateMembers
         this.userId = userId;
     }
 
-    public int getLastReadMessageId()
+    public Messages getLastReadMessageId()
     {
         return lastReadMessageId;
     }
 
-    public void setLastReadMessageId(int lastReadMessageId)
+    public void setLastReadMessageId(Messages lastReadMessageId)
     {
         this.lastReadMessageId = lastReadMessageId;
     }

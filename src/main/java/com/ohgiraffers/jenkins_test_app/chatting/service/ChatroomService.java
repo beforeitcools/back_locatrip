@@ -119,22 +119,17 @@ public class ChatroomService
                 System.out.println(" Chat room already exists with ID: " + existingChatRoomId.get());
                 return existingChatRoomId.get();
             }
+            else {
+                // 새 방 만들어
+                ChatRoom newChatRoom = new ChatRoom(chatroomName, 1, false, 1); //String chatroomName, int alarm, boolean isForTrip, int status)
+                chatroomRepository.save(newChatRoom);
 
-            // 새 방 만들어
-            ChatRoom newChatRoom = new ChatRoom();
-            newChatRoom.setChatroomName(chatroomName);
-            chatroomRepository.save(newChatRoom);
+                participateRepository.insertChatroomUser(userId, newChatRoom);
+                participateRepository.insertChatroomUser(securityUtil.getAuthenticatedUser().getId(), newChatRoom);
 
-            ParticipateMembers chatRoomUser = new ParticipateMembers();
-            chatRoomUser.setChatroom(newChatRoom);
-            chatRoomUser.setUserId(userId);
-            participateRepository.save(chatRoomUser);
+                return newChatRoom.getId();
+            }
 
-            // save my Id too
-            chatRoomUser.setUserId(securityUtil.getAuthenticatedUser().getId());
-            participateRepository.save(chatRoomUser);
-
-            return newChatRoom.getId();
         }
         else
         {

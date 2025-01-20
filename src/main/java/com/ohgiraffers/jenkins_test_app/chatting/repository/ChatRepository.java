@@ -35,14 +35,14 @@ public interface ChatRepository extends JpaRepository<Messages, Integer>
         WHERE pm.userId = :userId
             AND m.userId != :userId
             AND cr.id = :chatroomId
-            AND m.id > pm.lastReadMessageId
+            AND m.id > pm.lastReadMessageId.id
     """)
      int countByReadStatus(@Param("chatroomId") int chatroomId, @Param("userId") int userId);
 
     @Modifying
     @Query(value = """
         UPDATE ParticipateMembers pm
-        SET pm.lastReadMessageId = :messageId
+        SET pm.lastReadMessageId.id = :messageId
         WHERE pm.userId = :userId AND pm.chatroom.id = :chatroomId
     """, nativeQuery = false)
     void updateLastReadMessageId(@PathVariable("chatroomId") int chatroomId, @Param("userId") int userId, @Param("messageId") int messageId);
