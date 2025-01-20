@@ -161,4 +161,22 @@ public class AdviceService {
         adviceData.put("adviceList", adviceList);
         return adviceData;
     }
+
+
+    public List<LocalAdvice> selectAdviceList(Integer postId, Integer userId) {
+        System.out.println("Service 호출: postId = " + postId + ", userId = " + userId);
+        try {
+            List<LocalAdvice> adviceList = adviceRepository.findByPostIdAndUserId(postId, userId);
+            if(adviceList.isEmpty()){
+                return null;
+            }else {
+                return adviceList;
+            }
+
+        } catch (Exception e) {
+            System.err.println("Repository 호출 중 예외 발생: " + e.getMessage());
+            e.printStackTrace();
+            return null;
+        }
+    }
 }

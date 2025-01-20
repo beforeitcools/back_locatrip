@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface AdviceRepository extends JpaRepository<LocalAdvice, Integer> {
 
@@ -28,4 +29,11 @@ public interface AdviceRepository extends JpaRepository<LocalAdvice, Integer> {
     GROUP BY la.id
 """)
     List<AdvicesWithUserInfoDTO> getAdvicesOnLocation(Integer locationId);
+
+
+    @Query(value = "SELECT * FROM local_advice WHERE post_id = :postId AND user_id = :userId AND status = 1", nativeQuery = true)
+    List<LocalAdvice> findByPostIdAndUserId(@Param("postId") Integer postId, @Param("userId") Integer userId);
+
+
+
 }

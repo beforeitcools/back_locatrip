@@ -7,6 +7,7 @@ import com.ohgiraffers.jenkins_test_app.advice.dto.ValidTripForPostDTO;
 import com.ohgiraffers.jenkins_test_app.advice.entity.LocalAdvice;
 import com.ohgiraffers.jenkins_test_app.advice.entity.Posts;
 import com.ohgiraffers.jenkins_test_app.advice.service.AdviceService;
+import com.ohgiraffers.jenkins_test_app.advice.service.PostService;
 import com.ohgiraffers.jenkins_test_app.auth.entity.Users;
 import com.ohgiraffers.jenkins_test_app.common.utils.SecurityUtil;
 import com.ohgiraffers.jenkins_test_app.mypage.dto.MyPostSummaryDTO;
@@ -16,12 +17,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @RestController
-@RequestMapping("/advice/*")
+@RequestMapping("advice")
 public class AdviceController {
 
     @Autowired
@@ -32,6 +31,9 @@ public class AdviceController {
 
     @Autowired
     SecurityUtil securityUtil;
+
+    @Autowired
+    PostService postService;
 
     /**
      *  유저의 현지인 인증이 유효한지 검사
@@ -112,7 +114,7 @@ public class AdviceController {
     /**
      *  첨삭보기
      * @PathVariable("locationId") int locationId
-     * @return location.category, address, name, orderIndex  , loacalAdvice, user
+     * @return location.category, address, name, orderIndex, localAdvice, user
      * */
     @GetMapping("getAdvice")
     public ResponseEntity<Map<String, Object>> getAdviceData(@RequestBody PostIdAndLocattionIdDTO postIdAndLocattionIdDTO) {
@@ -123,5 +125,59 @@ public class AdviceController {
         return ResponseEntity.ok(adviceData);
     }
 
+
+    @GetMapping("selectAdviceList")
+    public ResponseEntity selectAdviceList(@RequestParam(name = "postId") Integer postId, @RequestParam(name="userId") Integer userId) {
+
+        System.out.println("postId = " + postId);
+        System.out.println("userId = " + userId);
+
+        if(postId == null || userId == null) {
+            return ResponseEntity.badRequest().build();
+        }
+
+
+        // 로컬 어드바이스
+        List<LocalAdvice> localAdviceList = adviceService.selectAdviceList(postId, userId);
+
+        // 해당포스트
+        ResponseEntity<Posts> posts = postService.getPostById(postId);
+
+
+        List placeList = new ArrayList<>();
+        Map<String, Object> result = new HashMap<>();
+
+        if(localAdviceList != null && localAdviceList.size() > 0) {
+            for(LocalAdvice localAdvice : localAdviceList){
+                if(localAdvice.getAdviceNum() == 1){
+                    // 전체
+                    result.put("all", localAdvice);
+
+                }else {
+                    // 장소
+                    placeList.add(localAdvice);
+                    result.put("place", placeList);
+
+                }
+
+            }
+        }
+
+
+        if(posts != null){
+            result.put("posts", posts.getBody().getAdvicedTripData());
+
+        }
+
+
+        System.out.println("result = " + result);
+
+        if(localAdviceList == null || posts == null || result.isEmpty()) {
+            return ResponseEntity.status(500).build();
+        }
+
+
+        return ResponseEntity.ok(result);
+    }
 
 }
