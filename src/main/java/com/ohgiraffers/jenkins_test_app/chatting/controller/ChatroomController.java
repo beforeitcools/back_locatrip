@@ -33,6 +33,18 @@ public class ChatroomController
     public int createChatooom(@RequestBody Map<String, Object> userInfo)
     {
         // 새로운 채팅방 생성
+        System.out.println("I got new chat room for one to one " + userInfo.get("userId"));
         return chatroomService.getOrCreateChatroom(userInfo);
+    }
+
+    @PostMapping("/createNewChatroom")
+    public int createTripChatroom(@RequestBody Map<String, Object> tripInfo){
+        return chatroomService.createTripChatroom(tripInfo);
+    }
+
+    @GetMapping("/getExistChatroom")
+    public int getTripChatroom(@RequestBody Map<String, Object> tripInfo)
+    {
+        return chatroomService.getTripChatroom(tripInfo);
     }
 }

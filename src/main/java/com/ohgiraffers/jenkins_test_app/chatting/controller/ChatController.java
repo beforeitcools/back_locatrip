@@ -41,7 +41,6 @@ public class ChatController
     @RequestMapping(value = "/unread/count", method = RequestMethod.GET)
     public int getUnreadMessagesCount(@Param("chatroomId") int chatroomId)
     {
-        System.out.println(" *************** GET UNREAD MESSAGES COUNT FUNCTION ***************");
         int unreadCount = chatService.getUnreadMessagesCount(chatroomId);
         return unreadCount;
     }
@@ -49,7 +48,6 @@ public class ChatController
     @RequestMapping(value = "/updateLastMessage/{chatroomId}", method = RequestMethod.POST)
     public void updateUnreadMessageId(@PathVariable("chatroomId") int chatroomId)
     {
-        System.out.println(" *************** UPDATE UNREAD MESSAGE ID FUNCTION ***************");
         chatService.updateLastReadMessage(chatroomId);
     }
 }
