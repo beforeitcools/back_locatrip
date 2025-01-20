@@ -141,5 +141,51 @@ public class ChatroomService
             throw new IllegalArgumentException("User ID is required for creating or finding a chatroom.");
         }
     }
+
+    // 트립 쪽 채팅방 생성
+    public int getTripChatroom(Map<String, Object> tripInfo)
+    {
+        int tripId = (Integer) tripInfo.get("id");
+        String chatroomName = (String) tripInfo.get("title");
+
+        // 이거는 trip Id가 있는지 봐야 되는디
+        Optional<Integer> existingChatRoomId = chatroomRepository.findChatRoomIdByUserId(tripId, securityUtil.getAuthenticatedUser().getId());
+
+        // find my user id exists in the chat room
+        Optional<Integer> existingUserId = participateRepository.findUserExists(tripId, securityUtil.getAuthenticatedUser().getId());
+
+        if(existingUserId.isEmpty())
+        {
+            ParticipateMembers chatRoomUser = new ParticipateMembers();
+            chatRoomUser.setUserId(securityUtil.getAuthenticatedUser().getId());
+            participateRepository.save(chatRoomUser);
+        }
+
+        return existingChatRoomId.get();
+    }
+
+    public int createTripChatroom(Map<String, Object> tripInfo)
+    {
+        int tripId = (Integer) tripInfo.get("id");
+        int userId = securityUtil.getAuthenticatedUser().getId();
+        String chatroomName = (String) tripInfo.get("title");
+
+        // 새 방 만들어
+        ChatRoom newChatRoom = new ChatRoom();
+        newChatRoom.setForTrip(true);
+        newChatRoom.setChatroomName(chatroomName);
+        chatroomRepository.save(newChatRoom);
+
+        ParticipateMembers chatRoomUser = new ParticipateMembers();
+        chatRoomUser.setChatroom(newChatRoom);
+        chatRoomUser.setUserId(userId);
+        participateRepository.save(chatRoomUser);
+
+        // save my Id too
+        chatRoomUser.setUserId(securityUtil.getAuthenticatedUser().getId());
+        participateRepository.save(chatRoomUser);
+
+        return newChatRoom.getId();
+    }
 }
 
